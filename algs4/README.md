@@ -24,6 +24,8 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ### Sorting
 
+- [x] Quick sort `QuickSort.java`
+
 ### Searching
 
 ### Graphs
