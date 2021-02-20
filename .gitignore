@@ -1,3 +1,10 @@
+
+# 忽略编辑器配置文件
+.idea/
+coding.iml
+
+out/
+
 # Compiled class file
 *.class
 
