@@ -8,7 +8,7 @@ https://algs4.cs.princeton.edu/home/
 
 代码位置
 
-`algs4.jar` => Add as Library
+[algs4.jar](https://algs4.cs.princeton.edu/code/algs4.jar) => Add as Library
 
 ```
 https://algs4.cs.princeton.edu/code/
@@ -54,3 +54,7 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 ### Context
 
 ### Exercises
+
+2.3.17 Sentinels `QuickWithSentinels.java`
+
+快速排序的改进版本，将最大值放置在数组最右边防止越界。

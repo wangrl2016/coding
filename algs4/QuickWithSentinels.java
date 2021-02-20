@@ -2,52 +2,55 @@ import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 /**
- * Quicksort is a recursive program that sorts a subarray a[lo...hi] by using
- * a partition() method that puts a[i] into position and arranges the rest of
- * entries such that the recursive calls finish the sort.
+ * 2.3.17 Sentinels. Modify the code in ALGORITHM 2.5 to remove both bounds checks
+ * in the inner while loops. The test against the left end of the subarray is redundant since
+ * the partition item acts as a sentinels ( v is never less than a[lo]). To enable removal of
+ * the other test, put an item whose key is the largest in the whole array into a[length-1]
+ * just after the shuffle. This item will never move (except possibly to be swapped with an
+ * item having the same key) and will serve as a sentinel in all subarrays involving the end
+ * of the array. Note: When sorting interior subarray, the leftmost entry in the subarray
+ * to the right serves as a sentinel for the right end of the subarray.
  */
-
-public class QuickSort {
+public class QuickWithSentinels {
 
     // This class should not be instantiated.
-    private QuickSort() {
+    private QuickWithSentinels() {
     }
 
-    /**
-     * Rearranges the array in ascending order, using the natural order.
-     *
-     * @param a the array to be sorted
-     */
     public static void sort(Comparable[] a) {
+        // Place biggest item on the right end.
+        Comparable max = a[0];
+        int maxIndex = 0;
+        for (int i = 1; i < a.length; i++) {
+            if (less(max, a[i])) {
+                max = a[i];
+                maxIndex = i;
+            }
+        }
+        exch(a, maxIndex, a.length - 1);
+
         sort(a, 0, a.length - 1);
-        assert isSorted(a);
     }
 
-    // Quicksort the subarray from a[lo] to a[hi].
     private static void sort(Comparable[] a, int lo, int hi) {
         if (hi <= lo) return;
+
         int j = partition(a, lo, hi);
         sort(a, lo, j - 1);
         sort(a, j + 1, hi);
         assert isSorted(a, lo, hi);
     }
 
-    // Partition the subarray a[lo..hi] so that a[lo..j-1] <= a[j] <= a[j+1..hi]
-    // and return the index j.
     private static int partition(Comparable[] a, int lo, int hi) {
         int i = lo;
         int j = hi + 1;
         Comparable v = a[lo];
         while (true) {
             // find item on lo to swap
-            while (less(a[++i], v)) {
-                if (i == hi) break;
-            }
+            while (less(a[++i], v)) ;
 
             // find item on hi to swap
-            while (less(v, a[--j])) {
-                if (j == lo) break;     // redundant since a[lo] acts as sentinel
-            }
+            while (less(v, a[--j])) ;
 
             // check if pointers cross
             if (i >= j) break;
@@ -62,12 +65,6 @@ public class QuickSort {
         return j;
     }
 
-    // Is v < w ?
-    private static boolean less(Comparable v, Comparable w) {
-        if (v == w) return false;   // optimization when reference equals
-        return v.compareTo(w) < 0;
-    }
-
     // Check if array is sorted - useful for debugging.
     private static boolean isSorted(Comparable[] a) {
         return isSorted(a, 0, a.length - 1);
@@ -80,11 +77,10 @@ public class QuickSort {
         return true;
     }
 
-    // Print array to standard output.
-    private static void show(Comparable[] a) {
-        for (int i = 0; i < a.length; i++) {
-            StdOut.println(a[i]);
-        }
+    // Is v < w ?
+    private static boolean less(Comparable v, Comparable w) {
+        if (v == w) return false;       // optimization when reference equals
+        return v.compareTo(w) < 0;
     }
 
     // Exchange a[i] and a[j].
@@ -94,9 +90,16 @@ public class QuickSort {
         a[j] = swap;
     }
 
+    // Print array to standard output.
+    private static void show(Comparable[] a) {
+        for (int i = 0; i < a.length; i++) {
+            StdOut.println(a[i]);
+        }
+    }
+
     public static void main(String[] args) {
         String[] a = StdIn.readAllStrings();
-        QuickSort.sort(a);
+        QuickWithSentinels.sort(a);
         show(a);
     }
 }
