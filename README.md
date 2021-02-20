@@ -5,5 +5,5 @@ Personal coding exercises
 
 ![二维码关注](res/personal-qrcode.png)
 
-## 算法第四版
+## 算法(Algorithms)第四版
 

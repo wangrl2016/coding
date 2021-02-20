@@ -26,7 +26,10 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 - [x] Selection sort `SelectionSort.java`
 - [x] Insertion sort `InsertionSort.java`
+- [ ] Shell sort `ShellSort.java`
+- [ ] Merge sort `MergeSort.java`
 - [x] Quick sort `QuickSort.java`
+
 
 ### Searching
 
