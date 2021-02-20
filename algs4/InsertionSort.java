@@ -7,6 +7,11 @@ public class InsertionSort {
     private InsertionSort() {
     }
 
+    /**
+     * Rearranges the array in ascending order, using the natural order.
+     *
+     * @param a the array to be sorted
+     */
     public static void sort(Comparable[] a) {
         int n = a.length;
         for (int i = 1; i < n; i++) {
@@ -16,6 +21,22 @@ public class InsertionSort {
             assert isSorted(a, 0, i);
         }
         assert isSorted(a);
+    }
+
+    /**
+     * Rearranges the subarray a[lo..hi] in ascending order, using the natural order.
+     *
+     * @param a  the array to be sorted
+     * @param lo left endpoint (inclusive)
+     * @param hi right endpoint (exclusive)
+     */
+    public static void sort(Comparable[] a, int lo, int hi) {
+        for (int i = lo + 1; i < hi; i++) {
+            for (int j = i; j > lo && less(a[j], a[j - 1]); j--) {
+                exch(a, j, j - 1);
+            }
+        }
+        assert isSorted(a, lo, hi);
     }
 
     // Is v < w ?

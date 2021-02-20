@@ -58,3 +58,8 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 2.3.17 Sentinels `QuickWithSentinels.java`
 
 快速排序的改进版本，将最大值放置在数组最右边防止越界。
+
+2.3.25 Cutoff to insertion sort. `QuickWithCutoff.java`
+
+在子数组元素较少时使用插入排序。
+
