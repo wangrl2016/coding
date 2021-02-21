@@ -26,6 +26,10 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ![Stack](../res/stack.jpeg)
 
+- [x] Queue `Queue.java`
+
+![Queue](../res/queue.png)
+
 ### Sorting
 
 - [x] Selection sort `SelectionSort.java`
