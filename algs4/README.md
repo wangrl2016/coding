@@ -22,7 +22,7 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ### Fundamental
 
-- [x] Stack `Stack.java`
+- [x] Stack `Stack.java` `StackArray.java`
 
 ![Stack](../res/stack.jpeg)
 
@@ -71,4 +71,6 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 在子数组元素较少时使用插入排序。
 
-2.4.3
+2.4.3 Priority queue `PriorityElementary.java`
+
+使用数组和链表实现优先队列。
