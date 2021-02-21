@@ -22,6 +22,10 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ### Fundamental
 
+- [x] Stack `Stack.java`
+
+![Stack](../res/stack.jpeg)
+
 ### Sorting
 
 - [x] Selection sort `SelectionSort.java`
@@ -59,7 +63,8 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 快速排序的改进版本，将最大值放置在数组最右边防止越界。
 
-2.3.25 Cutoff to insertion sort. `QuickWithCutoff.java`
+2.3.25 Cutoff to insertion sort `QuickWithCutoff.java`
 
 在子数组元素较少时使用插入排序。
 
+2.4.3
