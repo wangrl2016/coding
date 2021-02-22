@@ -14,7 +14,7 @@
 
 2. 在Java中使用数组(Array)
 
-`ArrayInJava.java`
+`ArrayInJava.java` `Student.java` `ArrayCopy.java`
 
 #### Array Rotations
 
