@@ -1,5 +1,7 @@
 # Simple Data Structures and Algorithms
 
+数字序号开头的文字对应头条号里面的文章题目
+
 ## 数据结构
 
 ### Array
@@ -8,7 +10,11 @@
 
 1. 数组(Array)介绍
 
+`IntroductionArray.java`
+
 2. 在Java中使用数组(Array)
+
+`ArrayInJava.java`
 
 #### Array Rotations
 
