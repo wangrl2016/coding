@@ -180,6 +180,74 @@ public class PriorityElementary {
         }
     }
 
+    private class PriorityQueueUnorderedLinkedList<Key extends Comparable<Key>> {
+        private class Node {
+            Key key;
+            Node next;
+        }
+
+        private Node first;
+        private int size;
+
+        public boolean isEmpty() {
+            return size == 0;
+        }
+
+        public int size() {
+            return size;
+        }
+
+        // O(1)
+        public void insert(Key key) {
+            Node oldFirst = first;
+            first = new Node();
+            first.key = key;
+            first.next = oldFirst;
+
+            size++;
+        }
+
+        // O(N)
+        public Key removeMax() {
+            if (isEmpty())
+                throw new RuntimeException("Priority queue underflow");
+
+            Key maxValue = first.key;
+
+            Node current = first;
+            current = current.next;
+
+            // Find out max value.
+            while (current != null) {
+                if (less(maxValue, current.key)) {
+                    maxValue = current.key;
+                }
+
+                current = current.next;
+            }
+
+            if (maxValue == first.key) {
+                // First element is the max value
+                first = first.next;
+            } else {
+                current = first;
+
+                while (current.next.key != maxValue) {
+                    current = current.next;
+                }
+
+                if (current.next.next == null) {
+                    current.next = null;
+                } else {
+                    current.next = current.next.next;
+                }
+            }
+
+            size--;
+            return maxValue;
+        }
+    }
+
     // Exchange a[i] and a[j].
     private static void exchange(Object[] a, int i, int j) {
         Object swap = a[i];
@@ -223,7 +291,7 @@ public class PriorityElementary {
         PriorityQueueOrderedLinkedList<Integer> orderedLinkedList =
                 new PriorityElementary().new PriorityQueueOrderedLinkedList<>();
 
-        for (Integer integer: a)
+        for (Integer integer : a)
             orderedLinkedList.insert(integer);
 
         while (!orderedLinkedList.isEmpty())
@@ -232,7 +300,14 @@ public class PriorityElementary {
         StdOut.println();
 
         // unordered linked list
+        PriorityQueueUnorderedLinkedList<Integer> unorderedLinkedList =
+                new PriorityElementary().new PriorityQueueUnorderedLinkedList<>();
 
+        for (Integer integer : a)
+            unorderedLinkedList.insert(integer);
+
+        while (!unorderedLinkedList.isEmpty())
+            StdOut.print(unorderedLinkedList.removeMax() + " ");
 
     }
 }
