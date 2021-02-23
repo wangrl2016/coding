@@ -22,6 +22,9 @@ def cmake_executable():
 if __name__ == '__main__':
     print('Running FFmpeg tutorials automatically')
 
+    if not os.path.exists('out'):
+        os.mkdir('out')
+
     cmake_executable()
 
     build_dir = 'build'
