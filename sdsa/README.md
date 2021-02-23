@@ -20,7 +20,7 @@
 
 1. 数组的旋转
 
-`ArrayRotate.java`
+`GCD.java` `ArrayRotate.java`
 
 #### Arrangement Rearrangement
 
