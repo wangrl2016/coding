@@ -5,5 +5,14 @@ project(FFmpegTutorials)
 
 # add the executable
 
-add_executable(metadata Metadata.cpp)
-target_link_libraries(metadata avformat avcodec swresample swscale avutil avfilter avdevice)
+SET(EXAMPLES
+        Dump
+        Metadata
+        )
+
+foreach (EXAMPLE ${EXAMPLES})
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
+    target_link_libraries(${EXAMPLE} avformat avcodec swresample
+            swscale avutil avfilter avdevice)
+endforeach ()
+

@@ -2,6 +2,8 @@
 // Created by wangrl on 2021/2/23.
 //
 
+#include <cstdlib>
+
 extern "C" {
 #include <libavformat/avformat.h>
 }
@@ -9,7 +11,6 @@ extern "C" {
 int main(int argc, char** argv) {
 
     AVFormatContext* fmtCtx = nullptr;
-    AVDictionaryEntry* tag = nullptr;
 
     int ret;
 
@@ -23,15 +24,13 @@ int main(int argc, char** argv) {
     if ((ret = avformat_open_input(&fmtCtx, argv[1], nullptr, nullptr)))
         return ret;
 
-    if ((ret = avformat_find_stream_info(fmtCtx, nullptr)) < 0) {
+    ret = avformat_find_stream_info(fmtCtx, nullptr);   // 查询信息流
+    if (ret < 0) {
         av_log(nullptr, AV_LOG_ERROR, "Cannot find stream information\n");
         return ret;
     }
 
-    while ((tag = av_dict_get(fmtCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
-        printf("%s = %s\n", tag->key, tag->value);
-
-    avformat_close_input(&fmtCtx);
+    av_dump_format(fmtCtx, 0, argv[1], 0);
 
     return EXIT_SUCCESS;
 }

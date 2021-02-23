@@ -28,8 +28,15 @@ if __name__ == '__main__':
 
     subprocess.run([cmake_executable(), build_dir])
     subprocess.run(['make', '-C', build_dir])
-
     print()
 
-    print('打印多媒体文件元数据')
-    subprocess.run([os.path.join(build_dir, 'metadata'), '../res/big-buck-bunny.mp4'])
+    examples = ['Metadata', 'Dump']
+
+    print('0. 打印多媒体文件元数据')
+    subprocess.run([os.path.join(build_dir, examples[0]),
+                    '../res/big-buck-bunny.mp4'])
+    print()
+
+    print('1. 打印音视频流信息')
+    subprocess.run([os.path.join(build_dir, examples[1]),
+                    '../res/big-buck-bunny.mp4'])

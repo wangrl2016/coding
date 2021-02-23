@@ -13,4 +13,6 @@ sudo ldconfig               // take effect
 
 ## FFmpeg示例
 
+1. 打印多媒体文件元数据
 
+2. 打印音视频流信息
