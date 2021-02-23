@@ -13,6 +13,10 @@ Personal coding exercises
 
 参考Algorithms 4th书本编写
 
+## FFmpeg示例 (ffmpeg/)
+
+参考FFmpeg写的示例
+
 ## 打赏作者
 
 1. 填写邀请码
