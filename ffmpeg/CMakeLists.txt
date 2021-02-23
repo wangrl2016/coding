@@ -8,6 +8,7 @@ project(FFmpegTutorials)
 SET(EXAMPLES
         Dump
         Metadata
+        DecodeVideo
         )
 
 foreach (EXAMPLE ${EXAMPLES})
