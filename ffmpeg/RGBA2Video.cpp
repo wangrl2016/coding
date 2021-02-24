@@ -5,6 +5,7 @@
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
+#include <libavutil/imgutils.h>
 }
 
 #define VIDEO_WIDTH 1280
@@ -16,12 +17,22 @@ extern "C" {
 // pts of the next frame that will be generated.
 int64_t NEXT_PTS = 0;
 
-static void fillRGBAImage(AVFrame* frame, int index, int width, int height) {
+static void fillRGBAImage(AVFrame* frame, uint8_t* rgbaBuf, int index, int width, int height) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width * 4; x += 4) {
+            rgbaBuf[y * width * 4 + x + 0] = x + y + index * 3;
+            rgbaBuf[y * width * 4 + x + 1] = 128 + y + index * 2;
+            rgbaBuf[y * width * 4 + x + 2] = 64 + x + index * 5;
+            rgbaBuf[y * width * 4 + x + 3] = 255;
+        }
+    }
 
+    av_image_fill_arrays(frame->data, frame->linesize, rgbaBuf,
+                         AV_PIX_FMT_RGBA, width, height, 32);
 }
 
 static AVFrame* getVideoFrame(AVCodecContext* codecContext, SwsContext* swsContext,
-                              AVFrame* frame, AVFrame* rgbaFrame) {
+                              AVFrame* frame, AVFrame* rgbaFrame, uint8_t* rgbaBuf) {
 
     // Check if we want to generate more frames.
     if (av_compare_ts(NEXT_PTS, codecContext->time_base,
@@ -34,7 +45,7 @@ static AVFrame* getVideoFrame(AVCodecContext* codecContext, SwsContext* swsConte
         exit(EXIT_FAILURE);
     }
 
-    fillRGBAImage(rgbaFrame, NEXT_PTS, codecContext->width, codecContext->height);
+    fillRGBAImage(rgbaFrame, rgbaBuf, NEXT_PTS, codecContext->width, codecContext->height);
     sws_scale(swsContext, (const uint8_t* const*) rgbaFrame->data,
               rgbaFrame->linesize, 0, codecContext->height,
               frame->data, frame->linesize);
@@ -57,6 +68,7 @@ int main(int argc, char** argv) {
     AVStream* stream = nullptr;
     SwsContext* swsContext = nullptr;
 
+    uint8_t* rgbaBuf;
     bool hasVideo = false;
     int ret;
 
@@ -112,7 +124,7 @@ int main(int argc, char** argv) {
                                     codecContext->width, codecContext->height,
                                     codecContext->pix_fmt,
                                     SWS_BICUBIC, nullptr, nullptr, nullptr);
-
+        rgbaBuf = new uint8_t[codecContext->width * codecContext->height * 4];
         hasVideo = true;
     }
 
@@ -167,7 +179,7 @@ int main(int argc, char** argv) {
         return ret;
     }
 
-    while (getVideoFrame(codecContext, swsContext, frame, rgbaFrame)) {
+    while (getVideoFrame(codecContext, swsContext, frame, rgbaFrame, rgbaBuf)) {
         // Send the frame to the encoder
         ret = avcodec_send_frame(codecContext, frame);
         if (ret < 0) {
@@ -199,6 +211,20 @@ int main(int argc, char** argv) {
         }
     }
 
+    // Flush the encoder.
+    avcodec_send_frame(codecContext, nullptr);
+    while (ret >= 0) {
+        AVPacket pkt = {0};
+        ret = avcodec_receive_packet(codecContext, &pkt);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            break;
+
+        av_packet_rescale_ts(&pkt, codecContext->time_base, stream->time_base);
+        pkt.stream_index = stream->index;
+        av_interleaved_write_frame(formatContext, &pkt);
+        av_packet_unref(&pkt);
+    }
+
     av_write_trailer(formatContext);
 
     avcodec_free_context(&codecContext);
@@ -212,6 +238,8 @@ int main(int argc, char** argv) {
 
     // Free the stream.
     avformat_free_context(formatContext);
+
+    delete rgbaBuf;
 
     return EXIT_SUCCESS;
 }
