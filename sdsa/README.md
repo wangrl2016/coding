@@ -8,19 +8,17 @@
 
 #### Introduction
 
-1. 数组(Array)介绍
+- [x] 数组(Array)介绍 `ArrayIntroduction.java`
 
-`IntroductionArray.java`
-
-2. 在Java中使用数组(Array)
+- [x] 在Java中使用数组(Array)
 
 `ArrayInJava.java` `Student.java` `ArrayCopy.java`
 
 #### Array Rotations
 
-1. 数组的旋转
+- [x] 数组(Array)旋转的三种算法 `GCD.java` `ArrayRotate.java`
 
-`GCD.java` `ArrayRotate.java`
+- [x] 使用反转(Reverse)算法对数组旋转 `ArrayReverse.java`
 
 #### Arrangement Rearrangement
 

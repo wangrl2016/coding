@@ -1,4 +1,4 @@
-public class IntroductionArray {
+public class ArrayIntroduction {
 
     public static void main(String[] args) {
         // A character array in Java.
