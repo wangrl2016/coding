@@ -33,7 +33,8 @@ if __name__ == '__main__':
     subprocess.run(['make', '-C', build_dir])
     print()
 
-    examples = ['Metadata', 'Dump', 'DecodeVideo']
+    examples = ['Metadata', 'Dump', 'DecodeVideo',
+                'EncodeVideo']
 
     print('0. 打印多媒体文件元数据')
     subprocess.run([os.path.join(build_dir, examples[0]),
@@ -48,4 +49,9 @@ if __name__ == '__main__':
     print('2. 解码视频为PPM图片')
     subprocess.run([os.path.join(build_dir, examples[2]),
                     '../res/big-buck-bunny.mp4'])
+    print()
+
+    print('3. 构造数据编码视频')
+    subprocess.run([os.path.join(build_dir, examples[3]),
+                    'out/out.mp4'])
     print()
