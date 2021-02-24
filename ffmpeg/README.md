@@ -13,6 +13,18 @@ sudo ldconfig               // take effect
 
 ## FFmpeg示例
 
-1. 打印多媒体文件元数据
+### 基础大纲
 
-2. 打印音视频流信息
+- [ ] PBM图像格式讲解
+
+- [ ] FFmpeg打印多媒体文件元数据
+
+- [ ] FFmpeg打印音视频流信息
+
+- [ ] FFmpeg解码视频流
+
+- [ ] FFmpeg中YUV420P转换为RGB格式
+
+- [ ] RGB格式存储
+
+

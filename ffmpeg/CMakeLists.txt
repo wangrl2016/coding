@@ -9,6 +9,7 @@ SET(EXAMPLES
         Dump
         Metadata
         DecodeVideo
+        EncodeVideo
         )
 
 foreach (EXAMPLE ${EXAMPLES})

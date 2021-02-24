@@ -20,6 +20,8 @@
 
 - [x] 使用反转(Reverse)算法对数组旋转 `ArrayReverse.java`
 
+- [x] 块交换算法对数组(Array)旋转 `ArrayBlockSwap.java`
+
 #### Arrangement Rearrangement
 
 #### Order Statistics

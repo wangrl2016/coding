@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    // dump information about file onto standard output
+    // Dump information about file onto standard output.
     av_dump_format(formatContext, 0, argv[1], 0);
 
     // find the first video stream
@@ -116,8 +116,8 @@ int main(int argc, char* argv[]) {
             // supply raw packet data as input to a decoder
             int response = avcodec_send_packet(codecContext, packet);
             if (response < 0) {
-                fprintf(stderr, "error while sending a packet to the decoder\n");
-                return -1;
+                av_log(nullptr, AV_LOG_ERROR, "Error while sending a packet to the decoder\n");
+                return response;
             }
             while (response >= 0) {
                 // return decode output data (into a frame) from a decoder
@@ -125,8 +125,8 @@ int main(int argc, char* argv[]) {
                 if (response == AVERROR(EAGAIN) || response == AVERROR_EOF) {
                     break;
                 } else if (response < 0) {
-                    fprintf(stderr, "error while receiving a frame from the decoder\n");
-                    return -1;
+                    av_log(nullptr, AV_LOG_ERROR, "Error while receiving a frame from the decoder\n");
+                    return response;
                 }
 
                 // convert the image from its native format to rgb
