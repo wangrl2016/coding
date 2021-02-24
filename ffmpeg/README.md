@@ -17,14 +17,14 @@ sudo ldconfig               // take effect
 
 - [ ] PBM图像格式讲解
 
-- [ ] FFmpeg打印多媒体文件元数据
+- [ ] FFmpeg打印多媒体文件元数据 `Metadata.cpp`
 
-- [ ] FFmpeg打印音视频流信息
+- [ ] FFmpeg打印音视频流信息 `Dump.cpp`
 
-- [ ] FFmpeg解码视频流
+- [ ] FFmpeg解码视频流 `DecodeVideo.cpp`
 
-- [ ] FFmpeg中YUV420P转换为RGB格式
+- [ ] FFmpeg编码视频流 `EncodeVideo.cpp`
+
+- [ ] RGBA图片构建视频 `Rgba2Video.cpp`
 
 - [ ] RGB格式存储
-
-

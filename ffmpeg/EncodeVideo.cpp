@@ -4,14 +4,15 @@
 
 extern "C" {
 #include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
 #include <libavutil/avutil.h>
 }
 
 #define STREAM_FRAME_RATE 25
-#define STREAM_PIX_FMT AV_PIX_FMT_YUV420P
+#define STREAM_PIX_FMT AV_PIX_FMT_YUV422P
 #define STREAM_DURATION 10.0
 
-// pts of the next frame that will be generated.`
+// pts of the next frame that will be generated.
 int64_t NEXT_PTS;
 
 static AVFrame* allocPicture(enum AVPixelFormat pixelFormat, int width, int height) {
@@ -35,8 +36,6 @@ static AVFrame* allocPicture(enum AVPixelFormat pixelFormat, int width, int heig
 
 // Prepare a dummy image.
 static void fillYUVImage(AVFrame* frame, int index, int width, int height) {
-    int x, y, i;
-
     // Y
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
@@ -46,12 +45,13 @@ static void fillYUVImage(AVFrame* frame, int index, int width, int height) {
     for (int y = 0; y < height / 2; y++) {
         for (int x = 0; x < width / 2; x++) {
             frame->data[1][y * frame->linesize[1] + x] = 128 + y + index * 2;
-            frame->data[2][y * frame->linesize[2] + x] = 64 + x + i * 5;
+            frame->data[2][y * frame->linesize[2] + x] = 64 + x + index * 5;
         }
     }
 }
 
-static AVFrame* getVideoFrame(AVCodecContext* codecContext, AVFrame* frame) {
+static AVFrame* getVideoFrame(AVCodecContext* codecContext, SwsContext* swsContext,
+                              AVFrame* frame, AVFrame* tmpFrame) {
     // Check if we want to generate more frames.
     if (av_compare_ts(NEXT_PTS, codecContext->time_base,
                       STREAM_DURATION, (AVRational) {1, 1}) > 0)
@@ -63,7 +63,23 @@ static AVFrame* getVideoFrame(AVCodecContext* codecContext, AVFrame* frame) {
         exit(1);
 
     if (codecContext->pix_fmt != AV_PIX_FMT_YUV420P) {
-
+        if (!swsContext) {
+            swsContext = sws_getContext(codecContext->width,
+                                        codecContext->height,
+                                        AV_PIX_FMT_YUV420P,
+                                        codecContext->width, codecContext->height,
+                                        codecContext->pix_fmt,
+                                        SWS_BICUBIC,
+                                        nullptr, nullptr, nullptr);
+            if (!swsContext) {
+                av_log(nullptr, AV_LOG_ERROR, "Could not initialize the conversion context\n");
+                exit(EXIT_FAILURE);
+            }
+            fillYUVImage(tmpFrame, NEXT_PTS, codecContext->width, codecContext->height);
+            sws_scale(swsContext, (const uint8_t* const*) tmpFrame->data,
+                      tmpFrame->linesize, 0, codecContext->height,
+                      frame->data, frame->linesize);
+        }
     } else {
         fillYUVImage(frame, NEXT_PTS, codecContext->width, codecContext->height);
     }
@@ -100,11 +116,9 @@ int main(int argc, char** argv) {
     AVCodec* codec;
     AVStream* stream;
     AVCodecContext* codecContext;
-    bool haveVideo = false;
+    bool hasVideo = false;
 
     if (fmt->video_codec != AV_CODEC_ID_NONE) {
-        // add_stream(&video_st, oc, &video_codec, fmt->video_codec);
-
         // Find the encoder.
         codec = avcodec_find_encoder(fmt->video_codec);
         if (!codec) {
@@ -151,14 +165,14 @@ int main(int argc, char** argv) {
         if (formatContext->oformat->flags & AVFMT_GLOBALHEADER)
             codecContext->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
-        haveVideo = true;
+        hasVideo = true;
     }
 
     int ret;
 
     // Now that all the parameters are set, we can open the video
     // codecs and allocate the necessary encode buffers.
-    if (haveVideo) {
+    if (hasVideo) {
         // Open the codec.
         ret = avcodec_open2(codecContext, codec, nullptr);
         if (ret < 0) {
@@ -210,8 +224,9 @@ int main(int argc, char** argv) {
         return ret;
     }
 
-    while (getVideoFrame(codecContext, frame)) {
+    SwsContext* swsContext = nullptr;
 
+    while (getVideoFrame(codecContext, swsContext, frame, tmpFrame)) {
         // Send the frame to the encoder
         ret = avcodec_send_frame(codecContext, frame);
         if (ret < 0) {

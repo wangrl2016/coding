@@ -10,6 +10,7 @@ SET(EXAMPLES
         Metadata
         DecodeVideo
         EncodeVideo
+        RGBA2Video
         )
 
 foreach (EXAMPLE ${EXAMPLES})
