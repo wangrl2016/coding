@@ -9,9 +9,61 @@ Personal coding exercises
 
 参考geeksforgeeks.org网站编写
 
+- [ ] Array
+- [ ] Linked List
+- [ ] Stack
+- [ ] Queue
+- [ ] Binary Tree
+- [ ] Binary Search Tree
+- [ ] Heap
+- [ ] Hashing
+- [ ] Graph
+- [ ] Matrix
+- [ ] Misc
+- [ ] Advanced Data Structure
+- [ ] Analysis of Algorithms
+- [ ] Searching and Sorting
+- [ ] Greedy Algorithms
+- [ ] Dynamic Programming
+- [ ] Pattern Searching
+- [ ] Other String Algorithms
+- [ ] Backtracking
+- [ ] Divide and Conquer
+- [ ] Geometric Algorithms
+- [ ] Mathematical Algorithms
+- [ ] Bit Algorithms
+- [ ] Graph Algorithms
+- [ ] Randomized Algorithms
+- [ ] Branch and Bound
+- [ ] Quizzes on Algorithms
+- [ ] Misc
+
 ## 算法(Algorithms)第四版 (algs4/)
 
 参考Algorithms 4th书本编写
+
+- [x] Basic Programming Model
+- [x] Data Abstraction
+- [x] Bags, Queues, and Stacks
+- [x] Analysis of Algorithms
+- [x] Elementary Sorts
+- [x] Mergesort
+- [x] Quicksort
+- [ ] Priority Queues
+- [ ] Symbol Tables
+- [ ] Binary Search Trees
+- [ ] Balanced Search Trees
+- [ ] Hash Tables
+- [ ] Undirected Graphs
+- [ ] Directed Graphs
+- [ ] Minimum Spanning Trees
+- [ ] Shortest Paths
+- [ ] String Sorts
+- [ ] Tries
+- [ ] Substring Search
+- [ ] Regular Expressions
+- [ ] Data Compression 
+
 
 ## FFmpeg示例 (ffmpeg/)
 
