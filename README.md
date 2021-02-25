@@ -9,7 +9,7 @@ Personal coding exercises
 
 参考geeksforgeeks.org网站编写
 
-- [ ] Array
+- [x] Array
 - [ ] Linked List
 - [ ] Stack
 - [ ] Queue

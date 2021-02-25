@@ -22,7 +22,7 @@
 
 - [x] 实现数组(Array)向右旋转 `ArrayRightRotate.java`
 
-- [x] 在排好序并旋转的数组中查找元素
+- [x] 在排好序并旋转的数组中查找元素 `ArraySearch.java`
 
 
 #### Arrangement Rearrangement
@@ -43,11 +43,61 @@
 
 ### Linked List
 
+#### Singly Linked List
+
+#### Circular Linked List
+
+#### Doubly Linked List
+
+#### Misc
+
+#### Quick Links
+
 ### Stack
+
+#### Introduction
+
+#### Design and Implementation
+
+#### Standard Problems
+
+#### Operations on Stack
+
+#### Misc
+
+#### Quick Links
 
 ### Queue
 
+#### Introduction
+
+#### Implementation
+
+#### Standard Problems
+
+#### Operations on Queue
+
+#### Misc
+
+#### Quick Links
+
 ### Binary Tree
+
+#### Introduction
+
+#### Traversals
+
+#### Construction & Conversion
+
+#### Checking & Printing
+
+#### Summation
+
+#### Longest Common Ancestor
+
+#### Misc
+
+#### Quick Links
 
 ### Binary Search Tree
 
