@@ -85,7 +85,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Initialize the stream parameters with demuxer information.
-    error = avcodec_parameters_to_context(inputCodecContext, inputFormatContext->streams[0]->codecpar);
+    error = avcodec_parameters_to_context(inputCodecContext,
+            inputFormatContext->streams[0]->codecpar);
     if (error < 0) {
         avformat_close_input(&inputFormatContext);
         avcodec_free_context(&inputCodecContext);

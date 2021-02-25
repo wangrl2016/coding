@@ -70,4 +70,5 @@ if __name__ == '__main__':
     print('6. 解码MP3音频')
     subprocess.run([os.path.join(build_dir, examples[6]),
                     '../res/moon-night.mp3', 'out/mp3-samples.raw'])
+    print()
 

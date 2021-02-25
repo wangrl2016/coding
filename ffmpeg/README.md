@@ -21,6 +21,7 @@ sudo ldconfig               // take effect
 ```
 --enable-shared 编译动态库
 --enable-libmp3lame 增加MP3编码
+--enable-libx264 --enable-gpl x264编码
 ```
 
 ## FFmpeg示例
