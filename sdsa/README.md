@@ -20,7 +20,10 @@
 
 - [x] 使用反转(Reverse)算法对数组旋转 `ArrayReverse.java`
 
-- [x] 块交换算法对数组(Array)旋转 `ArrayBlockSwap.java`
+- [x] 实现数组(Array)向右旋转 `ArrayRightRotate.java`
+
+- [x] 在排好序并旋转的数组中查找元素
+
 
 #### Arrangement Rearrangement
 
