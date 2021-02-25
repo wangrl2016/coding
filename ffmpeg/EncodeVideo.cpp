@@ -9,7 +9,7 @@ extern "C" {
 }
 
 #define STREAM_FRAME_RATE 25
-#define STREAM_PIX_FMT AV_PIX_FMT_YUV422P
+#define STREAM_PIX_FMT AV_PIX_FMT_YUV420P
 #define STREAM_DURATION 10.0
 
 // pts of the next frame that will be generated.

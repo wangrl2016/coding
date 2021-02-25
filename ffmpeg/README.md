@@ -2,6 +2,12 @@
 
 ## 安装FFmpeg库
 
+安装依赖
+
+```
+sudo apt install libmp3lame-dev
+```
+
 ```
 ./configure --enable-shared // configure lib
 make                        // build
@@ -11,20 +17,27 @@ sudo vim /etc/ld.so.conf    // make ld to find
 sudo ldconfig               // take effect
 ```
 
+详细的编译选项
+```
+--enable-shared 编译动态库
+--enable-libmp3lame 增加MP3编码
+```
+
 ## FFmpeg示例
 
 ### 基础大纲
 
-- [ ] PBM图像格式讲解
+- [x] PBM图像格式讲解
 
-- [ ] FFmpeg打印多媒体文件元数据 `Metadata.cpp`
+- [x] FFmpeg打印多媒体文件元数据 `Metadata.cpp`
 
-- [ ] FFmpeg打印音视频流信息 `Dump.cpp`
+- [x] FFmpeg打印音视频流信息 `Dump.cpp`
 
-- [ ] FFmpeg解码视频流 `DecodeVideo.cpp`
+- [x] FFmpeg解码视频流 `DecodeVideo.cpp`
 
-- [ ] FFmpeg编码视频流 `EncodeVideo.cpp`
+- [x] FFmpeg编码视频流 `EncodeVideo.cpp`
 
-- [ ] RGBA图片构建视频 `Rgba2Video.cpp`
+- [x] RGBA图片构建视频 `Rgba2Video.cpp`
 
-- [ ] RGB格式存储
+- [x] 合成音频 `EncodeAudio.cpp`
+
