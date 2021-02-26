@@ -35,7 +35,9 @@ if __name__ == '__main__':
 
     examples = ['Metadata', 'Dump', 'DecodeVideo',
                 'EncodeVideo', 'RGBA2Video',
-                'EncodeAudio', 'DecodeAudio']
+                'EncodeAudio', 'DecodeAudio',
+                'ScaleVideo'
+                ]
 
     print('0. 打印多媒体文件元数据')
     subprocess.run([os.path.join(build_dir, examples[0]),
@@ -72,3 +74,7 @@ if __name__ == '__main__':
                     '../res/moon-night.mp3', 'out/mp3-samples.raw'])
     print()
 
+    print('7. 放大视频尺寸')
+    subprocess.run([os.path.join(build_dir, examples[7]),
+                    'out/scale-video.raw', 'svga'])
+    print()

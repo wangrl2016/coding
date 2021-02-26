@@ -13,6 +13,7 @@ SET(EXAMPLES
         RGBA2Video
         EncodeAudio
         DecodeAudio
+        ScaleVideo
         )
 
 foreach (EXAMPLE ${EXAMPLES})
