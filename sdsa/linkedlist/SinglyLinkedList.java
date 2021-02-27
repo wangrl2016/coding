@@ -1,9 +1,7 @@
 package linkedlist;
 
 public class SinglyLinkedList {
-
     Node head;  // head of the list
-
     static class Node {
         int data;
         Node next;
@@ -12,7 +10,6 @@ public class SinglyLinkedList {
             data = d;
             next = null;
         }
-
     }
 
     public static void main(String[] args) {
