@@ -67,7 +67,25 @@ Personal coding exercises
 
 ## FFmpeg示例 (ffmpeg/)
 
-参考FFmpeg写的示例
+参考[FFmpeg](https://ffmpeg.org/)写的示例
+
+* `libavcodec` encoding/decoding library
+
+* `libavfilter` graph-based frame editing library
+
+* `libavformat` I/O and muxing/demuxing library
+
+* `libavdevice` special devices muxing/demuxing library
+
+* `libavutil` common utility library
+
+* `libswreample` audio resampling, format conversion nd mixing
+
+* `libpostproc` post processing library
+
+* `libswscale` color conversion and scaling library
+
+![FFmpeg](res/ffmpeg.png)
 
 ## 打赏作者
 
