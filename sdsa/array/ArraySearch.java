@@ -1,3 +1,5 @@
+package array;
+
 public class ArraySearch {
     /**
      * 查找分割点下标
@@ -93,8 +95,8 @@ public class ArraySearch {
         System.out.println("Index of the element is: " +
                 pivotedBinarySearch(arr1, key1));
 
-        int arr2[] = {4, 5, 6, 7, 8, 9, 1, 2, 3};
-        int key2 = 6;
+        int arr2[] = {16, 19, 21, 25, 3, 5, 8, 10};
+        int key2 = 5;
         System.out.println("Index: " + search(arr2, 0, arr2.length - 1, key2));
     }
 }

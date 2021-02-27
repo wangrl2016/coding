@@ -1,3 +1,5 @@
+package array;
+
 public class ArrayRotate {
     // 方法一
     public void rotateUsingTempArray(int[] arr, int d) {

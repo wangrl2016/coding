@@ -1,3 +1,5 @@
+package array;
+
 public class ArrayCopy {
     public static void main(String[] args) {
         int singleArray[] = {1, 2, 3};

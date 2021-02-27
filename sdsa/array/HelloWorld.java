@@ -1,3 +1,5 @@
+package array;
+
 /**
  * Java语法示例
  */

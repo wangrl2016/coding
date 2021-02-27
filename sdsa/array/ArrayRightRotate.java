@@ -1,3 +1,5 @@
+package array;
+
 public class ArrayRightRotate {
     static void rotateByOne(int[] arr) {
         int temp = arr[arr.length - 1];

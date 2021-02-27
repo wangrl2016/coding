@@ -42,3 +42,7 @@ sudo ldconfig               // take effect
 
 - [x] 合成音频 `EncodeAudio.cpp`
 
+- [x] 对视频进行缩放 `ScaleVideo.cpp`
+
+- [x] 
+

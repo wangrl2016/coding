@@ -1,3 +1,5 @@
+package array;
+
 public class ArrayReverse {
 
     // Reverse arr[] from index start to end.
