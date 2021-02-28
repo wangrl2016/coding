@@ -45,6 +45,8 @@
 
 #### Singly Linked List
 
+- [x] 单链表首、尾、中间的插入操作 `SinglyLinkedListInserted.java`
+
 #### Circular Linked List
 
 #### Doubly Linked List

@@ -5,7 +5,7 @@ Personal coding exercises
 
 ![二维码关注](res/personal-qrcode.png)
 
-## 简单数据结构和算法 (sdsa/)
+## 简单数据结构和算法 ([sdsa](sdsa/))
 
 参考geeksforgeeks.org网站编写
 
@@ -38,7 +38,7 @@ Personal coding exercises
 - [ ] Quizzes on Algorithms
 - [ ] Misc
 
-## 算法(Algorithms)第四版 (algs4/)
+## 算法(Algorithms)第四版 ([algs4](algs4/))
 
 参考Algorithms 4th书本编写
 
@@ -65,7 +65,7 @@ Personal coding exercises
 - [ ] Data Compression 
 
 
-## FFmpeg示例 (ffmpeg/)
+## FFmpeg示例 ([ffmpeg](ffmpeg/))
 
 参考[FFmpeg](https://ffmpeg.org/)写的示例
 
