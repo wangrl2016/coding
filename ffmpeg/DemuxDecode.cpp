@@ -8,28 +8,32 @@ extern "C" {
 #include <libavutil/timestamp.h>
 }
 
-static AVFormatContext* fmt_ctx = NULL;
-static AVCodecContext* video_dec_ctx = NULL, * audio_dec_ctx;
+static AVFormatContext* inputFormatContext = nullptr;
+static AVCodecContext* videoDecodeContext = nullptr, * audioDecodeContext = nullptr;
 static int width, height;
-static enum AVPixelFormat pix_fmt;
-static AVStream* video_stream = NULL, * audio_stream = NULL;
-static const char* src_filename = NULL;
-static const char* video_dst_filename = NULL;
-static const char* audio_dst_filename = NULL;
-static FILE* video_dst_file = NULL;
-static FILE* audio_dst_file = NULL;
-static uint8_t* video_dst_data[4] = {NULL};
-static int video_dst_linesize[4];
-static int video_dst_bufsize;
-static int video_stream_idx = -1, audio_stream_idx = -1;
-static AVFrame* frame = NULL;
+static enum AVPixelFormat pixelFormat;
+static AVStream* videoStream = nullptr, * audioStream = nullptr;
+
+static const char* srcFilename = nullptr;
+static const char* videoDstFilename = nullptr;
+static const char* audioDstFilename = nullptr;
+static FILE* videoDstFile = nullptr;
+static FILE* audioDstFile = nullptr;
+
+static uint8_t* videoDstData[4] = {nullptr};
+static int videoDstLinesize[4];
+static int videoDstBufsize;
+
+static int videoStreamIdx = -1, audioStreamIdx = -1;
+static AVFrame* frame = nullptr;
 static AVPacket pkt;
-static int video_frame_count = 0;
-static int audio_frame_count = 0;
+
+static int videoFrameCount = 0;
+static int audioFrameCount = 0;
 
 static int output_video_frame(AVFrame* frame) {
     if (frame->width != width || frame->height != height ||
-        frame->format != pix_fmt) {
+        frame->format != pixelFormat) {
         /* To handle this change, one could call av_image_alloc again and
          * decode the following frames into another rawvideo file. */
         fprintf(stderr, "Error: Width, height and pixel format have to be "
@@ -37,28 +41,26 @@ static int output_video_frame(AVFrame* frame) {
                         "pixel format of the input video changed:\n"
                         "old: width = %d, height = %d, format = %s\n"
                         "new: width = %d, height = %d, format = %s\n",
-                width, height, av_get_pix_fmt_name(pix_fmt),
+                width, height, av_get_pix_fmt_name(pixelFormat),
                 frame->width, frame->height,
                 av_get_pix_fmt_name(static_cast<AVPixelFormat>(frame->format)));
         return -1;
     }
-    printf("video_frame n:%d coded_n:%d\n",
-           video_frame_count++, frame->coded_picture_number);
+    videoFrameCount++;
     /* copy decoded frame to destination buffer:
      * this is required since rawvideo expects non aligned data */
-    av_image_copy(video_dst_data, video_dst_linesize,
+    av_image_copy(videoDstData, videoDstLinesize,
                   (const uint8_t**) (frame->data), frame->linesize,
-                  pix_fmt, width, height);
+                  pixelFormat, width, height);
     /* write to rawvideo file */
-    fwrite(video_dst_data[0], 1, video_dst_bufsize, video_dst_file);
+    fwrite(videoDstData[0], 1, videoDstBufsize, videoDstFile);
     return 0;
 }
 
 static int output_audio_frame(AVFrame* frame) {
     size_t unpadded_linesize = frame->nb_samples *
                                av_get_bytes_per_sample(static_cast<AVSampleFormat>(frame->format));
-    printf("audio_frame n:%d nb_samples:%d\n",
-           audio_frame_count++, frame->nb_samples);
+    audioFrameCount++;
     /* Write the raw audio data samples of the first plane. This works
      * fine for packed formats (e.g. AV_SAMPLE_FMT_S16). However,
      * most audio decoders output planar audio, which uses a separate
@@ -67,7 +69,7 @@ static int output_audio_frame(AVFrame* frame) {
      * in these cases.
      * You should use libswresample or libavfilter to convert the frame
      * to packed data. */
-    fwrite(frame->extended_data[0], 1, unpadded_linesize, audio_dst_file);
+    fwrite(frame->extended_data[0], 1, unpadded_linesize, audioDstFile);
     return 0;
 }
 
@@ -106,12 +108,12 @@ static int open_codec_context(int* stream_idx,
                               AVCodecContext** dec_ctx, AVFormatContext* fmt_ctx, enum AVMediaType type) {
     int ret, stream_index;
     AVStream* st;
-    AVCodec* dec = NULL;
-    AVDictionary* opts = NULL;
-    ret = av_find_best_stream(fmt_ctx, type, -1, -1, NULL, 0);
+    AVCodec* dec = nullptr;
+    AVDictionary* opts = nullptr;
+    ret = av_find_best_stream(fmt_ctx, type, -1, -1, nullptr, 0);
     if (ret < 0) {
         fprintf(stderr, "Could not find %s stream in input file '%s'\n",
-                av_get_media_type_string(type), src_filename);
+                av_get_media_type_string(type), srcFilename);
         return ret;
     } else {
         stream_index = ret;
@@ -160,7 +162,7 @@ static int get_format_from_sample_fmt(const char** fmt,
             {AV_SAMPLE_FMT_FLT, "f32be", "f32le"},
             {AV_SAMPLE_FMT_DBL, "f64be", "f64le"},
     };
-    *fmt = NULL;
+    *fmt = nullptr;
     for (i = 0; i < FF_ARRAY_ELEMS(sample_fmt_entries); i++) {
         struct sample_fmt_entry* entry = &sample_fmt_entries[i];
         if (sample_fmt == entry->sample_fmt) {
@@ -185,51 +187,51 @@ int main(int argc, char** argv) {
                 argv[0]);
         exit(1);
     }
-    src_filename = argv[1];
-    video_dst_filename = argv[2];
-    audio_dst_filename = argv[3];
+    srcFilename = argv[1];
+    videoDstFilename = argv[2];
+    audioDstFilename = argv[3];
     /* open input file, and allocate format context */
-    if (avformat_open_input(&fmt_ctx, src_filename, NULL, NULL) < 0) {
-        fprintf(stderr, "Could not open source file %s\n", src_filename);
+    if (avformat_open_input(&inputFormatContext, srcFilename, nullptr, nullptr) < 0) {
+        fprintf(stderr, "Could not open source file %s\n", srcFilename);
         exit(1);
     }
     /* retrieve stream information */
-    if (avformat_find_stream_info(fmt_ctx, NULL) < 0) {
+    if (avformat_find_stream_info(inputFormatContext, nullptr) < 0) {
         fprintf(stderr, "Could not find stream information\n");
         exit(1);
     }
-    if (open_codec_context(&video_stream_idx, &video_dec_ctx, fmt_ctx, AVMEDIA_TYPE_VIDEO) >= 0) {
-        video_stream = fmt_ctx->streams[video_stream_idx];
-        video_dst_file = fopen(video_dst_filename, "wb");
-        if (!video_dst_file) {
-            fprintf(stderr, "Could not open destination file %s\n", video_dst_filename);
+    if (open_codec_context(&videoStreamIdx, &videoDecodeContext, inputFormatContext, AVMEDIA_TYPE_VIDEO) >= 0) {
+        videoStream = inputFormatContext->streams[videoStreamIdx];
+        videoDstFile = fopen(videoDstFilename, "wb");
+        if (!videoDstFile) {
+            fprintf(stderr, "Could not open destination file %s\n", videoDstFilename);
             ret = 1;
             goto end;
         }
         /* allocate image where the decoded image will be put */
-        width = video_dec_ctx->width;
-        height = video_dec_ctx->height;
-        pix_fmt = video_dec_ctx->pix_fmt;
-        ret = av_image_alloc(video_dst_data, video_dst_linesize,
-                             width, height, pix_fmt, 1);
+        width = videoDecodeContext->width;
+        height = videoDecodeContext->height;
+        pixelFormat = videoDecodeContext->pix_fmt;
+        ret = av_image_alloc(videoDstData, videoDstLinesize,
+                             width, height, pixelFormat, 1);
         if (ret < 0) {
             fprintf(stderr, "Could not allocate raw video buffer\n");
             goto end;
         }
-        video_dst_bufsize = ret;
+        videoDstBufsize = ret;
     }
-    if (open_codec_context(&audio_stream_idx, &audio_dec_ctx, fmt_ctx, AVMEDIA_TYPE_AUDIO) >= 0) {
-        audio_stream = fmt_ctx->streams[audio_stream_idx];
-        audio_dst_file = fopen(audio_dst_filename, "wb");
-        if (!audio_dst_file) {
-            fprintf(stderr, "Could not open destination file %s\n", audio_dst_filename);
+    if (open_codec_context(&audioStreamIdx, &audioDecodeContext, inputFormatContext, AVMEDIA_TYPE_AUDIO) >= 0) {
+        audioStream = inputFormatContext->streams[audioStreamIdx];
+        audioDstFile = fopen(audioDstFilename, "wb");
+        if (!audioDstFile) {
+            fprintf(stderr, "Could not open destination file %s\n", audioDstFilename);
             ret = 1;
             goto end;
         }
     }
     /* dump input information to stderr */
-    av_dump_format(fmt_ctx, 0, src_filename, 0);
-    if (!audio_stream && !video_stream) {
+    av_dump_format(inputFormatContext, 0, srcFilename, 0);
+    if (!audioStream && !videoStream) {
         fprintf(stderr, "Could not find audio or video stream in the input, aborting\n");
         ret = 1;
         goto end;
@@ -240,41 +242,41 @@ int main(int argc, char** argv) {
         ret = AVERROR(ENOMEM);
         goto end;
     }
-    /* initialize packet, set data to NULL, let the demuxer fill it */
+    /* initialize packet, set data to nullptr, let the demuxer fill it */
     av_init_packet(&pkt);
-    pkt.data = NULL;
+    pkt.data = nullptr;
     pkt.size = 0;
-    if (video_stream)
-        printf("Demuxing video from file '%s' into '%s'\n", src_filename, video_dst_filename);
-    if (audio_stream)
-        printf("Demuxing audio from file '%s' into '%s'\n", src_filename, audio_dst_filename);
+    if (videoStream)
+        printf("Demuxing video from file '%s' into '%s'\n", srcFilename, videoDstFilename);
+    if (audioStream)
+        printf("Demuxing audio from file '%s' into '%s'\n", srcFilename, audioDstFilename);
     /* read frames from the file */
-    while (av_read_frame(fmt_ctx, &pkt) >= 0) {
+    while (av_read_frame(inputFormatContext, &pkt) >= 0) {
         // check if the packet belongs to a stream we are interested in, otherwise
         // skip it
-        if (pkt.stream_index == video_stream_idx)
-            ret = decode_packet(video_dec_ctx, &pkt);
-        else if (pkt.stream_index == audio_stream_idx)
-            ret = decode_packet(audio_dec_ctx, &pkt);
+        if (pkt.stream_index == videoStreamIdx)
+            ret = decode_packet(videoDecodeContext, &pkt);
+        else if (pkt.stream_index == audioStreamIdx)
+            ret = decode_packet(audioDecodeContext, &pkt);
         av_packet_unref(&pkt);
         if (ret < 0)
             break;
     }
     /* flush the decoders */
-    if (video_dec_ctx)
-        decode_packet(video_dec_ctx, NULL);
-    if (audio_dec_ctx)
-        decode_packet(audio_dec_ctx, NULL);
+    if (videoDecodeContext)
+        decode_packet(videoDecodeContext, nullptr);
+    if (audioDecodeContext)
+        decode_packet(audioDecodeContext, nullptr);
     printf("Demuxing succeeded.\n");
-    if (video_stream) {
+    if (videoStream) {
         printf("Play the output video file with the command:\n"
                "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
-               av_get_pix_fmt_name(pix_fmt), width, height,
-               video_dst_filename);
+               av_get_pix_fmt_name(pixelFormat), width, height,
+               videoDstFilename);
     }
-    if (audio_stream) {
-        enum AVSampleFormat sfmt = audio_dec_ctx->sample_fmt;
-        int n_channels = audio_dec_ctx->channels;
+    if (audioStream) {
+        enum AVSampleFormat sfmt = audioDecodeContext->sample_fmt;
+        int n_channels = audioDecodeContext->channels;
         const char* fmt;
         if (av_sample_fmt_is_planar(sfmt)) {
             const char* packed = av_get_sample_fmt_name(sfmt);
@@ -288,18 +290,18 @@ int main(int argc, char** argv) {
             goto end;
         printf("Play the output audio file with the command:\n"
                "ffplay -f %s -ac %d -ar %d %s\n",
-               fmt, n_channels, audio_dec_ctx->sample_rate,
-               audio_dst_filename);
+               fmt, n_channels, audioDecodeContext->sample_rate,
+               audioDstFilename);
     }
     end:
-    avcodec_free_context(&video_dec_ctx);
-    avcodec_free_context(&audio_dec_ctx);
-    avformat_close_input(&fmt_ctx);
-    if (video_dst_file)
-        fclose(video_dst_file);
-    if (audio_dst_file)
-        fclose(audio_dst_file);
+    avcodec_free_context(&videoDecodeContext);
+    avcodec_free_context(&audioDecodeContext);
+    avformat_close_input(&inputFormatContext);
+    if (videoDstFile)
+        fclose(videoDstFile);
+    if (audioDstFile)
+        fclose(audioDstFile);
     av_frame_free(&frame);
-    av_free(video_dst_data[0]);
+    av_free(videoDstData[0]);
     return ret < 0;
 }
