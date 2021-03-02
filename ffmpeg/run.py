@@ -37,7 +37,7 @@ if __name__ == '__main__':
                 'EncodeVideo', 'RGBA2Video',
                 'EncodeAudio', 'DecodeAudio',
                 'ScaleVideo', 'DemuxDecode',
-                'FilteringVideo'
+                'FilteringVideo', 'FilteringAudio'
                 ]
 
     print('0. 打印多媒体文件元数据')
@@ -89,3 +89,9 @@ if __name__ == '__main__':
     print('9. 视频filter处理')
     subprocess.run([os.path.join(build_dir, examples[9]),
                     '../res/big-buck-bunny.mp4'])
+    print()
+
+    print('10. 音频filter处理')
+    subprocess.run([os.path.join(build_dir, examples[10]),
+                    '../res/big-buck-bunny.mp4'])
+    print()

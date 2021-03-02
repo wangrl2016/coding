@@ -14,6 +14,7 @@ const char* FILTER_DESCR = "scale=780:240,transpose=cclock";
 
 static void pgmSave(AVFrame* frame, const char* filename) {
     FILE* file = fopen(filename, "wb");
+    av_log(nullptr, AV_LOG_INFO, "Filename %s\n", filename);
     fprintf(file, "P5\n%d %d\n%d\n", frame->width, frame->height, 255);
     for (int i = 0; i < frame->height; i++)
         fwrite(frame->data[0] + i * frame->linesize[0], 1, frame->width, file);
