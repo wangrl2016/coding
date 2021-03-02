@@ -15,6 +15,7 @@ SET(EXAMPLES
         DecodeAudio
         ScaleVideo
         DemuxDecode
+        FilteringVideo
         )
 
 foreach (EXAMPLE ${EXAMPLES})

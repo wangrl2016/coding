@@ -36,7 +36,8 @@ if __name__ == '__main__':
     examples = ['Metadata', 'Dump', 'DecodeVideo',
                 'EncodeVideo', 'RGBA2Video',
                 'EncodeAudio', 'DecodeAudio',
-                'ScaleVideo', 'DemuxDecode'
+                'ScaleVideo', 'DemuxDecode',
+                'FilteringVideo'
                 ]
 
     print('0. 打印多媒体文件元数据')
@@ -83,3 +84,8 @@ if __name__ == '__main__':
     subprocess.run([os.path.join(build_dir, examples[8]),
                     '../res/big-buck-bunny.mp4', 'out/demux-decode-video.raw',
                     'out/demux-decode-audio.raw'])
+    print()
+
+    print('9. 视频filter处理')
+    subprocess.run([os.path.join(build_dir, examples[9]),
+                    '../res/big-buck-bunny.mp4'])
