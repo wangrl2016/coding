@@ -71,6 +71,6 @@ int main(int argc, char** argv) {
     cv::namedWindow("Output1", cv::WINDOW_AUTOSIZE);
     cv::imshow("Output1", dst1);
 
-    cv::waitKey();
+    cv::waitKey(1000);
     return EXIT_SUCCESS;
 }

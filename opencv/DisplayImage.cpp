@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
     cv::namedWindow("Display image", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display image", image);
-    cv::waitKey(0);
+    cv::waitKey(1000);
 
     return 0;
 }

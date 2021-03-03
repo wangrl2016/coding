@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     cv::addWeighted(img1, alpha, img2, beta, 0.0, dst);
 
     cv::imshow("Linear Blend", dst);
-    cv::waitKey();
+    cv::waitKey(10000);
 
     return EXIT_SUCCESS;
 }

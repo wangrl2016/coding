@@ -23,15 +23,28 @@ if __name__ == '__main__':
     if not os.path.exists('out'):
         os.mkdir('out')
 
-        build_dir = 'build'
+    build_dir = 'build'
 
-        subprocess.run([cmake_executable(), build_dir])
-        subprocess.run(['make', '-C', build_dir])
-        print()
+    subprocess.run([cmake_executable(), build_dir])
+    subprocess.run(['make', '-C', build_dir])
+    print()
 
-        examples = [
-            'DisplayImage'
-        ]
+    examples = [
+        'DisplayImage',
+        'ImageEnhance',
+        'BlendImage'
+    ]
 
-        subprocess.run([os.path.join(build_dir, examples[0]),
-                        '../res/sunflower-girl.png'])
+    print('1. 显示图片')
+    subprocess.run([os.path.join(build_dir, examples[0]),
+                    '../res/sunflower-girl.png'])
+    print()
+
+    print('2. 图像增强')
+    subprocess.run([os.path.join(build_dir, examples[1]),
+                    '../res/sunflower-girl.png'])
+    print()
+
+    print('3. 两张图片混合')
+    subprocess.run([os.path.join(build_dir, examples[2]),
+                    '../res/foreign-girl.jpeg'])
