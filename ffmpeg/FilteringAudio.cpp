@@ -22,18 +22,18 @@ static int audioStreamIndex = -1;
 static int open_input_file(const char* filename) {
     int ret;
     AVCodec* dec;
-    if ((ret = avformat_open_input(&formatContext, filename, NULL, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot open input file\n");
+    if ((ret = avformat_open_input(&formatContext, filename, nullptr, nullptr)) < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Cannot open input file\n");
         return ret;
     }
-    if ((ret = avformat_find_stream_info(formatContext, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
+    if ((ret = avformat_find_stream_info(formatContext, nullptr)) < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Cannot find stream information\n");
         return ret;
     }
     /* select the audio stream */
     ret = av_find_best_stream(formatContext, AVMEDIA_TYPE_AUDIO, -1, -1, &dec, 0);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot find an audio stream in the input file\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot find an audio stream in the input file\n");
         return ret;
     }
     audioStreamIndex = ret;
@@ -43,8 +43,8 @@ static int open_input_file(const char* filename) {
         return AVERROR(ENOMEM);
     avcodec_parameters_to_context(decodeContext, formatContext->streams[audioStreamIndex]->codecpar);
     /* init the audio decoder */
-    if ((ret = avcodec_open2(decodeContext, dec, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot open audio decoder\n");
+    if ((ret = avcodec_open2(decodeContext, dec, nullptr)) < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Cannot open audio decoder\n");
         return ret;
     }
     return 0;
@@ -75,34 +75,34 @@ static int init_filters(const char* filters_descr) {
              time_base.num, time_base.den, decodeContext->sample_rate,
              av_get_sample_fmt_name(decodeContext->sample_fmt), decodeContext->channel_layout);
     ret = avfilter_graph_create_filter(&bufferSrcContext, abuffersrc, "in",
-                                       args, NULL, filter_graph);
+                                       args, nullptr, filter_graph);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot create audio buffer source\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot create audio buffer source\n");
         goto end;
     }
     /* buffer audio sink: to terminate the filter chain. */
     ret = avfilter_graph_create_filter(&bufferSinkContext, abuffersink, "out",
-                                       NULL, NULL, filter_graph);
+                                       nullptr, nullptr, filter_graph);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot create audio buffer sink\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot create audio buffer sink\n");
         goto end;
     }
     ret = av_opt_set_int_list(bufferSinkContext, "sample_fmts", out_sample_fmts, -1,
                               AV_OPT_SEARCH_CHILDREN);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot set output sample format\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot set output sample format\n");
         goto end;
     }
     ret = av_opt_set_int_list(bufferSinkContext, "channel_layouts", out_channel_layouts, -1,
                               AV_OPT_SEARCH_CHILDREN);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot set output channel layout\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot set output channel layout\n");
         goto end;
     }
     ret = av_opt_set_int_list(bufferSinkContext, "sample_rates", out_sample_rates, -1,
                               AV_OPT_SEARCH_CHILDREN);
     if (ret < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot set output sample rate\n");
+        av_log(nullptr, AV_LOG_ERROR, "Cannot set output sample rate\n");
         goto end;
     }
     /*
@@ -118,7 +118,7 @@ static int init_filters(const char* filters_descr) {
     outputs->name = av_strdup("in");
     outputs->filter_ctx = bufferSrcContext;
     outputs->pad_idx = 0;
-    outputs->next = NULL;
+    outputs->next = nullptr;
     /*
      * The buffer sink input must be connected to the output pad of
      * the last filter described by filters_descr; since the last
@@ -128,19 +128,19 @@ static int init_filters(const char* filters_descr) {
     inputs->name = av_strdup("out");
     inputs->filter_ctx = bufferSinkContext;
     inputs->pad_idx = 0;
-    inputs->next = NULL;
+    inputs->next = nullptr;
     if ((ret = avfilter_graph_parse_ptr(filter_graph, filters_descr,
-                                        &inputs, &outputs, NULL)) < 0)
+                                        &inputs, &outputs, nullptr)) < 0)
         goto end;
-    if ((ret = avfilter_graph_config(filter_graph, NULL)) < 0)
+    if ((ret = avfilter_graph_config(filter_graph, nullptr)) < 0)
         goto end;
     /* Print summary of the sink buffer
      * Note: args buffer is reused to store channel layout string */
     outlink = bufferSinkContext->inputs[0];
     av_get_channel_layout_string(args, sizeof(args), -1, outlink->channel_layout);
-    av_log(NULL, AV_LOG_INFO, "Output: srate:%dHz fmt:%s chlayout:%s\n",
+    av_log(nullptr, AV_LOG_INFO, "Output: srate:%dHz fmt:%s chlayout:%s\n",
            (int) outlink->sample_rate,
-           (char*) av_x_if_null(av_get_sample_fmt_name(static_cast<AVSampleFormat>(outlink->format)), "?"),
+           (char*) av_x_if_nullptr(av_get_sample_fmt_name(static_cast<AVSampleFormat>(outlink->format)), "?"),
            args);
     end:
     avfilter_inout_free(&inputs);
@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
         if (packet.stream_index == audioStreamIndex) {
             ret = avcodec_send_packet(decodeContext, &packet);
             if (ret < 0) {
-                av_log(NULL, AV_LOG_ERROR, "Error while sending a packet to the decoder\n");
+                av_log(nullptr, AV_LOG_ERROR, "Error while sending a packet to the decoder\n");
                 break;
             }
             while (ret >= 0) {
@@ -192,13 +192,13 @@ int main(int argc, char** argv) {
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
                     break;
                 } else if (ret < 0) {
-                    av_log(NULL, AV_LOG_ERROR, "Error while receiving a frame from the decoder\n");
+                    av_log(nullptr, AV_LOG_ERROR, "Error while receiving a frame from the decoder\n");
                     goto end;
                 }
                 if (ret >= 0) {
                     /* push the audio data from decoded frame into the filtergraph */
                     if (av_buffersrc_add_frame_flags(bufferSrcContext, frame, AV_BUFFERSRC_FLAG_KEEP_REF) < 0) {
-                        av_log(NULL, AV_LOG_ERROR, "Error while feeding the audio filtergraph\n");
+                        av_log(nullptr, AV_LOG_ERROR, "Error while feeding the audio filtergraph\n");
                         break;
                     }
                     /* pull filtered audio from the filtergraph */
