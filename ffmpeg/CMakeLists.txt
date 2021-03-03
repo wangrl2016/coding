@@ -17,10 +17,11 @@ SET(EXAMPLES
         DemuxDecode
         FilteringVideo
         FilteringAudio
+        TranscodeAAC
         )
 
 foreach (EXAMPLE ${EXAMPLES})
-    add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp FFmpegUtils.cpp)
     target_link_libraries(${EXAMPLE} avformat avcodec swresample
             swscale avutil avfilter avdevice)
 endforeach ()

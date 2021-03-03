@@ -37,7 +37,8 @@ if __name__ == '__main__':
                 'EncodeVideo', 'RGBA2Video',
                 'EncodeAudio', 'DecodeAudio',
                 'ScaleVideo', 'DemuxDecode',
-                'FilteringVideo', 'FilteringAudio'
+                'FilteringVideo', 'FilteringAudio',
+                'TranscodeAAC'
                 ]
 
     print('0. 打印多媒体文件元数据')
@@ -94,4 +95,9 @@ if __name__ == '__main__':
     print('10. 音频filter处理')
     subprocess.run([os.path.join(build_dir, examples[10]),
                     '../res/big-buck-bunny.mp4'])
+    print()
+
+    print('11. MP3格式转化为AAC格式')
+    subprocess.run([os.path.join(build_dir, examples[11]),
+                    '../res/moon-night.mp3'])
     print()

@@ -87,6 +87,23 @@ Personal coding exercises
 
 ![FFmpeg](res/ffmpeg.png)
 
+## OpenGL示例
+
+![OpenGL](../res/opengl-45.png)
+
+## OpenCV示例
+
+* Introduction to OpenCV - build and install OpenCV on your computer
+
+* The Core Functionality (core module) - basic building blocks of the library
+
+* Image Processing (imgproc module) - image processing functions
+
+* Application utils (highgui, imgcodecs, videoio modules) - application utils (GUI, image/video input/output)
+
+## 协议
+
+
 ## 打赏作者
 
 1. 填写邀请码
