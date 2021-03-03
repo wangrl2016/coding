@@ -29,7 +29,6 @@ static cv::Mat& ScanImageAndReduceIterator(cv::Mat& I, const uchar* const table)
             break;
         }
         case 4: {
-            printf("4\n");
             cv::MatIterator_<cv::Vec4b> it, end;
             for (it = I.begin<cv::Vec4b>(), end = I.end<cv::Vec4b>(); it != end; ++it) {
                 for (int k = 0; k < 4; k++) {
@@ -38,6 +37,8 @@ static cv::Mat& ScanImageAndReduceIterator(cv::Mat& I, const uchar* const table)
             }
             break;
         }
+        default:
+            break;
     }
     return I;
 }
@@ -88,7 +89,6 @@ int main(int argc, char** argv) {
 
     cv::namedWindow("Display image", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display image", image);
-
     cv::waitKey(0);
 
     return 0;

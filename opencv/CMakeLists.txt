@@ -7,3 +7,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(DisplayImage DisplayImage.cpp)
 target_link_libraries(DisplayImage ${OpenCV_LIBS})
+
+add_executable(ImageEnhance ImageEnhance.cpp)
+target_link_libraries(ImageEnhance ${OpenCV_LIBS})
