@@ -89,7 +89,7 @@ Personal coding exercises
 
 ## OpenGL示例
 
-![OpenGL](../res/opengl-45.png)
+![OpenGL](res/opengl-45.png)
 
 ## OpenCV示例
 
