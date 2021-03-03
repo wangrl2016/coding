@@ -9,3 +9,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(HelloWindow HelloWindow.cpp glad/glad.c)
 target_link_libraries(HelloWindow ${OPENGL_LIBRARIES} glfw dl)
+
+add_executable(HelloTriangle HelloTriangle.cpp glad/glad.c)
+target_link_libraries(HelloTriangle ${OPENGL_LIBRARIES} glfw dl)
