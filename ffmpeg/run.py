@@ -38,7 +38,8 @@ if __name__ == '__main__':
                 'EncodeAudio', 'DecodeAudio',
                 'ScaleVideo', 'DemuxDecode',
                 'FilteringVideo', 'FilteringAudio',
-                'TranscodeAAC', 'Muxing'
+                'TranscodeAAC', 'Muxing',
+                'Remuxing'
                 ]
 
     print('0. 打印多媒体文件元数据')
@@ -105,3 +106,8 @@ if __name__ == '__main__':
     print('12. 合成视频')
     subprocess.run([os.path.join(build_dir, examples[12]),
                     'out/muxing-audio-video.mp4'])
+    print()
+
+    print('13. 转换容器')
+    subprocess.run([os.path.join(build_dir, examples[13]),
+                    '../res/big-buck-bunny.mp4', '../out/big-buck-bunny.mov'])
