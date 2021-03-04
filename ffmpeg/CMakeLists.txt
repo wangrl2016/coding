@@ -18,6 +18,7 @@ SET(EXAMPLES
         FilteringVideo
         FilteringAudio
         TranscodeAAC
+        Muxing
         )
 
 foreach (EXAMPLE ${EXAMPLES})

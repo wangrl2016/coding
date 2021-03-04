@@ -138,10 +138,10 @@ static int init_filters(const char* filters_descr) {
      * Note: args buffer is reused to store channel layout string */
     outlink = bufferSinkContext->inputs[0];
     av_get_channel_layout_string(args, sizeof(args), -1, outlink->channel_layout);
-    av_log(nullptr, AV_LOG_INFO, "Output: srate:%dHz fmt:%s chlayout:%s\n",
-           (int) outlink->sample_rate,
-           (char*) av_x_if_nullptr(av_get_sample_fmt_name(static_cast<AVSampleFormat>(outlink->format)), "?"),
-           args);
+//    av_log(nullptr, AV_LOG_INFO, "Output: srate:%dHz fmt:%s chlayout:%s\n",
+//           (int) outlink->sample_rate,
+//           (char*) av_x_if_nullptr(av_get_sample_fmt_name(static_cast<AVSampleFormat>(outlink->format)), "?"),
+//           args);
     end:
     avfilter_inout_free(&inputs);
     avfilter_inout_free(&outputs);

@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 'EncodeAudio', 'DecodeAudio',
                 'ScaleVideo', 'DemuxDecode',
                 'FilteringVideo', 'FilteringAudio',
-                'TranscodeAAC'
+                'TranscodeAAC', 'Muxing'
                 ]
 
     print('0. 打印多媒体文件元数据')
@@ -101,3 +101,7 @@ if __name__ == '__main__':
     subprocess.run([os.path.join(build_dir, examples[11]),
                     '../res/moon-night.mp3'])
     print()
+
+    print('12. 合成视频')
+    subprocess.run([os.path.join(build_dir, examples[12]),
+                    'out/muxing-audio-video.mp4'])
