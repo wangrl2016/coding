@@ -4,6 +4,7 @@
 
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <cmath>
 
 const char* vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -73,12 +74,13 @@ int main(int argc, char** argv) {
     glEnableVertexAttribArray(1);
 
     glUseProgram(shaderProgram);
-    
-    glUniform1f(glGetUniformLocation(shaderProgram, "xOffset"), 0.2f);
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        float timeValue = glfwGetTime();
+        glUniform1f(glGetUniformLocation(shaderProgram, "xOffset"), sin(timeValue));
 
         glBindVertexArray(vertexArrayObject);
         glDrawArrays(GL_TRIANGLES, 0, 3);
