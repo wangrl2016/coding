@@ -15,3 +15,6 @@ target_link_libraries(HelloTriangle ${OPENGL_LIBRARIES} glfw dl)
 
 add_executable(HelloRectangle HelloRectangle.cpp glad/glad.c)
 target_link_libraries(HelloRectangle ${OPENGL_LIBRARIES} glfw dl)
+
+add_executable(TwoTriangle TwoTriangle.cpp glad/glad.c)
+target_link_libraries(TwoTriangle ${OPENGL_LIBRARIES} glfw dl)
