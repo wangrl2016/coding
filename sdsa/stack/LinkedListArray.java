@@ -20,7 +20,7 @@ public class LinkedListArray {
     }
 
     public void push(int data) {
-        
+
     }
 
 }
