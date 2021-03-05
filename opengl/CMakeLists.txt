@@ -24,3 +24,6 @@ target_link_libraries(ColorTriangle ${OPENGL_LIBRARIES} glfw dl)
 
 add_executable(DrawCircle DrawCircle.cpp glad/glad.c)
 target_link_libraries(DrawCircle ${OPENGL_LIBRARIES} glfw dl)
+
+add_executable(HelloTexture HelloTexture.cpp glad/glad.c)
+target_link_libraries(HelloTexture ${OPENGL_LIBRARIES} glfw dl)
