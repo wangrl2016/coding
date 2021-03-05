@@ -17,3 +17,6 @@ target_link_libraries(BlendImage ${OpenCV_LIBS})
 add_executable(DrawContours DrawContours.cpp)
 target_link_libraries(DrawContours ${OpenCV_LIBS})
 
+add_executable(ContrastBrightness ContrastBright.cpp)
+target_link_libraries(ContrastBrightness ${OpenCV_LIBS})
+
