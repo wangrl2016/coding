@@ -2,8 +2,6 @@
 // Created by wangrl on 2021/3/5.
 //
 
-
-
 #include "BitmapFormat.h"
 
 int main(int argc, char** argv) {
