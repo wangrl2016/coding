@@ -21,6 +21,8 @@
 #include <iostream>
 #include <cstdint>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 // 小端模式
 #define BITMAP_SIGNATURE 0x4d42
@@ -110,6 +112,7 @@ public:
         file.seekg(BITMAP_FILE_HEADER_SIZE + mBitmapImageHeader.biSize, std::ios::beg);
 
         unsigned int colorTableSize = 0;
+        // Color table for 16 bits images are not supported yet.
         if (mBitmapImageHeader.biBitCount == 1) {
             colorTableSize = 2;
         } else if (mBitmapImageHeader.biBitCount == 4) {
@@ -119,8 +122,49 @@ public:
         }
 
         // Always allocate full size color table.
+        // std::bad_alloc exception should be thrown if memory is not available.
+        BGRA* colorTable = new BGRA[colorTableSize];
+        file.read((char*) colorTable, sizeof(BGRA) * mBitmapImageHeader.biClrUsed);
 
+        mBitmapSize = getWidth() * getHeight();
+        mBitmapData = new RGBA[mBitmapSize];
 
+        unsigned int lineWidth = ((getWidth() * getBitCount() / 8) + 3) & ~3;
+        uint8_t* line = new uint8_t[lineWidth];
+
+        file.seekg(mBitmapFileHeader.bfOffBits, std::ios::beg);
+
+        int index = 0;
+        bool result = true;
+
+        std::cout << "Compression " << mBitmapImageHeader.biCompression << std::endl;
+        switch (mBitmapImageHeader.biCompression) {
+            case 0: {
+                for (unsigned int i = 0; i < getHeight(); i++) {
+                    file.read((char*) line, lineWidth);
+                    uint8_t* linePtr = line;
+                    for (unsigned int j = 0; j < getWidth(); j++) {
+                        switch (mBitmapImageHeader.biBitCount) {
+                            case 24: {
+                                uint32_t color = *((uint32_t*) linePtr);
+                                mBitmapData[index].bBlue = color & 0xff;
+                                mBitmapData[index].bGreen = (color >> 8) & 0xff;
+                                mBitmapData[index].bRed = (color >> 16) & 0xff;
+                                mBitmapData[index].bAlpha = 255;
+                                index++;
+                                linePtr += 3;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        delete[] colorTable;
+        delete[] line;
+        file.close();
+        return result;
     }
 
     unsigned int getWidth() {
@@ -129,6 +173,32 @@ public:
 
     unsigned int getHeight() {
         return mBitmapImageHeader.biHeight;
+    }
+
+    unsigned int getBitCount() {
+        if (mBitmapImageHeader.biBitCount > 32)
+            mBitmapImageHeader.biBitCount = 32;
+        return mBitmapImageHeader.biBitCount;
+    }
+
+    void savePPMImage(const char* filename) {
+        std::ofstream ofs;
+        ofs.open(filename);
+        ofs << "P6\n" << getWidth() << " " << getHeight() << "\n255\n";
+
+        std::vector<float> buffer(getWidth() * getHeight() * 3);
+        // https://stackoverflow.com/questions/8346115/why-are-bmps-stored-upside-down
+        for (size_t j = 0; j < getHeight(); j++) {
+            for (size_t i = 0; i < getWidth(); i++) {
+                buffer[3 * (i + j * getWidth())] = mBitmapData[i + (getHeight() - j - 1) * getWidth()].bRed;
+                buffer[3 * (i + j * getWidth()) + 1] = mBitmapData[i + (getHeight() - j - 1) * getWidth()].bGreen;
+                buffer[3 * (i + j * getWidth()) + 2] = mBitmapData[i + (getHeight() - j - 1) * getWidth()].bBlue;
+            }
+        }
+        for (size_t i = 0; i < getWidth() * getHeight() * 3; ++i) {
+            ofs << char(buffer[i]);
+        }
+        ofs.close();
     }
 
     void dispose() {
