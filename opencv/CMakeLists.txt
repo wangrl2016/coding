@@ -14,3 +14,6 @@ target_link_libraries(ImageEnhance ${OpenCV_LIBS})
 add_executable(BlendImage BlendImage.cpp)
 target_link_libraries(BlendImage ${OpenCV_LIBS})
 
+add_executable(DrawContours DrawContours.cpp)
+target_link_libraries(DrawContours ${OpenCV_LIBS})
+
