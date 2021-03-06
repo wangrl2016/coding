@@ -1,4 +1,4 @@
-package stack;
+package queue;
 
 public class ArrayQueue {
     int front, rear, size;
@@ -68,5 +68,4 @@ public class ArrayQueue {
         System.out.println("Front item is " + queue.front());
         System.out.println("Rear item is " + queue.rear());
     }
-
 }
