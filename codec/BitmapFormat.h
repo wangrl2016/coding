@@ -11,7 +11,7 @@
  *
  * https://cdn.hackaday.io/files/274271173436768/Simplified%20Windows%20BMP%20Bitmap%20File%20Format%20Specification.htm
  *
- * 实现网址
+ * 参考实现网址
  *
  * http://www.kalytta.com/bitmap.h
  */

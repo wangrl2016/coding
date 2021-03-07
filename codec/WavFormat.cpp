@@ -6,5 +6,8 @@
 
 int main(int argc, char** argv) {
 
+    WavFormat<float>* wav = new WavFormat<float>();
+    wav->load("../../res/sample-wav-44k.wav");
+
     return 0;
 }

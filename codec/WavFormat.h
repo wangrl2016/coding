@@ -14,11 +14,16 @@
  * A WAVE file is often just a RIFF file with a single "WAVE" chunk which consists of two
  * sub-chunks -- a "fmt" chunk specifying the data format and a "data" chunk containing
  * the actual sample data.
+ *
+ * 参考实现
+ *
+ * https://github.com/adamstark/AudioFile
  */
 
 #pragma once
 
 #include <vector>
+#include <string>
 
 template <class T> class WavFormat {
 public:
