@@ -2,6 +2,7 @@
 import os
 import subprocess
 
+
 def cmake_executable():
     """
     Find the cmake executable
@@ -17,6 +18,7 @@ def cmake_executable():
             return None
         return 'cmake'
 
+
 if __name__ == '__main__':
     if not os.path.exists('out'):
         os.mkdir('out')
@@ -29,4 +31,3 @@ if __name__ == '__main__':
     subprocess.run([cmake_executable(), build_dir])
     subprocess.run(['make', '-C', build_dir])
     print()
-
