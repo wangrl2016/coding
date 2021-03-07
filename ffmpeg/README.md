@@ -24,6 +24,14 @@ sudo ldconfig               // take effect
 --enable-libx264 --enable-gpl x264编码
 ```
 
+播放原始yuv数据
+
+`ffplay -f rawvideo -video_size 1280x720 xxx.yuv`
+
+播放16kHz单声道
+
+`ffplay -ar 16000 -channels 1 -f s16le -i xxx.pcm`
+
 ## FFmpeg示例
 
 ### 基础大纲
