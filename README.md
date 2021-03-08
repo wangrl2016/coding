@@ -104,6 +104,12 @@ Personal coding exercises
 ## 协议
 
 
+## Docker
+
+```
+docker build -t coding:0.1.0 .
+```
+
 ## 打赏作者
 
 1. 填写邀请码
