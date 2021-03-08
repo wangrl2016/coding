@@ -27,12 +27,14 @@ int main(int argc, char** argv) {
         p = src.ptr<uchar>(i);
         q = img.ptr<uchar>(i);
         for (int j = 0; j < src.cols * channels; j += 4) {
-            if (p[j + 3] == 0)
+            if (p[j + 3] < 127)
                 q[j / channels] = 0;
             else
                 q[j / channels] = 255;
         }
     }
+
+    cv::imwrite("../out/alpha_binary.png", img);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
@@ -47,7 +49,7 @@ int main(int argc, char** argv) {
                          2, cv::LINE_8, hierarchy, 0);
     }
 
-    cv::imwrite("draw_contours.png", drawing);
+    cv::imwrite("../out/draw_contours.png", drawing);
 
     return EXIT_SUCCESS;
 }
