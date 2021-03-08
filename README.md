@@ -10,9 +10,9 @@ Personal coding exercises
 参考geeksforgeeks.org网站编写
 
 - [x] Array
-- [ ] Linked List
-- [ ] Stack
-- [ ] Queue
+- [x] Linked List
+- [x] Stack
+- [x] Queue
 - [ ] Binary Tree
 - [ ] Binary Search Tree
 - [ ] Heap
