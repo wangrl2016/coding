@@ -1,8 +1,10 @@
 编解码
 
+
+
 - [x] GIF图片格式
 
-
+![GIF](../res/format-gif89a-image.png)
 
 - [x] WAV音频格式
 
@@ -13,5 +15,3 @@
 ![BMP](../res/format-bmp-image.png)
 
 - [x] [PBM图片格式](https://zh.wikipedia.org/wiki/PBM格式)
-
-PBM是单色，PGM是灰度图，PPM使用RGB颜色。

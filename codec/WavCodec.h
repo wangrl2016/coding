@@ -36,6 +36,19 @@ enum class AudioFileFormat {
     WAVE,
 };
 
+enum class Endian {
+    LittleEndianess,
+    BigEndianess
+};
+
+enum WavAudioFormat {
+    PCM = 0x0001,
+    IEEEFloat = 0x0003,
+    ALaw = 0x0006,
+    MuLaw = 0x0007,
+    Extensible = 0xFFFE
+};
+
 template<class T>
 class WavCodec {
 public:
@@ -56,7 +69,42 @@ public:
 private:
 
     AudioFileFormat determineAudioFileFormat(std::vector<uint8_t>& fileData);
+
     bool decodeWaveFile(std::vector<uint8_t>& fileData);
+
+    /**
+     * 寻找关键词的下标。
+     *
+     * @param source            原数据
+     * @param chunkHeaderID     关键词
+     * @param startIndex        起始点
+     * @param endian            大小端
+     * @return                  下标值，如果没有找到返回-1
+     */
+    int getIndexOfChunk(std::vector<uint8_t>& source, const std::string& chunkHeaderID, int startIndex,
+                        Endian endian = Endian::LittleEndianess);
+
+    /**
+     * 将两个字节转化为整形数据。
+     *
+     * @param source        原数据
+     * @param startIndex    起始点
+     * @param endian        大小端
+     * @return              整形数据
+     */
+    int16_t twoByteToInt(std::vector<uint8_t>& source, int startIndex,
+                         Endian endian = Endian::LittleEndianess);
+
+    /**
+     * 将四个字节转化为整形数据。
+     *
+     * @param source        原数据　
+     * @param startIndex    起始点
+     * @param endian        大小端
+     * @return              整形数据
+     */
+    int32_t fourBytesToInt(std::vector<uint8_t>& source, int startIndex,
+                           Endian endian = Endian::LittleEndianess);
 
     AudioFileFormat mAudioFileFormat;
     uint32_t mSampleRate;
