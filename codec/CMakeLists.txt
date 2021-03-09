@@ -18,5 +18,8 @@ add_executable(Webp2Png Webp2Png.cpp)
 
 add_subdirectory(image_decoders)
 
-add_subdirectory(gif_decoder)
+add_executable(GifDecodeTest
+        gif_decoder/GifDecodeTest.cpp
+        gif_decoder/GifCodec.cpp
+        gif_decoder/GifImageReader.cpp)
 

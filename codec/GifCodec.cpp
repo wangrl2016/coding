@@ -6,7 +6,11 @@
 #include <iostream>
 #include "GifCodec.h"
 
-GifDecoder::GifDecoder() {
+#define GIF87_STAMP "GIF87a"
+#define GIF89_STAMP "GIF89a"
+
+GifDecoder::GifDecoder() :
+        mVersion(0) {
 
 }
 
@@ -51,10 +55,20 @@ int64_t GifDecoder::getDelay(int i) {
 }
 
 bool GifDecoder::readHeader() {
-    std::string tag(fileData.begin(), fileData.begin() + 3);
-    if (tag == "GIF" || tag == "gif") {
-        std::cout << tag.c_str() << std::endl;
+    std::string tag(fileData.begin(), fileData.begin() + 6);
+
+    if (tag == GIF87_STAMP)
+        mVersion = 87;
+    else if (tag == GIF89_STAMP)
+        mVersion = 89;
+    else {
+        // This prevent attempting to continue reading this invalid stream.
+        return false;
     }
+
+    // Reads logical screen descriptor
+
+
     return false;
 }
 

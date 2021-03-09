@@ -43,6 +43,9 @@ private:
     bool readContent();
 
     std::vector<uint8_t> fileData;
+
+    // Global (multi-image) state.
+    int mVersion;   // either 89 for GIF89 or 87 for GIF87
 };
 
 
