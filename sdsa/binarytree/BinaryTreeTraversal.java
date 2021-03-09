@@ -27,24 +27,34 @@ public class BinaryTreeTraversal {
         root = null;
     }
 
+    /**
+     * 利用的规则
+     * If parent node is at index i in the array then the left child
+     * of that node is at index (2*i + 1) and right child is at index
+     * (2*i + 2) in the array.
+     */
     public Node insertLevelOrder(int[] arr, Node root, int i) {
         // Base case for recursion.
         if (i < arr.length) {
-            
+            Node temp = new Node(arr[i]);
+            root = temp;
+
+            // Insert left child.
+            root.left = insertLevelOrder(arr, root.left, 2 * i + 1);
+
+            // Insert right child.
+            root.right = insertLevelOrder(arr, root.right, 2 * i + 2);
         }
+        return root;
     }
 
     public static void main(String[] args) {
         BinaryTreeTraversal tree = new BinaryTreeTraversal();
-        /**
-         *    1
-         *  /   \
-         * 2    3
-         */
-        tree.root = new Node(1);
-        tree.root.left = new Node(2);
-        tree.root.right = new Node(3);
 
+        int[] arr = new int[20];
+        for (int i = 0; i < arr.length; i++)
+            arr[i] = i + 1;
+        tree.root = tree.insertLevelOrder(arr, tree.root, 0);
 
     }
 }
