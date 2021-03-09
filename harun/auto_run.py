@@ -10,7 +10,12 @@ MAX_PHOTOS_STORE = 50
 
 
 def cycle(device):
+    # 需要手机保持亮屏状态
+    # 获取手机像素大小
     (w, h) = phone.get_size(device)
+
+    # 滑动手机打开屏幕
+    phone.swipe_down_to_up(device, w / 2, h)
 
 
 def run(device):
