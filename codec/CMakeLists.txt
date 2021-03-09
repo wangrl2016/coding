@@ -13,3 +13,6 @@ add_executable(GifCodec GifCodec.cpp)
 add_executable(Mp3Codec Mp3Codec.cpp)
 
 add_executable(H264Codec H264Codec.cpp)
+
+add_executable(Webp2Png Webp2Png.cpp)
+
