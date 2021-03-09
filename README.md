@@ -1,6 +1,8 @@
 # coding
 Personal coding exercises
 
+主要涉及音视频和图像算法。
+
 欢迎关注头条号 火车上遇见
 
 ![二维码关注](res/personal-qrcode.png)
@@ -13,8 +15,8 @@ Personal coding exercises
 - [x] Linked List
 - [x] Stack
 - [x] Queue
-- [ ] Binary Tree
-- [ ] Binary Search Tree
+- [x] Binary Tree
+- [x] Binary Search Tree
 - [ ] Heap
 - [ ] Hashing
 - [ ] Graph
@@ -102,6 +104,12 @@ Personal coding exercises
 * Application utils (highgui, imgcodecs, videoio modules) - application utils (GUI, image/video input/output)
 
 ## 协议
+
+## 数字图像处理
+
+参考Digital Image Processing教材编写
+
+## 数学基础
 
 
 ## Docker
