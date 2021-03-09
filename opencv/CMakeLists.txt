@@ -23,3 +23,5 @@ target_link_libraries(ContrastBrightness ${OpenCV_LIBS})
 add_executable(MergeImage MergeImage.cpp)
 target_link_libraries(MergeImage ${OpenCV_LIBS})
 
+add_executable(ScaleImage ScaleImage.cpp)
+target_link_libraries(ScaleImage ${OpenCV_LIBS})
