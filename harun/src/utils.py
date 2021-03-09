@@ -1,4 +1,12 @@
 import os
+from src import info
+
+
+def is_coordinate_checkin(a):
+    """
+    :return: 程序是否需要点击桌面图标启动
+    """
+    return info.activities[a].__contains__('#')
 
 
 def get_photos(path):
