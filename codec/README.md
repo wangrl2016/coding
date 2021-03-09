@@ -12,6 +12,8 @@
 
 - [ ] Mp3音频格式
 
+![MP3](../res/format-mp3-audio.png)
+
 - [x] GIF图片格式
 
 ![GIF](../res/format-gif89a-image.png)
