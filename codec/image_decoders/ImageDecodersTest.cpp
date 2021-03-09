@@ -7,7 +7,7 @@
  *
  * https://chromium.googlesource.com/chromium/blink.git
  *
- * platform/image-decoders
+ * Source/platform/image-decoders
  */
 
 int main(int argc, char** argv) {
