@@ -34,23 +34,36 @@ sudo ldconfig               // take effect
 
 ## FFmpeg示例
 
-### 基础大纲
+- [x] 打印多媒体文件元数据
 
-- [x] PBM图像格式讲解
+```
+major_brand = isom
+minor_version = 512
+compatible_brands = isomiso2avc1mp41
+encoder = Lavf58.47.100
+```
 
-- [x] FFmpeg打印多媒体文件元数据 `Metadata.cpp`
+- [x] 打印音视频流信息
 
-- [x] FFmpeg打印音视频流信息 `Dump.cpp`
+```
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '../res/big-buck-bunny.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf58.47.100
+  Duration: 00:00:30.02, start: 0.000000, bitrate: 1928 kb/s
+  Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 1794 kb/s, 24 fps, 24 tbr, 12288 tbn, 48 tbc (default)
+    Metadata:
+      handler_name    : (C) 2007 Google Inc. v08.13.2007.
+      vendor_id       : [0][0][0][0]
+  Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 129 kb/s (default)
+    Metadata:
+      handler_name    : (C) 2007 Google Inc. v08.13.2007.
+      vendor_id       : [0][0][0][0]
+```
 
-- [x] FFmpeg解码视频流 `DecodeVideo.cpp`
+- [x] 解码视频为PPM图片
 
-- [x] FFmpeg编码视频流 `EncodeVideo.cpp`
-
-- [x] RGBA图片构建视频 `Rgba2Video.cpp`
-
-- [x] 合成音频 `EncodeAudio.cpp`
-
-- [x] 对视频进行缩放 `ScaleVideo.cpp`
-
-- [x] 
+![解码图片](../res/video-decode-ppm.png)
 
