@@ -32,3 +32,7 @@ target_link_libraries(HelloTexture ${OPENGL_LIBRARIES} glfw dl)
 
 add_executable(HelloTransform HelloTransform.cpp glad/glad.c)
 target_link_libraries(HelloTransform ${OPENGL_LIBRARIES} glfw dl)
+
+add_executable(DrawSphere DrawSphere.cpp glad/glad.c Sphere.cpp)
+target_link_libraries(DrawSphere ${OPENGL_LIBRARIES} glfw dl)
+
