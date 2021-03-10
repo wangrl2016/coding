@@ -47,8 +47,8 @@ int main(int argc, char** argv) {
     for (int j = 0; j < 3; j++)
         vertices.push_back(0.0f);
     for (int i = 0; i <= n; i++) {
-        vertices.push_back(static_cast<float>(radius * sin(2 * M_PI * i / n)));
         vertices.push_back(static_cast<float>(radius * cos(2 * M_PI * i / n)));
+        vertices.push_back(static_cast<float>(radius * sin(2 * M_PI * i / n)));
         vertices.push_back(0.0f);
     }
 
