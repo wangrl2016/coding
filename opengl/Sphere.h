@@ -7,14 +7,14 @@
 #include <vector>
 
 /**
- * flat模式三角形三个顶点的法向量一致，也就是三角形的法向量。
+ * flat模式三角形三个顶点的法向量一致，也就是三角形面的法向量。
  * smooth模式为每个顶点创建一个法向量，看起来更光滑。
  */
 
 class Sphere {
 public:
-    Sphere(float radius = 1.0f, int sectorCount = 46,
-           int stackCount = 18, bool smooth = true);
+    explicit Sphere(float radius = 1.0f, int sectorCount = 46,
+                    int stackCount = 18, bool smooth = true);
 
     ~Sphere();
 
@@ -40,7 +40,26 @@ public:
 
     void setSmooth(bool smooth);
 
+    unsigned int getVertexCount() const {
+        return (unsigned int) vertices.size() / 3;
+    }
+
+    unsigned int getNormalCount() const {
+        return (unsigned int) normals.size() / 3;
+    }
+
+    unsigned int getTexCoordCount() const {
+        return (unsigned int) texCoords.size() / 2;
+    }
+
+
 private:
+    void clearArrays();
+
+    void buildVerticesSmooth();
+
+    void buildVerticesFlat();
+
     float radius;           // 球的半径
     int sectorCount;        // 经度划分的个数
     int stackCount;         // 纬度划分的个数
@@ -50,4 +69,13 @@ private:
     std::vector<float> normals;     // 法向量坐标
     std::vector<float> texCoords;   // 纹理坐标
 
+    std::vector<unsigned int> indices;
+    std::vector<unsigned int> lineIndices;
+
+    // interleaved
+    // 将vertices, normals, texCoords坐标合并
+    std::vector<float> interleaveVertices;
+
+    // (3 vertices + 3 normals + 2 texCoords) * sizeof(float)
+    int interleavedStride;
 };
