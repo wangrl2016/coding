@@ -6,7 +6,7 @@ import sys
 
 # 项目所需要的依赖
 dependencies = {
-
+    "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3"
 }
 
 
@@ -58,7 +58,7 @@ def git_sync_deps():
             subprocess.run([git, 'clone', '--quiet', '--no-checkout', repo, directory])
             subprocess.run([git, 'checkout', '--quiet', commit_hash], cwd=directory)
 
-            status(directory, commit_hash, False)  # success
+            status(directory, commit_hash, True)  # success
             continue
 
         with open(os.devnull, 'w') as devnull:

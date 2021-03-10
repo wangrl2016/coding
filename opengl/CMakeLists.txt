@@ -7,6 +7,8 @@ find_package(glfw3 REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+include_directories(glm)
+
 add_executable(HelloWindow HelloWindow.cpp glad/glad.c)
 target_link_libraries(HelloWindow ${OPENGL_LIBRARIES} glfw dl)
 
@@ -27,3 +29,6 @@ target_link_libraries(DrawCircle ${OPENGL_LIBRARIES} glfw dl)
 
 add_executable(HelloTexture HelloTexture.cpp glad/glad.c)
 target_link_libraries(HelloTexture ${OPENGL_LIBRARIES} glfw dl)
+
+add_executable(HelloTransform HelloTransform.cpp glad/glad.c)
+target_link_libraries(HelloTransform ${OPENGL_LIBRARIES} glfw dl)
