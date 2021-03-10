@@ -11,20 +11,8 @@ target_link_libraries(DisplayImage ${OpenCV_LIBS})
 add_executable(ImageEnhance ImageEnhance.cpp)
 target_link_libraries(ImageEnhance ${OpenCV_LIBS})
 
-add_executable(BlendImage BlendImage.cpp)
-target_link_libraries(BlendImage ${OpenCV_LIBS})
-
 add_executable(DrawContours DrawContours.cpp)
 target_link_libraries(DrawContours ${OpenCV_LIBS})
-
-add_executable(ContrastBrightness ContrastBright.cpp)
-target_link_libraries(ContrastBrightness ${OpenCV_LIBS})
-
-add_executable(MergeImage MergeImage.cpp)
-target_link_libraries(MergeImage ${OpenCV_LIBS})
-
-add_executable(ScaleImage ScaleImage.cpp)
-target_link_libraries(ScaleImage ${OpenCV_LIBS})
 
 add_executable(BlendMode BlendMode)
 target_link_libraries(BlendMode ${OpenCV_LIBS})

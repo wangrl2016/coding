@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 'RGBA2Video', 'EncodeAudio',
                 'DecodeAudio', 'ScaleVideo',
                 'DemuxDecode', 'FilteringVideo',
-                'FilterAudio', 'TranscodeAAC',
+                'FilteringAudio', 'TranscodeAAC',
                 'Muxing', 'Remuxing']
 
     for index, example in enumerate(reversed(examples)):

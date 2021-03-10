@@ -19,7 +19,8 @@ static void Sharpen(const cv::Mat& image, cv::Mat& result) {
 
         for (int i = nChannels; i < nChannels * (image.cols - 1); ++i) {
             *output++ = cv::saturate_cast<uchar>(5 * current[i] -
-                         current[i - nChannels] - current[i + nChannels] - previous[i] - next[i]);
+                                                 current[i - nChannels] - current[i + nChannels] - previous[i] -
+                                                 next[i]);
         }
     }
     result.row(0).setTo(cv::Scalar(0));
@@ -58,19 +59,12 @@ int main(int argc, char** argv) {
         }
     }
 
-    cv::namedWindow("Input", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Input", src);
-
     Sharpen(src, dst0);
-    cv::namedWindow("Output0", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Output0", dst0);
+    cv::imwrite(argv[2], dst0);
 
     cv::Mat kernel = (cv::Mat_<char>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
     cv::filter2D(src, dst1, src.depth(), kernel);
-    cv::namedWindow("Output1", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Output1", dst1);
-
-    cv::waitKey(1000);
+    cv::imwrite(argv[3], dst1);
     return EXIT_SUCCESS;
 }

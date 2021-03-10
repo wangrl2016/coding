@@ -6,15 +6,14 @@
 #include <vector>
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        printf("Usage: %s image_path\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s input output1 output2\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     cv::Mat src = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
 
     CV_Assert(src.depth() == CV_8U);
-    CV_Assert(src.type() == CV_8UC4);
 
     int channels = src.channels();
 
@@ -34,7 +33,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    cv::imwrite("../out/alpha_binary.png", img);
+    cv::imwrite(argv[2], img);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
@@ -49,7 +48,7 @@ int main(int argc, char** argv) {
                          2, cv::LINE_8, hierarchy, 0);
     }
 
-    cv::imwrite("../out/draw_contours.png", drawing);
+    cv::imwrite(argv[3], drawing);
 
     return EXIT_SUCCESS;
 }

@@ -20,31 +20,46 @@ def cmake_executable():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('out'):
-        os.mkdir('out')
-
+    out_dir = 'out'
     build_dir = 'build'
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+    if not os.path.exists(build_dir):
+        os.mkdir(build_dir)
 
     subprocess.run([cmake_executable(), build_dir])
     subprocess.run(['make', '-C', build_dir])
-    print()
 
     examples = [
         'DisplayImage',
         'ImageEnhance',
-        'BlendImage'
+        'DrawContours',
+        'BlendMode'
     ]
 
-    print('1. 显示图片')
-    subprocess.run([os.path.join(build_dir, examples[0]),
-                    '../res/sunflower-girl.png'])
-    print()
+    for index, example in enumerate(reversed(examples)):
+        exe = os.path.join(build_dir, example)
+        args = [exe]
 
-    print('2. 图像增强')
-    subprocess.run([os.path.join(build_dir, examples[1]),
-                    '../res/sunflower-girl.png'])
-    print()
+        if index == len(examples) - 1:
+            print('显示图片')
+            args.append('../res/sunflower-girl.png')
+        elif index == len(examples) - 2:
+            print('图像增强')
+            args.append('../res/sunflower-girl.png')
+            args.append('out/image-enhance0.png')
+            args.append('out/image-enhance1.png')
+        elif index == len(examples) - 3:
+            print('绘制等高线')
+            args.append('../res/sunflower-girl.png')
+            args.append('out/alpha-binary.png')
+            args.append('out/draw-contours.png')
+        elif index == len(examples) - 4:
+            print('混合模式')
+            args.append('../res/model-girl-warm.jpeg')
+            args.append('../res/model-girl-cold.jpeg')
 
-    print('3. 两张图片混合')
-    subprocess.run([os.path.join(build_dir, examples[2]),
-                    '../res/foreign-girl.jpeg'])
+        subprocess.run(args)
+        print()
+
+    exit(0)
