@@ -91,4 +91,12 @@ ffplay -f rawvideo -pix_fmt rgb24 -video_size 800x600 out/scale-video.raw
 
 - [x] 解码音视频
 
+- [x] 视频filter处理
 
+- [ ] 音频filter处理
+
+- [ ] MP3格式转码成为AAC格式
+
+- [ ] 合成音视频
+
+- [x] 容器转换(MP4->MOV)

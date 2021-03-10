@@ -50,20 +50,13 @@ if __name__ == '__main__':
     subprocess.run([cmake_executable(), build_dir])
     subprocess.run(['make', '-C', build_dir])
 
-    # examples = ['Metadata', 'Dump', 'DecodeVideo',
-    #             'EncodeVideo', 'RGBA2Video',
-    #             'EncodeAudio', 'DecodeAudio',
-    #             'ScaleVideo', 'DemuxDecode',
-    #             'FilteringVideo', 'FilteringAudio',
-    #             'TranscodeAAC', 'Muxing',
-    #             'Remuxing'
-    #             ]
-
     examples = ['Metadata', 'Dump',
                 'DecodeVideo', 'EncodeVideo',
                 'RGBA2Video', 'EncodeAudio',
                 'DecodeAudio', 'ScaleVideo',
-                'DemuxDecode', 'FilteringVideo']
+                'DemuxDecode', 'FilteringVideo',
+                'FilterAudio', 'TranscodeAAC',
+                'Muxing', 'Remuxing']
 
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
@@ -103,28 +96,22 @@ if __name__ == '__main__':
         elif index == len(examples) - 10:
             print('视频filter处理')
             args.append('../res/big-buck-bunny.mp4')
+        elif index == len(examples) - 11:
+            print('音频filter处理')
+            args.append('../res/big-buck-bunny.mp4')
+        elif index == len(examples) - 12:
+            print('MP3格式转码成为AAC格式')
+            args.append('../res/moon-night.mp3')
+            args.append('../res/moon-night.aac')
+        elif index == len(examples) - 13:
+            print('合成音视频')
+            args.append('out/muxing-audio-video.mp4')
+        elif index == len(examples) - 14:
+            print('容器转换(MP4->MOV)')
+            args.append('../res/big-buck-bunny.mp4')
+            args.append('out/big-buck-bunny.mov')
 
         subprocess.run(args)
         print()
 
     exit(0)
-
-
-    print('10. 音频filter处理')
-    subprocess.run([os.path.join(build_dir, examples[10]),
-                    '../res/big-buck-bunny.mp4'])
-    print()
-
-    print('11. MP3格式转化为AAC格式')
-    subprocess.run([os.path.join(build_dir, examples[11]),
-                    '../res/moon-night.mp3'])
-    print()
-
-    print('12. 合成视频')
-    subprocess.run([os.path.join(build_dir, examples[12]),
-                    'out/muxing-audio-video.mp4'])
-    print()
-
-    print('13. 转换容器')
-    subprocess.run([os.path.join(build_dir, examples[13]),
-                    '../res/big-buck-bunny.mp4', '../out/big-buck-bunny.mov'])

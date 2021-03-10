@@ -23,7 +23,7 @@ SET(EXAMPLES
         )
 
 foreach (EXAMPLE ${EXAMPLES})
-    add_executable(${EXAMPLE} ${EXAMPLE}.cpp FFmpegUtils.cpp)
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
     target_link_libraries(${EXAMPLE} avformat avcodec swresample
             swscale avutil avfilter avdevice)
 endforeach ()
