@@ -109,8 +109,11 @@ int main(int argc, char* argv[]) {
             SWS_BILINEAR,
             nullptr, nullptr, nullptr);
 
-    int numberToSave = 0;
-    while (av_read_frame(formatContext, packet) >= 0) {
+    int index = 0;
+    // Seek到第5s进行解码
+    int64_t timestamp = 5 * AV_TIME_BASE;
+    av_seek_frame(formatContext, videoStreamIndex, timestamp, AVSEEK_FLAG_BACKWARD);
+    while (av_read_frame(formatContext, packet) >= 0 && index < 5) {
         // Is this a packet from the video stream?
         if (packet->stream_index == videoStreamIndex) {
             // supply raw packet data as input to a decoder
@@ -134,9 +137,8 @@ int main(int argc, char* argv[]) {
                           frame->linesize, 0, codecContext->height,
                           frameRGB->data, frameRGB->linesize);
 
-                if (++numberToSave <= 50 && numberToSave > 45) {
-                    saveFrame(frameRGB, codecContext->width, codecContext->height, numberToSave);
-                }
+                if (index++ < 5)
+                    saveFrame(frameRGB, codecContext->width, codecContext->height, index);
             }
         }
         // free the packet that was allocated by av_read_frame
