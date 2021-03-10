@@ -1,5 +1,3 @@
-# FFmpeg示例
-
 ## 安装FFmpeg库
 
 安装依赖
