@@ -59,9 +59,11 @@ if __name__ == '__main__':
     #             'Remuxing'
     #             ]
 
-    examples = ['Metadata',
-                'Dump',
-                'DecodeVideo']
+    examples = ['Metadata', 'Dump',
+                'DecodeVideo', 'EncodeVideo',
+                'RGBA2Video', 'EncodeAudio',
+                'DecodeAudio', 'ScaleVideo',
+                'DemuxDecode', 'FilteringVideo']
 
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
@@ -76,47 +78,37 @@ if __name__ == '__main__':
         elif index == len(examples) - 3:
             print('解码视频为PPM图片')
             args.append('../res/big-buck-bunny.mp4')
+        elif index == len(examples) - 4:
+            print('构造YUV数据编码视频')
+            args.append('out/yuv420p-encode.mp4')
+        elif index == len(examples) - 5:
+            print('构造RGBA数据编码视频')
+            args.append('out/rgba-to-yuv420p.mp4')
+        elif index == len(examples) - 6:
+            print('编码MP3音频')
+            args.append('out/16bit-dummy-audio.mp3')
+        elif index == len(examples) - 7:
+            print('解码MP3音频')
+            args.append('../res/moon-night.mp3')
+            args.append('out/mp3-samples.raw')
+        elif index == len(examples) - 8:
+            print('放大视频尺寸')
+            args.append('out/scale-video.raw')
+            args.append('svga')
+        elif index == len(examples) - 9:
+            print('解码音视频')
+            args.append('../res/big-buck-bunny.mp4')
+            args.append('out/demux-decode-video.raw')
+            args.append('out/demux-decode-audio.raw')
+        elif index == len(examples) - 10:
+            print('视频filter处理')
+            args.append('../res/big-buck-bunny.mp4')
 
         subprocess.run(args)
         print()
 
     exit(0)
 
-    print('3. 构造数据编码视频')
-    subprocess.run([os.path.join(build_dir, examples[3]),
-                    'out/yuv420p-to-yuv422p.mp4'])
-    print()
-
-    print('4. RGBA图片构建视频')
-    subprocess.run([os.path.join(build_dir, examples[4]),
-                    'out/rgba-to-yuv420p.mp4'])
-    print()
-
-    print('5. 编码MP3音频')
-    subprocess.run([os.path.join(build_dir, examples[5]),
-                    'out/16bit-dummy-audio.mp3'])
-    print()
-
-    print('6. 解码MP3音频')
-    subprocess.run([os.path.join(build_dir, examples[6]),
-                    '../res/moon-night.mp3', 'out/mp3-samples.raw'])
-    print()
-
-    print('7. 放大视频尺寸')
-    subprocess.run([os.path.join(build_dir, examples[7]),
-                    'out/scale-video.raw', 'svga'])
-    print()
-
-    print('8. 解码音视频')
-    subprocess.run([os.path.join(build_dir, examples[8]),
-                    '../res/big-buck-bunny.mp4', 'out/demux-decode-video.raw',
-                    'out/demux-decode-audio.raw'])
-    print()
-
-    print('9. 视频filter处理')
-    subprocess.run([os.path.join(build_dir, examples[9]),
-                    '../res/big-buck-bunny.mp4'])
-    print()
 
     print('10. 音频filter处理')
     subprocess.run([os.path.join(build_dir, examples[10]),

@@ -18,19 +18,12 @@ sudo ldconfig               // take effect
 ```
 
 详细的编译选项
+
 ```
 --enable-shared 编译动态库
 --enable-libmp3lame 增加MP3编码
 --enable-libx264 --enable-gpl x264编码
 ```
-
-播放原始yuv数据
-
-`ffplay -f rawvideo -video_size 1280x720 xxx.yuv`
-
-播放16kHz单声道
-
-`ffplay -ar 16000 -channels 1 -f s16le -i xxx.pcm`
 
 ## FFmpeg示例
 
@@ -66,4 +59,36 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '../res/big-buck-bunny.mp4':
 - [x] 解码视频为PPM图片
 
 ![解码图片](../res/video-decode-ppm.png)
+
+- [x] 构造YUV数据编码视频
+
+![编码视频](../res/yuv420p-encode.png)
+
+- [x] 构造RGBA数据编码视频
+
+![RGBA数据构造视频](../res/rgba-to-yuv420p.png)
+
+- [x] 编码MP3音频
+
+```
+Output #0, mp3, to 'out/16bit-dummy-audio.mp3':
+    Stream #0:0: Audio: mp3, 44100 Hz, stereo, s32p, 64 kb/s
+```
+
+- [x] 解码MP3音频
+
+```
+Play the output audio file with the command:
+ffplay -f f32le -ac 2 -ar 44100 out/mp3-samples.raw
+```
+      
+- [x] 放大视频尺寸
+
+```
+Scaling succeed. Play the output file with the command:
+ffplay -f rawvideo -pix_fmt rgb24 -video_size 800x600 out/scale-video.raw
+```
+
+- [x] 解码音视频
+
 

@@ -8,8 +8,8 @@ extern "C" {
 #include <libavutil/imgutils.h>
 }
 
-#define VIDEO_WIDTH 1280
-#define VIDEO_HEIGHT 720
+#define VIDEO_WIDTH 640
+#define VIDEO_HEIGHT 360
 #define STREAM_FRAME_RATE 25
 #define STREAM_PIX_FMT AV_PIX_FMT_YUV420P
 #define STREAM_DURATION 10.0

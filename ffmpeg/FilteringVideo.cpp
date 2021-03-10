@@ -10,7 +10,7 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
-const char* FILTER_DESCR = "scale=780:240,transpose=cclock";
+const char* FILTER_DESCR = "scale=780:360,transpose=cclock";
 
 static void pgmSave(AVFrame* frame, const char* filename) {
     FILE* file = fopen(filename, "wb");
@@ -138,21 +138,23 @@ int main(int argc, char* argv[]) {
 
     if ((ret = avfilter_graph_parse_ptr(filterGraph, FILTER_DESCR,
                                         &inputs, &outputs, nullptr)) < 0) {
-        return EXIT_FAILURE;
+        return ret;
     }
 
     if ((ret = avfilter_graph_config(filterGraph, nullptr)) < 0) {
-        return EXIT_FAILURE;
+        return ret;
     }
 
     avfilter_inout_free(&inputs);
     avfilter_inout_free(&outputs);
 
     AVPacket packet;
+    int index = 0;
     // Read all packets.
-    while (true) {
-        if ((ret = av_read_frame(inputFormatContext, &packet)) < 0)
-            break;
+    // Seek到第5s进行解码
+    int64_t timestamp = 5 * AV_TIME_BASE;
+    av_seek_frame(inputFormatContext, videoStreamIndex, timestamp, AVSEEK_FLAG_BACKWARD);
+    while (av_read_frame(inputFormatContext, &packet) >= 0 && index < 5) {
 
         if (packet.stream_index == videoStreamIndex) {
             ret = avcodec_send_packet(decodeContext, &packet);
@@ -185,9 +187,9 @@ int main(int argc, char* argv[]) {
                     if (ret < 0)
                         return ret;
 
-                    if (decodeContext->frame_number > 50 && decodeContext->frame_number < 55) {
+                    if (index++ < 5) {
                         char buf[1024];
-                        snprintf(buf, sizeof(buf), "out/%s-%d.pgm", "frame", decodeContext->frame_number);
+                        snprintf(buf, sizeof(buf), "out/filter-%s-%d.pgm", "frame", index);
                         pgmSave(filterFrame, buf);
                     }
 
