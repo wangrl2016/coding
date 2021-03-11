@@ -3,8 +3,9 @@
 import argparse
 import os
 import threading
+from datetime import datetime
 
-from src import utils, info, phone
+from src import utils, info, phone, checkin, sign
 
 MAX_PHOTOS_STORE = 50
 
@@ -17,9 +18,49 @@ def cycle(device):
     # 滑动手机打开屏幕
     phone.swipe_down_to_up(device, w / 2, h)
 
+    phone.go_home(device)
+
+    phone_packages = phone.list_packages(device)
+    run_apps = []
+    for p in info.packages_dict:
+        if phone_packages.__contains__(info.packages_dict[p]):
+            run_apps.append(p)
+
 
 def run(device):
+    # 获取手机的大小
     (w, h) = phone.get_size(device)
+    # 滑动手机打开屏幕
+    phone.swipe_down_to_up(device, w / 2, h)
+    # 回到手机主页
+    phone.go_home(device)
+
+    properties = phone.get_device_properties(device)
+    for p in properties:
+        if p.__contains__('vivo'):
+            for line in properties:
+                if line.__contains__('ro.vivo.market.name'):
+                    info.contexts[device]['phone_name'] = 'vivo'
+                    print(line)
+        if p.__contains__('Xiaomi'):
+            for line in properties:
+                if line.__contains__('ro.product.model'):
+                    print(line)
+
+    while True:
+        while datetime.now().hour.__eq__(0):
+            print('所有程序的签到工作 ' + datetime.now().__str__())
+            for a in info.apps:
+                if utils.is_coordinate_checkin(a):
+                    getattr(checkin, a)(device, w, h)
+                else:
+                    getattr(checkin, a)(device)
+                    # 所有程序的签到工作
+                    getattr(sign, a)(device, w, h)
+                    phone.stop_app(device, info.packages_dict[a])
+
+        while datetime.now().hour == 1:
+            print('今日头条的工作内容')
 
 
 def main(args):

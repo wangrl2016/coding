@@ -53,26 +53,25 @@ class Application(tk.Frame):
 
 
 if __name__ == '__main__':
-    run_threads = []
-
-    root = tk.Tk()
-
-    root.title('手动控制系统')
-
     devices = phone.get_devices()
     if not devices:
         print('没有发现设备')
         exit(0)
 
     out_dir = 'out/'
+    # 清理可能存在的文件
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+    os.mkdir(out_dir)
+
+    run_threads = []
+
+    root = tk.Tk()
+    root.title('手动控制系统')
+
     scale = 0.5
 
     (w, h) = phone.get_size(devices[0])
     app = Application(master=root)
 
     app.mainloop()
-
-    # 清理可能存在的文件
-    if os.path.exists(out_dir):
-        shutil.rmtree(out_dir)
-    os.mkdir(out_dir)
