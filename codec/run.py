@@ -35,7 +35,8 @@ if __name__ == '__main__':
     subprocess.run(['make', '-C', build_dir])
 
     examples = [
-        'PBMFormat'
+        'PBMFormat', 'BitmapFormat',
+        'WavCodec'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -46,6 +47,13 @@ if __name__ == '__main__':
             print('保存PBM图片格式')
             args.append('out/format_pgm_p5.pgm')
             args.append('out/format_ppm_p6.ppm')
+        elif index == len(examples) - 2:
+            print('BMP格式保存为PPM图片')
+            args.append('../res/sample-640x426.bmp')
+            args.append('out/bitmap2ppm.ppm')
+        elif index == len(examples) - 3:
+            print('解码WAV音频格式')
+            args.append('../res/sample-wav-1m.wav')
 
         subprocess.run(args)
         print()

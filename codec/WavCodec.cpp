@@ -17,12 +17,12 @@ WavCodec<T>::WavCodec() {
 }
 
 template<class T>
-WavCodec<T>::WavCodec(std::string filePath) {
+WavCodec<T>::WavCodec(const std::string& filePath) {
     load(filePath);
 }
 
 template<class T>
-bool WavCodec<T>::load(std::string filePath) {
+bool WavCodec<T>::load(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.good()) {
         std::cout << "Cannot load file " << filePath << std::endl;
@@ -115,6 +115,28 @@ bool WavCodec<T>::decodeWaveFile(std::vector<uint8_t>& fileData) {
         return false;
     }
 
+    // Check header data is consistent.
+    if (numBytesPerSecond != static_cast<uint32_t>((numChannels * mSampleRate * mBitDepth) / 8) ||
+        numBytesPerBlock != (numChannels * numBytesPerSample)) {
+        std::cout << "The header data in this WAV file seems to be inconsistent" << std::endl;
+        return false;
+    }
+
+    if (mBitDepth != 8 && mBitDepth != 16 && mBitDepth != 24 && mBitDepth != 32) {
+        std::cout << "This file has a bit depth that is not 8, 16, 24, or 32 bits" << std::endl;
+        return false;
+    }
+
+    // Data chunk
+    int d = indexOfDataChunk;
+    std::string dataChunkID(fileData.begin() + d, fileData.begin() + d + 4);
+    int32_t dataChunkSize = fourBytesToInt(fileData, d + 4);
+
+    int numSamples = dataChunkSize / (numChannels * mBitDepth / 8);
+    int sampleStartIndex = indexOfDataChunk + 8;
+
+
+
     return true;
 }
 
@@ -166,7 +188,7 @@ int16_t WavCodec<T>::twoByteToInt(std::vector<uint8_t>& source, int startIndex, 
 
 int main(int argc, char** argv) {
     WavCodec<float>* wav = new WavCodec<float>();
-    wav->load("../../res/sample-wav-44k.wav");
+    wav->load(argv[1]);
 
     return 0;
 }

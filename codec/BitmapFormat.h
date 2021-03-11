@@ -73,7 +73,7 @@ typedef struct RGBA {
     uint8_t bAlpha;
 } RGBA;
 
-typedef struct BGRA {
+struct BGRA {
     uint8_t bBlue;
     uint8_t bGreen;
     uint8_t bRed;

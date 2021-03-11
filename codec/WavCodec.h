@@ -57,14 +57,22 @@ public:
     WavCodec();
 
     // Constructor, using a given file path to load a file.
-    WavCodec(std::string filePath);
+    WavCodec(const std::string& filePath);
 
     /**
      * Loads an audio file from a given file path.
      *
      * @return true if the file was successfully loaded
      */
-    bool load(std::string filePath);
+    bool load(const std::string& filePath);
+
+    /**
+     * A vector of vectors holding the audio samples for the WavCodec. You can
+     * access the samples by channel and then by sample index.
+     *
+     * mSamples[channel][sampleIndex]
+     */
+    AudioBuffer mSamples;
 
 private:
 

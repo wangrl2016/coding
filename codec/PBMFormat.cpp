@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        printf("Usage: %s output_file1 output_file2");
+        printf("Usage: %s output_file1 output_file2", argv[0]);
         exit(EXIT_SUCCESS);
     }
 
