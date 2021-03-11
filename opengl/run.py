@@ -28,17 +28,14 @@ if __name__ == '__main__':
         os.mkdir(build_dir)
 
     if not cmake_executable():
-        print('没有安装CMake构建工具')
+        print('请手动安装CMake库')
         exit(0)
 
-    subprocess.run([cmake_executable(), '-S', '-', '-B', build_dir])
+    subprocess.run([cmake_executable(), '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
 
     examples = [
-        'DisplayImage',
-        'ImageEnhance',
-        'DrawContours',
-        'BlendMode'
+        'HelloWindow'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -46,21 +43,7 @@ if __name__ == '__main__':
         args = [exe]
 
         if index == len(examples) - 1:
-            print('显示图片')
-            args.append('../res/sunflower-girl.png')
-        elif index == len(examples) - 2:
-            print('图像增强')
-            args.append('../res/sunflower-girl.png')
-            args.append('out/image-enhance0.png')
-            args.append('out/image-enhance1.png')
-        elif index == len(examples) - 3:
-            print('绘制等高线')
-            args.append('../res/sunflower-girl.png')
-            args.append('out/fill-contours.svg')
-        elif index == len(examples) - 4:
-            print('混合模式')
-            args.append('../res/model-girl-warm.jpeg')
-            args.append('../res/model-girl-cold.jpeg')
+            print('窗口输出')
 
         subprocess.run(args)
         print()

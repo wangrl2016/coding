@@ -18,7 +18,7 @@ y = r * sin(2 * PI * i)
 
 - [ ] 球的坐标
 
-! [球的坐标](../res/sphere-coord.png)
+![球的坐标](../res/sphere-coord.png)
 
 - [ ] 圆柱的坐标
 

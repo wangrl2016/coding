@@ -47,7 +47,7 @@ if __name__ == '__main__':
         print('请手动安装CMake程序或者FFmpeg库')
         exit(0)
 
-    subprocess.run([cmake_executable(), build_dir])
+    subprocess.run([cmake_executable(), '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
 
     examples = ['Metadata', 'Dump',

@@ -24,13 +24,11 @@ int main(int argc, char** argv) {
     }
 
     cv::Mat src = cv::imread(inputImage, cv::IMREAD_UNCHANGED);
-
-    int width = src.cols;
-    int height = src.rows;
-
     CV_Assert(src.depth() == CV_8U);
     CV_Assert(src.channels() == 4);
 
+    int width = src.cols;
+    int height = src.rows;
     int channels = src.channels();
 
     cv::Mat img;
