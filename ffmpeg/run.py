@@ -105,7 +105,7 @@ if __name__ == '__main__':
             args.append('../res/moon-night.aac')
         elif index == len(examples) - 13:
             print('合成音视频')
-            args.append('out/muxing-audio-video.mp4')
+            args.append('out/muxing-h264-aac.mp4')
         elif index == len(examples) - 14:
             print('容器转换(MP4->MOV)')
             args.append('../res/big-buck-bunny.mp4')
