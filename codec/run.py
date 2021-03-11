@@ -20,14 +20,32 @@ def cmake_executable():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('out'):
-        os.mkdir('out')
+    out_dir = 'out'
+    build_dir = 'build'
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+    if not os.path.exists(build_dir):
+        os.mkdir(build_dir)
 
-    if cmake_executable() is None:
+    if not cmake_executable():
+        print('请手动安装CMake库')
         exit(0)
 
-    build_dir = 'build'
-
-    subprocess.run([cmake_executable(), build_dir])
+    subprocess.run([cmake_executable(), '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
-    print()
+
+    examples = [
+        'PBMFormat'
+    ]
+
+    for index, example in enumerate(reversed(examples)):
+        exe = os.path.join(build_dir, example)
+        args = [exe]
+
+        if index == len(examples) - 1:
+            print('保存PBM图片格式')
+            args.append('out/format_pgm_p5.pgm')
+            args.append('out/format_ppm_p6.ppm')
+
+        subprocess.run(args)
+        print()

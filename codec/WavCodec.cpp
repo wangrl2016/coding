@@ -121,7 +121,7 @@ bool WavCodec<T>::decodeWaveFile(std::vector<uint8_t>& fileData) {
 template<class T>
 int WavCodec<T>::getIndexOfChunk(std::vector<uint8_t>& source, const std::string& chunkHeaderID, int startIndex,
                                  Endian endian) {
-    constexpr int dataLen = 4;
+    int dataLen = 4;
     assert(chunkHeaderID.size() == dataLen);
 
     int i = startIndex;

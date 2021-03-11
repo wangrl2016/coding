@@ -30,13 +30,13 @@
  * indicate a failure to load a file, or that one hasn't been
  * loaded yet.
  */
-enum class AudioFileFormat {
+enum AudioFileFormat {
     ERROR,
     NOT_LOADED,
     WAVE,
 };
 
-enum class Endian {
+enum Endian {
     LittleEndianess,
     BigEndianess
 };
@@ -52,7 +52,7 @@ enum WavAudioFormat {
 template<class T>
 class WavCodec {
 public:
-    typedef std::vector<std::vector<T>> AudioBuffer;
+    typedef std::vector<std::vector<T> > AudioBuffer;
 
     WavCodec();
 

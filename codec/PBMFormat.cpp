@@ -7,13 +7,18 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s output_file1 output_file2");
+        exit(EXIT_SUCCESS);
+    }
+
     const int width = 128;
     const int height = 76;
 
     std::ofstream ofs;
 
     // P5
-    ofs.open("../out/format_pgm_p5.pgm");
+    ofs.open(argv[1]);
     ofs << "P5\n" << width << " " << height << "\n255\n";
 
     std::vector<float> buffer1(width * height);
@@ -26,7 +31,7 @@ int main(int argc, char* argv[]) {
     ofs.close();
 
     // P6
-    ofs.open("../out/format_ppm_p6.ppm");
+    ofs.open(argv[2]);
     ofs << "P6\n" << width << " " << height << "\n255\n";
 
     std::vector<float> buffer2(width * height * 3);
