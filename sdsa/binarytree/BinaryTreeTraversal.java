@@ -189,9 +189,9 @@ public class BinaryTreeTraversal {
         postOrderRecursion(tree.root);
         System.out.print("\n后序迭代遍历: ");
         postOrderIteration(tree.root);
-        System.out.print("\n广度遍历: ");
+        System.out.print("\n广度优先遍历: ");
         levelOrder(tree.root);
-        System.out.print("\n深度遍历: ");
+        System.out.print("\n深度优先遍历: ");
         deepOrder(tree.root);
     }
 }

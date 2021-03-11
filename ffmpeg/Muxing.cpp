@@ -7,9 +7,13 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
+#include <libavutil/timestamp.h>
+#include <libswscale/swscale.h>
+#include <libavutil/avassert.h>
 }
 
 #define STREAM_FRAME_RATE 24
+#define STREAM_DURATION 10
 
 // A wrapper around a single output AVStream.
 typedef struct OutputStream {
@@ -263,6 +267,179 @@ static void openAudio(AVFormatContext* formatContext, AVCodec* codec, OutputStre
     }
 }
 
+static void logPacket(const AVFormatContext* formatContext, const AVPacket* packet) {
+    AVRational* timeBase = &formatContext->streams[packet->stream_index]->time_base;
+    char packetPts[AV_TS_MAX_STRING_SIZE];
+    char packetPtsTime[AV_TS_MAX_STRING_SIZE];
+    char packetDts[AV_TS_MAX_STRING_SIZE];
+    char packetDtsTime[AV_TS_MAX_STRING_SIZE];
+    char duration[AV_TS_MAX_STRING_SIZE];
+    char durationTime[AV_TS_MAX_STRING_SIZE];
+    printf("pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s stream_index:%d\n",
+           av_ts_make_string(packetPts, packet->pts),
+           av_ts_make_time_string(packetPtsTime, reinterpret_cast<int64_t>(packetPts), timeBase),
+           av_ts_make_string(packetDts, packet->dts),
+           av_ts_make_time_string(packetDtsTime, reinterpret_cast<int64_t>(packetDts), timeBase),
+           av_ts_make_string(duration, packet->duration),
+           av_ts_make_time_string(durationTime, packet->duration, timeBase),
+           packet->stream_index);
+}
+
+static int writeFrame(AVFormatContext* formatContext, AVCodecContext* codecContext,
+                      AVStream* stream, AVFrame* frame) {
+    int ret;
+
+    // Send the frame to the encoder.
+    ret = avcodec_send_frame(codecContext, frame);
+    if (ret < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Error sending a frame wo the encoder\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while (ret >= 0) {
+        AVPacket packet = {0};
+        ret = avcodec_receive_packet(codecContext, &packet);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            break;
+        else if (ret < 0) {
+            av_log(nullptr, AV_LOG_ERROR, "Error encoding a frame\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Rescale output packet timestamp values from codec to stream timebase.
+        av_packet_rescale_ts(&packet, codecContext->time_base, stream->time_base);
+
+        // Write the compressed frame to the media file.
+        logPacket(formatContext, &packet);
+        ret = av_interleaved_write_frame(formatContext, &packet);
+        av_packet_unref(&packet);
+        if (ret < 0) {
+            av_log(nullptr, AV_LOG_ERROR, "Error while writing output packet\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    return ret == AVERROR_EOF;
+}
+
+static void fillYUVImage(AVFrame* frame, int index, int width, int height) {
+    // Y
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            frame->data[0][y * frame->linesize[0] + x] = x + y + index * 3;
+
+    // Cb and Cr
+    for (int y = 0; y < height / 2; y++) {
+        for (int x = 0; x < width / 2; x++) {
+            frame->data[1][y * frame->linesize[1] + x] = 128 + y + index * 2;
+            frame->data[2][y * frame->linesize[2] + x] = 64 + x + index * 5;
+        }
+    }
+}
+
+static AVFrame* getVideoFrame(OutputStream* outputStream) {
+    AVCodecContext* codecContext = outputStream->codecContext;
+
+    // Check if we want to generate more frames.
+    if (av_compare_ts(outputStream->nextPts, codecContext->time_base,
+                      STREAM_DURATION, (AVRational) {1, 1}) > 0)
+        return nullptr;
+
+    // When we pass a frame to the encoder, it may keep a reference to it internally;
+    // make sure we do not overwrite it here.
+    if (av_frame_make_writable(outputStream->frame) < 0)
+        exit(EXIT_FAILURE);
+
+    if (codecContext->pix_fmt != AV_PIX_FMT_YUV420P) {
+        // As we only generate a YUV420P picture, we must convert it
+        // to the codec pixel format if need.
+        if (!outputStream->swsContext) {
+            outputStream->swsContext = sws_getContext(codecContext->width,
+                                                      codecContext->height,
+                                                      AV_PIX_FMT_YUV420P,
+                                                      codecContext->width,
+                                                      codecContext->height,
+                                                      codecContext->pix_fmt,
+                                                      SWS_BICUBIC,
+                                                      nullptr, nullptr, nullptr);
+            if (!outputStream->swsContext) {
+                av_log(nullptr, AV_LOG_ERROR, "Could not initialize the conversion context\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        fillYUVImage(outputStream->frame, outputStream->nextPts, codecContext->width, codecContext->height);
+        sws_scale(outputStream->swsContext, (const uint8_t* const*) outputStream->tmpFrame->data,
+                  outputStream->tmpFrame->linesize, 0, codecContext->height, outputStream->frame->data,
+                  outputStream->frame->linesize);
+    } else {
+        fillYUVImage(outputStream->frame, outputStream->nextPts, codecContext->width, codecContext->height);
+    }
+    outputStream->frame->pts = outputStream->nextPts++;
+    return outputStream->frame;
+}
+
+// Encode one video frame and send it to the muxer return true when encoding is finished, 0 otherwise.
+static bool writeVideoFrame(AVFormatContext* formatContext, OutputStream* outputStream) {
+    return writeFrame(formatContext, outputStream->codecContext,
+               outputStream->stream, getVideoFrame(outputStream));
+}
+
+static AVFrame* getAudioFrame(OutputStream* outputStream) {
+    AVFrame* frame = outputStream->tmpFrame;
+
+    // Check if we want to generate more frames.
+    if (av_compare_ts(outputStream->nextPts, outputStream->codecContext->time_base,
+                      STREAM_DURATION, (AVRational) {1, 1}) > 0)
+        return nullptr;
+
+    int16_t* q = (int16_t*) frame->data[0];
+    for (int j = 0; j < frame->nb_samples; j++) {
+        int v = (int) (sin(outputStream->t) * 10000);
+        for (int i = 0; i < outputStream->codecContext->channels; i++) {
+            *q++ = v;
+        }
+        outputStream->t += outputStream->tincr;
+        outputStream->tincr += outputStream->tincr2;
+    }
+    frame->pts = outputStream->nextPts;
+    outputStream->nextPts += frame->nb_samples;
+    return frame;
+}
+
+static bool writeAudioFrame(AVFormatContext* formatContext, OutputStream* outputStream) {
+    AVCodecContext* codecContext = outputStream->codecContext;
+    AVFrame* frame;
+    int ret;
+    int dstNumberSamples;
+
+    frame = getAudioFrame(outputStream);
+    if (frame) {
+        dstNumberSamples = av_rescale_rnd(swr_get_delay(outputStream->swrContext,
+                                                        codecContext->sample_rate) + frame->nb_samples,
+                                          codecContext->sample_rate, codecContext->sample_rate, AV_ROUND_UP);
+        av_assert0(dstNumberSamples == frame->nb_samples);
+
+        ret = av_frame_make_writable(outputStream->frame);
+        if (ret < 0)
+            exit(EXIT_FAILURE);
+
+        // Convert to destination format.
+        ret = swr_convert(outputStream->swrContext,
+                          outputStream->frame->data,
+                          dstNumberSamples,
+                          (const uint8_t**) frame->data, frame->nb_samples);
+        if (ret < 0) {
+            av_log(nullptr, AV_LOG_ERROR, "Error while converting\n");
+            exit(EXIT_FAILURE);
+        }
+
+        frame = outputStream->frame;
+        frame->pts = av_rescale_q(outputStream->samplesCount, (AVRational) {1, codecContext->sample_rate},
+                                  codecContext->time_base);
+        outputStream->samplesCount += dstNumberSamples;
+    }
+    return writeFrame(formatContext, codecContext, outputStream->stream, frame);
+}
+
 int main(int argc, char** argv) {
     OutputStream videoStream = {0}, audioStream = {0};
 
@@ -318,6 +495,34 @@ int main(int argc, char** argv) {
         openAudio(formatContext, audioCodec, &audioStream, option);
 
     av_dump_format(formatContext, 0, filename, true);
+
+    // Open the output file, if needed.
+    if (!(outputFormat->flags & AVFMT_NOFILE)) {
+        ret = avio_open(&formatContext->pb, filename, AVIO_FLAG_WRITE);
+        if (ret < 0) {
+            av_log(nullptr, AV_LOG_ERROR, "Could not open %s\n", filename);
+            return EXIT_FAILURE;
+        }
+    }
+
+    // Write the stream header, if any.
+    ret = avformat_write_header(formatContext, &option);
+    if (ret < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Error occurred when opening output file\n");
+        return EXIT_FAILURE;
+    }
+
+    // 只有到EOF时encodeVideo和encodeAudio才为false
+    while (encodeVideo || encodeAudio) {
+        // Select the stream to encode.
+        if (encodeVideo &&
+            (!encodeAudio) || av_compare_ts(videoStream.nextPts, videoStream.codecContext->time_base,
+                                            audioStream.nextPts, audioStream.codecContext->time_base) <= 0) {
+            encodeVideo = !writeVideoFrame(formatContext, &videoStream);
+        } else {
+            encodeAudio = !writeAudioFrame(formatContext, &audioStream);
+        }
+    }
 
     return 0;
 }
