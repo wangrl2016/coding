@@ -17,19 +17,31 @@ extern "C" {
 static const char* FILTER_DESCR = "aresample=8000,aformat=sample_fmts=s16:channel_layouts=mono";
 static const char* PLAYER = "ffplay -f s16le -ar 8000 -ac 1 -";
 
+/**
+ * 初始化音频过滤器。
+ *
+ * @param formatContext         [in] 输入文件的Context
+ * @param filterGraph           [out] 过滤图
+ * @param codecContext          [out] 解码的Context
+ * @param bufferSrcContext      [out] 输入过滤器，连接过滤图
+ * @param bufferSinkContext     [out] 输出过滤器，连接过滤图
+ * @param audioStreamIndex      [in]  音频下标
+ * @return                      小于0表示失败
+ */
 static int initFilters(AVFormatContext* formatContext,
                        AVFilterGraph** filterGraph,
                        AVCodecContext** codecContext,
                        AVFilterContext** bufferSrcContext,
                        AVFilterContext** bufferSinkContext,
-                       int audioStreamIndex, const char* filtersDescr) {
+                       int audioStreamIndex) {
     char args[512];
     int ret = 0;
     const AVFilter* abufferSrc = avfilter_get_by_name("abuffer");
     const AVFilter* aBufferSink = avfilter_get_by_name("abuffersink");
     AVFilterInOut* outputs = avfilter_inout_alloc();
     AVFilterInOut* inputs = avfilter_inout_alloc();
-    static const enum AVSampleFormat outSampleFormats[] = {AV_SAMPLE_FMT_S16, static_cast<const AVSampleFormat>(-1)};
+    static const enum AVSampleFormat outSampleFormats[] = {AV_SAMPLE_FMT_S16,
+                                                           static_cast<const AVSampleFormat>(-1)};
     static const int64_t outChannelLayouts[] = {AV_CH_LAYOUT_MONO, -1};
     static const int outSampleRates[] = {8000, -1};
     const AVFilterLink* outLink;
@@ -131,8 +143,8 @@ static void printFrame(const AVFrame* frame) {
     const uint16_t* pEnd = p + n;
 
     while (p < pEnd) {
-        fputc(*p && 0xff, stdout);
-        fputc(*p >> 8 && 0xff, stdout);
+        fputc(*p & 0xff, stdout);
+        fputc(*p >> 8 & 0xff, stdout);
         p++;
     }
     fflush(stdout);
@@ -192,10 +204,10 @@ int main(int argc, char** argv) {
 
     if ((ret = initFilters(formatContext, &filterGraph,
                            &codecContext, &bufferSrcContext, &bufferSinkContext,
-                           audioStreamIndex, FILTER_DESCR)) < 0)
+                           audioStreamIndex)) < 0)
         goto end;
 
-    while (av_read_frame(formatContext, &packet) >= 0) {
+    while ((ret = av_read_frame(formatContext, &packet)) >= 0) {
         if (packet.stream_index == audioStreamIndex) {
             ret = avcodec_send_packet(codecContext, &packet);
             if (ret < 0) {
@@ -230,7 +242,6 @@ int main(int argc, char** argv) {
                 }
             }
         }
-
         av_packet_unref(&packet);
     }
 
@@ -241,7 +252,6 @@ int main(int argc, char** argv) {
     av_frame_free(&frame);
     av_frame_free(&filterFrame);
 
-    // TODO: Error occurred: Resource temporarily unavailable
     if (ret < 0 && ret != AVERROR_EOF) {
         char str[AV_ERROR_MAX_STRING_SIZE];
         av_log(nullptr, AV_LOG_ERROR, "Error occurred: %s\n",
