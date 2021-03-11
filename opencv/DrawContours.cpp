@@ -5,16 +5,31 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <fstream>
+#include <string>
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
-        printf("Usage: %s input_image output_file\n", argv[0]);
+    std::string inputImage;
+    std::string outputSvg;
+    if (argc == 2) {
+        inputImage = argv[1];
+        size_t pos = inputImage.rfind('.');
+        outputSvg = inputImage.substr(0, pos) + std::string(".svg");
+    } else if (argc == 3) {
+        inputImage = argv[1];
+        outputSvg = argv[2];
+    } else {
+        printf("Usage: %s input_image output_file\n"
+               "Use input path as output if only one argument", argv[0]);
         return EXIT_FAILURE;
     }
 
-    cv::Mat src = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
+    cv::Mat src = cv::imread(inputImage, cv::IMREAD_UNCHANGED);
+
+    int width = src.cols;
+    int height = src.rows;
 
     CV_Assert(src.depth() == CV_8U);
+    CV_Assert(src.channels() == 4);
 
     int channels = src.channels();
 
@@ -34,40 +49,43 @@ int main(int argc, char** argv) {
         }
     }
 
-    // cv::imwrite(argv[2], img);
-
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(img, contours, hierarchy,
                      cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-    std::vector<std::vector<cv::Point>> hull(contours.size());
-    for (size_t i = 0; i < contours.size(); i++) {
-        cv::convexHull(contours[i], hull[i]);
-    }
-
-    cv::Mat drawing = cv::Mat::zeros(img.size(), CV_8UC3);
-
-    for (size_t i = 0; i < contours.size(); i++) {
-        cv::Scalar color = cv::Scalar(255, 255, 0);
-        cv::drawContours(drawing, contours, (int) i, color,
-                         2, cv::LINE_8, hierarchy, 0);
-        cv::drawContours(drawing, hull, (int) i, color);
-    }
-
     std::cout << "Contours size " << contours.size() << std::endl;
 
-    std::ofstream file(argv[2]);
-
-    for (size_t i = 0; i < contours.size(); i++) {
-        std::vector<cv::Point> contour = contours[i];
+    std::string path;
+    for (auto contour : contours) {
         for (int j = 0; j < contour.size(); j++) {
-            std::cout << contour[j];
+            std::string temp = std::to_string(contour[j].x) + std::string(" ") +
+                               std::to_string(contour[j].y);
+            if (j == 0) {
+                path += std::string(" M ") + temp;
+            } else {
+                path += std::string(" L ") + temp;
+            }
         }
-        std::cout << std::endl;
+        path += " Z ";
     }
 
-    cv::imwrite("../out/draw.png", drawing);
+    std::string svg = "<svg width=\"%d\" height=\"%d\" viewBox=\"0 0 %d %d\" version=\"1.1\" "
+                      "xmlns=\"http://www.w3.org/2000/svg\" "
+                      "xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+                      "<path d=\"%s\" fill=\"#00ffcc\"></path></svg>";
+
+    // C++中字符串以\0结束
+    // -9 = -(len(%d) * 4 + len(%s)) + 1
+    int size = svg.size() + path.size() - 9 +
+               (std::to_string(width).size() + std::to_string(height).size()) * 2;
+
+    char args[size];
+    snprintf(args, size, svg.c_str(), width, height, width, height, path.c_str());
+
+    std::ofstream file(outputSvg);
+    // 不要将\0写入文件中
+    file.write(args, size - 1);
 
     return EXIT_SUCCESS;
 }
