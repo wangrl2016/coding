@@ -22,7 +22,6 @@ public class BinaryTree {
     // The root of the binary tree.
     private Node root;
 
-
     public BinaryTree() {
         root = null;
     }

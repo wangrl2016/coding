@@ -4,10 +4,11 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <fstream>
 
 int main(int argc, char** argv) {
-    if (argc != 4) {
-        printf("Usage: %s input output1 output2\n", argv[0]);
+    if (argc != 3) {
+        printf("Usage: %s input_image output_file\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -33,12 +34,17 @@ int main(int argc, char** argv) {
         }
     }
 
-    cv::imwrite(argv[2], img);
+    // cv::imwrite(argv[2], img);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(img, contours, hierarchy,
                      cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+    std::vector<std::vector<cv::Point>> hull(contours.size());
+    for (size_t i = 0; i < contours.size(); i++) {
+        cv::convexHull(contours[i], hull[i]);
+    }
 
     cv::Mat drawing = cv::Mat::zeros(img.size(), CV_8UC3);
 
@@ -46,9 +52,22 @@ int main(int argc, char** argv) {
         cv::Scalar color = cv::Scalar(255, 255, 0);
         cv::drawContours(drawing, contours, (int) i, color,
                          2, cv::LINE_8, hierarchy, 0);
+        cv::drawContours(drawing, hull, (int) i, color);
     }
 
-    cv::imwrite(argv[3], drawing);
+    std::cout << "Contours size " << contours.size() << std::endl;
+
+    std::ofstream file(argv[2]);
+
+    for (size_t i = 0; i < contours.size(); i++) {
+        std::vector<cv::Point> contour = contours[i];
+        for (int j = 0; j < contour.size(); j++) {
+            std::cout << contour[j];
+        }
+        std::cout << std::endl;
+    }
+
+    cv::imwrite("../out/draw.png", drawing);
 
     return EXIT_SUCCESS;
 }
