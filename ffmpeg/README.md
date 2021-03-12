@@ -91,10 +91,21 @@ ffplay -f rawvideo -pix_fmt rgb24 -video_size 800x600 out/scale-video.raw
 
 - [x] 视频filter处理
 
-- [ ] 音频filter处理
+- [x] 音频filter处理
 
 - [ ] MP3格式转码成为AAC格式
 
-- [ ] 合成音视频
+- [x] 合成音视频
+
+```
+pts:60928 pts_time:1.14523e+10 dts:58880 dts_time:1.14523e+10 duration:0 duration_time:0 stream_index:0
+pts:259072 pts_time:3.19107e+09 dts:259072 dts_time:3.19107e+09 duration:1024 duration_time:0.02322 stream_index:1
+pts:260096 pts_time:3.19107e+09 dts:260096 dts_time:3.19107e+09 duration:1024 duration_time:0.02322 stream_index:1
+pts:59904 pts_time:1.14523e+10 dts:59392 dts_time:1.14523e+10 duration:0 duration_time:0 stream_index:0
+pts:261120 pts_time:3.19107e+09 dts:261120 dts_time:3.19107e+09 duration:1024 duration_time:0.02322 stream_index:1
+pts:262144 pts_time:3.19107e+09 dts:262144 dts_time:3.19107e+09 duration:1024 duration_time:0.02322 stream_index:1
+```
 
 - [x] 容器转换(MP4->MOV)
+
+- [ ] 两个声音混合

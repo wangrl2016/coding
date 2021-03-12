@@ -102,7 +102,7 @@ if __name__ == '__main__':
         elif index == len(examples) - 12:
             print('MP3格式转码成为AAC格式')
             args.append('../res/moon-night.mp3')
-            args.append('../res/moon-night.aac')
+            args.append('out/moon-night.mp4')
         elif index == len(examples) - 13:
             print('合成音视频')
             args.append('out/muxing-h264-aac.mp4')
