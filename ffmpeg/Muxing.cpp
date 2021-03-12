@@ -285,8 +285,8 @@ static void logPacket(const AVFormatContext* formatContext, const AVPacket* pack
            packet->stream_index);
 }
 
-static int writeFrame(AVFormatContext* formatContext, AVCodecContext* codecContext,
-                      AVStream* stream, AVFrame* frame) {
+static bool writeFrame(AVFormatContext* formatContext, AVCodecContext* codecContext,
+                       AVStream* stream, AVFrame* frame) {
     int ret;
 
     // Send the frame to the encoder.
@@ -308,6 +308,8 @@ static int writeFrame(AVFormatContext* formatContext, AVCodecContext* codecConte
 
         // Rescale output packet timestamp values from codec to stream timebase.
         av_packet_rescale_ts(&packet, codecContext->time_base, stream->time_base);
+        // 设置packet的index
+        packet.stream_index = stream->index;
 
         // Write the compressed frame to the media file.
         logPacket(formatContext, &packet);
@@ -380,7 +382,7 @@ static AVFrame* getVideoFrame(OutputStream* outputStream) {
 // Encode one video frame and send it to the muxer return true when encoding is finished, 0 otherwise.
 static bool writeVideoFrame(AVFormatContext* formatContext, OutputStream* outputStream) {
     return writeFrame(formatContext, outputStream->codecContext,
-               outputStream->stream, getVideoFrame(outputStream));
+                      outputStream->stream, getVideoFrame(outputStream));
 }
 
 static AVFrame* getAudioFrame(OutputStream* outputStream) {

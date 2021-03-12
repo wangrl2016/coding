@@ -1,7 +1,16 @@
 # coding
-Personal coding exercises
 
-主要涉及音视频和图像算法。
+Personal coding exercises (个人代码练习)
+
+使用`git_sync_deps.py`下载C/C++程序需要的第三方库。
+
+`Dockerfile`文件描述构建项目的整体步骤。
+
+```
+sudo docker build -t coding-develop:0.1.0 .
+```
+
+邮箱wangrl2016@gmail.com
 
 欢迎关注头条号 火车上遇见
 
@@ -110,13 +119,6 @@ Personal coding exercises
 参考Digital Image Processing教材编写
 
 ## 数学基础
-
-
-## Docker
-
-```
-docker build -t coding:0.1.0 .
-```
 
 ## 打赏作者
 

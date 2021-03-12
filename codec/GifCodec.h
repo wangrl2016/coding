@@ -3,15 +3,15 @@
 //
 
 /**
+ * 解码Gif文件
+ *
  * Gif协议
  *
  * https://www.w3.org/Graphics/GIF/spec-gif89a.txt
  *
  * 参考实现1
  *
- * https://github.com/bumptech/glide/
- *
- * third_party/gif_decoder
+ * https://github.com/bumptech/glide/third_party/gif_decoder
  *
  * 参考实现2
  *

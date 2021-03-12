@@ -3,6 +3,8 @@
 //
 
 /**
+ * 解码WAV文件
+ *
  * 协议
  *
  * http://soundfile.sapp.org/doc/WaveFormat/

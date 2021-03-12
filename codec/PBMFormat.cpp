@@ -6,6 +6,10 @@
 #include <fstream>
 #include <iostream>
 
+/**
+ * 构造pbm图片格式
+ */
+
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         printf("Usage: %s output_file1 output_file2", argv[0]);

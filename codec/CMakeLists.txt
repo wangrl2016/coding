@@ -14,8 +14,6 @@ add_executable(Mp3Codec Mp3Codec.cpp)
 
 add_executable(H264Codec H264Codec.cpp)
 
-add_executable(Webp2Png Webp2Png.cpp)
-
 add_subdirectory(image_decoders)
 
 add_executable(GifDecodeTest

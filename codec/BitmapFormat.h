@@ -7,6 +7,10 @@
 /**
  * Windows Bitmap File Loader
  *
+ * 读取bitmap文件进行解码
+ *
+ * void savePPMImage(const char* filename)函数将解码数据保存为ppm图片格式
+ *
  * 协议网址
  *
  * https://cdn.hackaday.io/files/274271173436768/Simplified%20Windows%20BMP%20Bitmap%20File%20Format%20Specification.htm
