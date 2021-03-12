@@ -29,7 +29,8 @@ if __name__ == '__main__':
 
     examples = [
         'HelloConcurrent',
-        'AccessLocalVariable'
+        'AccessLocalVariable',
+        'WaitingThreadFinish'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -40,6 +41,10 @@ if __name__ == '__main__':
             print('A simple Hello Concurrent World program')
         elif index == len(examples) - 2:
             print('A function that returns while a thread still has access to local variables')
+        elif index == len(examples) - 3:
+            print('Waiting for a thread to finish')
+        elif index == len(examples) - 4:
+            print('Using RAII to wait for a thread to complete')
 
         subprocess.run(args)
         print()

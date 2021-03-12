@@ -5,6 +5,8 @@ project(CppThread)
 set(EXAMPLES
         HelloConcurrent
         AccessLocalVariable
+        WaitingThreadFinish
+        RAII
         )
 
 foreach (EXAMPLE ${EXAMPLES})
