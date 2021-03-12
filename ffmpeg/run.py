@@ -41,7 +41,7 @@ if __name__ == '__main__':
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
     if not os.path.exists(build_dir):
-        os.makedirs(build_dir)
+        os.mkdir(build_dir)
 
     if not cmake_executable() or not ffmpeg_library():
         print('请手动安装CMake程序或者FFmpeg库')
