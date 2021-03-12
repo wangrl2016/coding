@@ -28,7 +28,8 @@ if __name__ == '__main__':
     subprocess.run(['make', '-C', build_dir])
 
     examples = [
-        'HelloConcurrent'
+        'HelloConcurrent',
+        'AccessLocalVariable'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -37,6 +38,8 @@ if __name__ == '__main__':
 
         if index == len(examples) - 1:
             print('A simple Hello Concurrent World program')
+        elif index == len(examples) - 2:
+            print('A function that returns while a thread still has access to local variables')
 
         subprocess.run(args)
         print()
