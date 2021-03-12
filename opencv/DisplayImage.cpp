@@ -6,6 +6,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/hal/interface.h>
 
+// 去掉不透明的残余色，并对图片进行有损压缩，显示在屏幕上。
+
 static cv::Mat& ScanImageAndReduceIterator(cv::Mat& I, const uchar* const table) {
     // Accept only char type matrices.
     CV_Assert(I.depth() == CV_8U);
