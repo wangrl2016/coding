@@ -6,7 +6,8 @@ WORKDIR /app
 
 # 下载依赖
 RUN apt update \
-    && apt install -y git vim openjdk-11-jdk nasm curl python libstdc++6 libasound2 \
+    && apt install -y git vim openjdk-11-jdk nasm curl python libstdc++6 libasound \
+                        libssl-dev \
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \
@@ -19,9 +20,18 @@ RUN apt update \
     && cd opencv \
     && mkdir -p build \
     && cd build \
-    && cmake .. \
+    && make -j4 \
+    && sudo make install \
+    && cd ..\
+    # 安装CMake构建工具
+    && git clone --depth 10 https://github.com/Kitware/CMake/ \
+    && cd CMake \
+    && ./configure \
     && make -j4 \
     && sudo make install
+    && cd ..
+
+
 
 
 CMD python3 /app/git_sync_deps.py
