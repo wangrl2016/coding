@@ -93,7 +93,7 @@ ffplay -f rawvideo -pix_fmt rgb24 -video_size 800x600 out/scale-video.raw
 
 - [x] 音频filter处理
 
-- [ ] MP3格式转码成为AAC格式
+- [x] MP3格式转码成为AAC格式
 
 - [x] 合成音视频
 

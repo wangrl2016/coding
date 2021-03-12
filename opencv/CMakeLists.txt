@@ -14,5 +14,5 @@ set(EXAMPLES
 
 foreach (EXAMPLE ${EXAMPLES})
     add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
-    target_link_libraries(${EXAMPLE} ${OpenCV_LIBS})
+    target_link_libraries(${EXAMPLE} ${OpenCV_LIBS} -static)
 endforeach ()

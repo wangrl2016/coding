@@ -19,7 +19,7 @@ static int get_format_from_sample_fmt(const char** fmt,
             {AV_SAMPLE_FMT_FLT, "f32be", "f32le"},
             {AV_SAMPLE_FMT_DBL, "f64be", "f64le"},
     };
-    *fmt = NULL;
+    *fmt = nullptr;
     for (i = 0; i < FF_ARRAY_ELEMS(sample_fmt_entries); i++) {
         struct sample_fmt_entry* entry = &sample_fmt_entries[i];
         if (sample_fmt == entry->sample_fmt) {
