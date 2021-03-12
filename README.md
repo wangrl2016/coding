@@ -2,16 +2,18 @@
 
 Personal coding exercises (个人代码练习)
 
-使用`git_sync_deps.py`下载C/C++程序需要的第三方库。
+* 使用`git_sync_deps.py`下载C/C++程序需要的第三方库。
 
-`Dockerfile`文件展示项目构建过程。
+* `Dockerfile`文件展示项目构建过程。
 
 ```
 sudo docker build -t coding-develop:0.1.0 .
 sudo docker run -it coding-develop:0.1.0 /bin/bash
 ```
 
-欢迎关注头条号 火车上遇见
+* 每个项目下的`run.py`自动运行示例程序。
+
+* 欢迎关注头条号 火车上遇见
 
 ![二维码关注](res/personal-qrcode.png)
 
