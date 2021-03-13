@@ -34,7 +34,8 @@ if __name__ == '__main__':
         'RAII',
         'DetachThread',
         'ReturnThread',
-        'ScopedThread'
+        'ScopedThread',
+        'VectorThread'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -56,6 +57,8 @@ if __name__ == '__main__':
             print('Returning a std::thread from a function')
         elif no == 7:
             print('ScopedThread and example usage')
+        elif no == 8:
+            print('Spawns some threads and waits for them to finish')
 
         subprocess.run(args)
         print()

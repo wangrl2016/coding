@@ -10,6 +10,7 @@ set(EXAMPLES
         DetachThread
         ReturnThread
         ScopedThread
+        VectorThread
         )
 
 foreach (EXAMPLE ${EXAMPLES})
