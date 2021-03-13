@@ -35,15 +35,40 @@ if __name__ == '__main__':
     subprocess.run(['make', '-C', build_dir])
 
     examples = [
-        'HelloWindow'
+        'HelloWindow',
+        'HelloTriangle',
+        'TwoTriangle',
+        'HelloRectangle',
+        'ColorTriangle',
+        'DrawCircle',
+        'HelloTransform',
+        'HelloTexture',
+        'DrawSphere'
     ]
 
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
         args = [exe]
 
+        # 按ESC键进入下一个项目
         if index == len(examples) - 1:
             print('窗口输出')
+        elif index == len(examples) - 2:
+            print('绘制三角形')
+        elif index == len(examples) - 3:
+            print('绘制两个三角形')
+        elif index == len(examples) - 4:
+            print('绘制长方形')
+        elif index == len(examples) - 5:
+            print('绘制彩色三角形')
+        elif index == len(examples) - 6:
+            print('绘制圆形')
+        elif index == len(examples) - 7:
+            print('变换')
+        elif index == len(examples) - 8:
+            print('绘制纹理')
+        elif index == len(examples) - 9:
+            print('绘制圆球')
 
         subprocess.run(args)
         print()

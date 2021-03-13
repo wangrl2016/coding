@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sphere.getVertexSize(), sphere.getVertices(), GL_STATIC_DRAW);
-//
+
 //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphere.getIndexSize(), sphere.getIndices(), GL_STATIC_DRAW);
 

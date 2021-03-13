@@ -55,6 +55,7 @@ public:
 
     void setSmooth(bool smooth);
 
+    // 顶点的个数
     unsigned int getVertexCount() const {
         return (unsigned int) vertices.size() / 3;
     }
