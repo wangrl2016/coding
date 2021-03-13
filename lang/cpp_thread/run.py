@@ -35,7 +35,8 @@ if __name__ == '__main__':
         'DetachThread',
         'ReturnThread',
         'ScopedThread',
-        'VectorThread'
+        'VectorThread',
+        'AccumulateParallel'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -59,6 +60,8 @@ if __name__ == '__main__':
             print('ScopedThread and example usage')
         elif no == 8:
             print('Spawns some threads and waits for them to finish')
+        elif no == 9:
+            print('A naive version of std::accumulate')
 
         subprocess.run(args)
         print()

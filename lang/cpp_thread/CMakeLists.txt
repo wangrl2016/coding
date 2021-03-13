@@ -11,6 +11,7 @@ set(EXAMPLES
         ReturnThread
         ScopedThread
         VectorThread
+        AccumulateParallel
         )
 
 foreach (EXAMPLE ${EXAMPLES})
