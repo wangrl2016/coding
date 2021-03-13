@@ -19,7 +19,11 @@ sudo docker run -it coding-develop:0.1.0 /bin/bash
 
 ## 简单数据结构和算法 ([sdsa](sdsa/))
 
-参考geeksforgeeks.org网站编写
+主要参考
+
+geeksforgeeks.org网站
+
+https://github.com/TheAlgorithms/Java
 
 - [x] Array
 - [x] Linked List
