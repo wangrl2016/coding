@@ -31,23 +31,31 @@ if __name__ == '__main__':
         'HelloConcurrent',
         'AccessLocalVariable',
         'WaitingThreadFinish',
-        'DetachThread'
+        'RAII',
+        'DetachThread',
+        'ReturnThread',
+        'ScopedThread'
     ]
 
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
         args = [exe]
 
-        if index == len(examples) - 1:
+        no = len(examples) - index
+        if no == 1:
             print('A simple Hello Concurrent World program')
-        elif index == len(examples) - 2:
+        elif no == 2:
             print('A function that returns while a thread still has access to local variables')
-        elif index == len(examples) - 3:
+        elif no == 3:
             print('Waiting for a thread to finish')
-        elif index == len(examples) - 4:
+        elif no == 4:
             print('Using RAII to wait for a thread to complete')
-        elif index == len(examples) - 5:
+        elif no == 5:
             print('Detaching a thread to handle other documents')
+        elif no == 6:
+            print('Returning a std::thread from a function')
+        elif no == 7:
+            print('ScopedThread and example usage')
 
         subprocess.run(args)
         print()

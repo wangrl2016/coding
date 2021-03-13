@@ -8,6 +8,8 @@ set(EXAMPLES
         WaitingThreadFinish
         RAII
         DetachThread
+        ReturnThread
+        ScopedThread
         )
 
 foreach (EXAMPLE ${EXAMPLES})
