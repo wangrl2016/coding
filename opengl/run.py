@@ -65,8 +65,12 @@ if __name__ == '__main__':
             print('绘制圆形')
         elif index == len(examples) - 7:
             print('变换')
+            args.append('../res/foreign-girl.jpeg')
+            args.append('../res/cow-toy.png')
         elif index == len(examples) - 8:
             print('绘制纹理')
+            args.append('../res/foreign-girl.jpeg')
+            args.append('../res/cow-toy.png')
         elif index == len(examples) - 9:
             print('绘制圆球')
 
