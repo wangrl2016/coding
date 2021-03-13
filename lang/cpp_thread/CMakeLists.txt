@@ -7,6 +7,7 @@ set(EXAMPLES
         AccessLocalVariable
         WaitingThreadFinish
         RAII
+        DetachThread
         )
 
 foreach (EXAMPLE ${EXAMPLES})
