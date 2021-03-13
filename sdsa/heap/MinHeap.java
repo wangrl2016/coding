@@ -3,6 +3,14 @@ package heap;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * 堆的介绍
+ *
+ * https://ustccoder.github.io/2020/09/05/program%20Interview
+ * 
+ */
+
 public class MinHeap implements HeapInterface {
     private final List<HeapNode> minHeap;
 
@@ -61,6 +69,12 @@ public class MinHeap implements HeapInterface {
         }
     }
 
+    // Toggle an element down to its right place as long as its key is higher
+    // than any of its children's.
+    private void toggleDown(int index) {
+        int key = minHeap.get(index).getKey();
+    }
+
     @Override
     public void insertNode(HeapNode node) {
 
@@ -79,7 +93,7 @@ public class MinHeap implements HeapInterface {
         if ((index >= minHeap.size()) || (index < 0))
             throw new IndexOutOfBoundsException("Index out of heap range");
 
-        
+
     }
 
     public static void main(String[] args) {
