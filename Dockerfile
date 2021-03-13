@@ -7,7 +7,8 @@ WORKDIR /app
 # 下载依赖
 RUN apt update \
     && apt install -y git vim openjdk-11-jdk nasm curl python libstdc++6 libasound \
-                        libssl-dev \
+                        libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
+			libxi-dev \
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \
@@ -29,7 +30,10 @@ RUN apt update \
     && ./configure \
     && make -j4 \
     && sudo make install
-    && cd ..
+    && cd .. \
+    # 安装OpenGL库
+    && apt install mesa-common-dev \
+    # 安装GLFW图形显示
 
 
 

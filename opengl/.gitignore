@@ -6,3 +6,6 @@ build/
 
 # 忽略第三方库
 glm/
+
+cmake-build-debug/
+
