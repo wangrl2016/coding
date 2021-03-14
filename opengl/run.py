@@ -43,7 +43,8 @@ if __name__ == '__main__':
         'DrawCircle',
         'HelloTransform',
         'HelloTexture',
-        'DrawSphere'
+        'DrawSphere',
+        'CoordinateSystem'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -73,6 +74,12 @@ if __name__ == '__main__':
             args.append('../res/cow-toy.png')
         elif index == len(examples) - 9:
             print('绘制圆球')
+            args.append('../res/foreign-girl.jpeg')
+            args.append('../res/cow-toy.png')
+        elif index == len(examples) - 10:
+            print('坐标变换')
+            args.append('../res/foreign-girl.jpeg')
+            args.append('../res/cow-toy.png')
 
         subprocess.run(args)
         print()

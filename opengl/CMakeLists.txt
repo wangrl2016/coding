@@ -36,6 +36,6 @@ target_link_libraries(HelloTransform ${OPENGL_LIBRARIES} glfw dl)
 add_executable(DrawSphere DrawSphere.cpp glad/glad.c Sphere.cpp)
 target_link_libraries(DrawSphere ${OPENGL_LIBRARIES} glfw dl)
 
-add_executable(CoordinateSystem CoordinateSystem.cpp)
+add_executable(CoordinateSystem CoordinateSystem.cpp glad/glad.c Utils.cpp)
 target_link_libraries(CoordinateSystem ${OPENGL_LIBRARIES} glfw dl)
 
