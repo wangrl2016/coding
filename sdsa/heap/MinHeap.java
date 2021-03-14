@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * 堆的介绍
- *
- * https://ustccoder.github.io/2020/09/05/program%20Interview
- * 
+ * <p>
+ * 堆是一个完全二叉树，可以通过数组实现，数组的下标对应节点的编号。
+ * 设根节点下标为0，那么左右子节点的下标分别为1和2，通过观察可以得到
+ * 一个规律，下标为i的节点，它的左右子节点的编号为ix2+1和ix2+2。
  */
 
 public class MinHeap implements HeapInterface {
