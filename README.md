@@ -21,7 +21,7 @@ sudo docker run -it coding-develop:0.1.0 /bin/bash
 
 主要参考
 
-geeksforgeeks.org网站
+https://www.geeksforgeeks.org
 
 https://github.com/TheAlgorithms/Java
 
@@ -31,7 +31,7 @@ https://github.com/TheAlgorithms/Java
 - [x] Queue
 - [x] Binary Tree
 - [x] Binary Search Tree
-- [ ] Heap
+- [x] Heap
 - [ ] Hashing
 - [ ] Graph
 - [ ] Matrix

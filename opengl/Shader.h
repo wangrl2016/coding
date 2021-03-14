@@ -15,7 +15,7 @@ class Shader {
 public:
     unsigned int id;
 
-    Shader(const char* vertexPath, const char* fragmentPath, bool isShaderFile) {
+    Shader(const char* vertexPath, const char* fragmentPath, bool isShaderFile = false) {
         const char* vertexShaderSource;
         const char* fragmentShaderSource;
         if (isShaderFile) {

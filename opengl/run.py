@@ -44,7 +44,8 @@ if __name__ == '__main__':
         'HelloTransform',
         'HelloTexture',
         'DrawSphere',
-        'CoordinateSystem'
+        'CoordinateSystem',
+        'CameraView'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -80,6 +81,8 @@ if __name__ == '__main__':
             print('坐标变换')
             args.append('../res/foreign-girl.jpeg')
             args.append('../res/cow-toy.png')
+        elif index == len(examples) - 11:
+            print('相机视角')
 
         subprocess.run(args)
         print()

@@ -9,33 +9,27 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include_directories(glm)
 
-add_executable(HelloWindow HelloWindow.cpp glad/glad.c)
-target_link_libraries(HelloWindow ${OPENGL_LIBRARIES} glfw dl)
+set(EXAMPLES
+        HelloWindow
+        HelloTriangle
+        HelloRectangle
+        TwoTriangle
+        ColorTriangle
+        DrawCircle
+        HelloTexture
+        HelloTransform
+        DrawSphere
+        CoordinateSystem
+        CameraView
+        )
 
-add_executable(HelloTriangle HelloTriangle.cpp glad/glad.c)
-target_link_libraries(HelloTriangle ${OPENGL_LIBRARIES} glfw dl)
+foreach (EXAMPLE ${EXAMPLES})
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp
+            glad/glad.c
+            Sphere.cpp
+            Cuboid.cpp
+            Utils.cpp)
+    target_link_libraries(${EXAMPLE} ${OPENGL_LIBRARIES} glfw dl)
+endforeach ()
 
-add_executable(HelloRectangle HelloRectangle.cpp glad/glad.c)
-target_link_libraries(HelloRectangle ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(TwoTriangle TwoTriangle.cpp glad/glad.c)
-target_link_libraries(TwoTriangle ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(ColorTriangle ColorTriangle.cpp glad/glad.c)
-target_link_libraries(ColorTriangle ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(DrawCircle DrawCircle.cpp glad/glad.c)
-target_link_libraries(DrawCircle ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(HelloTexture HelloTexture.cpp glad/glad.c)
-target_link_libraries(HelloTexture ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(HelloTransform HelloTransform.cpp glad/glad.c)
-target_link_libraries(HelloTransform ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(DrawSphere DrawSphere.cpp glad/glad.c Sphere.cpp)
-target_link_libraries(DrawSphere ${OPENGL_LIBRARIES} glfw dl)
-
-add_executable(CoordinateSystem CoordinateSystem.cpp glad/glad.c Utils.cpp)
-target_link_libraries(CoordinateSystem ${OPENGL_LIBRARIES} glfw dl)
 

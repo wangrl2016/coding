@@ -31,7 +31,7 @@ if __name__ == '__main__':
         print('没有安装CMake构建工具')
         exit(0)
 
-    subprocess.run([cmake_executable(), '-S', '-', '-B', build_dir])
+    subprocess.run([cmake_executable(), '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
 
     examples = [
