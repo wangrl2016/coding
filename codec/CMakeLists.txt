@@ -7,6 +7,7 @@ SET(EXAMPLES
         PBMFormat
         BitmapFormat
         WavCodec
+        PcmCodec
         GifCodec
         Mp3Codec
         H264Codec
@@ -14,8 +15,7 @@ SET(EXAMPLES
 
 foreach (EXAMPLE ${EXAMPLES})
     add_executable(${EXAMPLE} ${EXAMPLE}.cpp
-            gif_decoder/GifImageReader.cpp
-            )
+            gif_decoder/GifImageReader.cpp)
 endforeach ()
 
 
