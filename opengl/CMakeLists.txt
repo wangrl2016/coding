@@ -21,6 +21,7 @@ set(EXAMPLES
         DrawSphere
         CoordinateSystem
         CameraView
+        LightSpecular
         )
 
 foreach (EXAMPLE ${EXAMPLES})

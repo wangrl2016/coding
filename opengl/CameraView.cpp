@@ -53,6 +53,8 @@ int main(int argc, char** argv) {
     if (window == nullptr)
         exit(EXIT_FAILURE);
 
+    glEnable(GL_DEPTH_TEST);
+
     Shader shader(vertexShaderSource, fragmentShaderSource, false);
     Cuboid sphere(0.6, 0.6, 0.6);
 

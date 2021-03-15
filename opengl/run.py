@@ -83,6 +83,8 @@ if __name__ == '__main__':
             args.append('../res/cow-toy.png')
         elif index == len(examples) - 11:
             print('相机视角')
+        elif index == len(examples) - 12:
+            print('镜面光')
 
         subprocess.run(args)
         print()
