@@ -20,6 +20,7 @@ SET(EXAMPLES
         TranscodeAAC
         Muxing
         Remuxing
+        FFPlay
         )
 
 foreach (EXAMPLE ${EXAMPLES})

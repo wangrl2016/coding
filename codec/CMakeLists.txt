@@ -2,22 +2,20 @@ cmake_minimum_required(VERSION 3.15)
 
 project(CodecTutorials)
 
-add_executable(PBMFormat PBMFormat.cpp)
 
-add_executable(BitmapFormat BitmapFormat.cpp)
+SET(EXAMPLES
+        PBMFormat
+        BitmapFormat
+        WavCodec
+        GifCodec
+        Mp3Codec
+        H264Codec
+        )
 
-add_executable(WavCodec WavCodec.cpp)
+foreach (EXAMPLE ${EXAMPLES})
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp
+            gif_decoder/GifImageReader.cpp
+            )
+endforeach ()
 
-add_executable(GifCodec GifCodec.cpp)
-
-add_executable(Mp3Codec Mp3Codec.cpp)
-
-add_executable(H264Codec H264Codec.cpp)
-
-add_subdirectory(image_decoders)
-
-add_executable(GifDecodeTest
-        gif_decoder/GifDecodeTest.cpp
-        gif_decoder/GifCodec.cpp
-        gif_decoder/GifImageReader.cpp)
 

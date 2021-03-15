@@ -77,8 +77,12 @@ bool GifDecoder::readContent() {
 }
 
 int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf("Usage: %s input_gif_file\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
     auto* decoder = new GifDecoder();
-    decoder->read("../../res/shellsort.gif");
+    decoder->read(argv[1]);
     for (int i = 0; i < decoder->getFrameCount(); i++) {
         decoder->getFrame(i);    // frame i
         decoder->getDelay(i);    // duration of frame in milliseconds

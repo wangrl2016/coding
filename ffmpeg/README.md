@@ -109,3 +109,5 @@ pts:262144 pts_time:3.19107e+09 dts:262144 dts_time:3.19107e+09 duration:1024 du
 - [x] 容器转换(MP4->MOV)
 
 - [ ] 两个声音混合
+
+- [ ] FFPlay播放器
