@@ -237,7 +237,80 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
             return x;
     }
 
-    
+    public Key floor2(Key key) {
+        Key x = floor2(root, key, null);
+        if (x == null)
+            throw new NoSuchElementException("Argument to floor() is too small");
+        else
+            return x;
+    }
+
+    private Key floor2(Node x, Key key, Key best) {
+        if (x == null)
+            return best;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0)
+            return floor2(x.left, key, best);
+        else if (cmp > 0)
+            return floor2(x.right, key, x.key);
+        else
+            return x.key;
+    }
+
+    /**
+     * Returns the smallest key in the symbol table greater than or equal to key.
+     */
+    public Key ceiling(Key key) {
+        if (key == null)
+            throw new IllegalArgumentException("Argument to ceiling() is null");
+        if (isEmpty())
+            throw new NoSuchElementException("Calls ceiling() with empty symbol table");
+        Node x = ceiling(root, key);
+        if (x == null)
+            throw new NoSuchElementException("Argument to floor() is too large");
+        else
+            return x.key;
+    }
+
+    private Node ceiling(Node x, Key key) {
+        if (x == null)
+            return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0)
+            return x;
+        if (cmp < 0) {
+            Node t = ceiling(x.left, key);
+            if (t != null)
+                return t;
+            else
+                return x;
+        }
+        return ceiling(x.right, key);
+    }
+
+    /**
+     * Return the key in the symbol table of given rank.
+     * This key has the property that there are rank keys in
+     * the symbol table that are smaller. In other words, this key is the
+     * rank+1st smallest key in the symbol table.
+     */
+    public Key select(int rank) {
+        if (rank < 0 || rank > size())
+            throw new IllegalArgumentException("Argument to select() is invalid: " + rank);
+        return select(root, rank);
+    }
+
+    private Key select(Node x, int rank) {
+        if (x == null)
+            return null;
+        int leftSize = size(x.left);
+        if (leftSize > rank)
+            return select(x.left, rank);
+        else if (leftSize < rank)
+            return select(x.right, rank - leftSize - 1);
+        else
+            return x.key;
+    }
 
 
     public static void main(String[] args) {
