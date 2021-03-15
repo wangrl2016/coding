@@ -52,6 +52,10 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ![Quick sort](../res/quicksort.gif)
 
+- [x] 最小堆实现的优先队列 `MinPriorityQueue.java`
+
+- [ ] 最大堆实现的优先队列 `MaxPriorityQueue.java`
+
 
 ### Searching
 
