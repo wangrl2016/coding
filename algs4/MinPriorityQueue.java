@@ -1,5 +1,10 @@
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * The MinPriorityQueue class represents a priority queue of generic keys.
@@ -50,9 +55,9 @@ public class MinPriorityQueue<Key> implements Iterable<Key> {
     }
 
     private boolean greater(int i, int j) {
-        if (comparator == null) {
+        if (comparator == null)
             return ((Comparable<Key>) pq[i]).compareTo(pq[j]) > 0;
-        } else
+        else
             return comparator.compare(pq[i], pq[j]) > 0;
     }
 
@@ -75,17 +80,139 @@ public class MinPriorityQueue<Key> implements Iterable<Key> {
     // 向上移动
     // Bottom-up reheapify (swim)
     private void swim(int k) {
-
+        while (k > 1 && greater(k / 2, k)) {
+            exch(k / 2, k);
+            k = k / 2;
+        }
     }
 
     // 向下移动
+    // Top-down reheapify (sink)
     private void sink(int k) {
-
+        while (2 * k <= n) {
+            int j = 2 * k;
+            if (j < n && greater(j, j + 1)) j++;
+            if (!greater(k, j)) break;
+            exch(k, j);
+            k = j;
+        }
     }
 
+    public void insert(Key x) {
+        if (n == pq.length - 1)
+            resize(2 * pq.length);
+
+        // Add x, and percolate it up to maintain heap invariant.
+        pq[++n] = x;
+        swim(n);
+        assert isMinHeap();
+    }
+
+    /**
+     * Removes and returns a smallest key on this priority queue.
+     *
+     * @return a smallest key on this priority queue
+     * @throws NoSuchElementException if this priority queue is empty
+     */
+    public Key delMin() {
+        if (isEmpty())
+            throw new NoSuchElementException("Priority queue underflow");
+        Key min = pq[1];
+        exch(1, n--);
+        sink(1);
+        pq[n + 1] = null; // to avoid loitering and help with garbage collection
+        assert isMinHeap();
+        return min;
+    }
+
+    public boolean isEmpty() {
+        return n == 0;
+    }
+
+    private boolean isMinHeap() {
+        for (int i = 1; i <= n; i++) {
+            if (pq[i] == null) return false;
+        }
+        for (int i = n + 1; i < pq.length; i++) {
+            if (pq[i] != null)
+                return false;
+        }
+        if (pq[0] != null)
+            return false;
+        return isMinHeapOrdered(1);
+    }
+
+    // Is subtree of pq[1..n] rooted at k a min heap?
+    private boolean isMinHeapOrdered(int k) {
+        if (k > n) return true;
+        int left = 2 * k;
+        int right = 2 * k + 1;
+        if (left <= n && greater(k, left)) return false;
+        if (right <= n && greater(k, right)) return false;
+        return isMinHeapOrdered(left) && isMinHeapOrdered(right);
+    }
+
+    // Resize the underlying array to have the given capacity.
+    private void resize(int capacity) {
+        assert capacity > n;
+        Key[] temp = (Key[]) new Object[capacity];
+        for (int i = 1; i <= n; i++) {
+            temp[i] = pq[i];
+        }
+        pq = temp;
+    }
+
+    /**
+     * Return the number of keys on this priority queue.
+     *
+     * @return the number of keys on this priority queue
+     */
+    public int size() {
+        return n;
+    }
 
     @Override
     public Iterator<Key> iterator() {
-        return null;
+        return new HeapIterator();
+    }
+
+    private class HeapIterator implements Iterator<Key> {
+        // Create a new pq.
+        private MinPQ<Key> copy;
+
+        // Add all items to copy of heap.
+        // Takes linear time since already in heap order so on kyes move
+        public HeapIterator() {
+            if (comparator == null)
+                copy = new MinPQ<>(size());
+            else
+                copy = new MinPQ<>(size(), comparator);
+            for (int i = 1; i <= n; i++)
+                copy.insert(pq[i]);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !copy.isEmpty();
+        }
+
+        @Override
+        public Key next() {
+            if (!hasNext())
+                throw new NoSuchElementException();
+            return copy.delMin();
+        }
+    }
+
+    public static void main(String[] args) {
+        MinPriorityQueue<String> pq = new MinPriorityQueue<>();
+        while (!StdIn.isEmpty()) {
+            String item = StdIn.readString();
+            if (!item.equals("-"))
+                pq.insert(item);
+            else if (!pq.isEmpty())
+                StdOut.print(pq.delMin() + " ");
+        }
+        StdOut.println("(" + pq.size() + " left on pq");
     }
 }
