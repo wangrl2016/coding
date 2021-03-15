@@ -69,6 +69,11 @@ public:
     bool load(const std::string& filePath);
 
     /**
+     * 将解码后的数据保存为pcm格式
+     */
+    bool pcmSave(std::string filePath);
+
+    /**
      * A vector of vectors holding the audio samples for the WavCodec. You can
      * access the samples by channel and then by sample index.
      *
@@ -81,6 +86,8 @@ private:
     AudioFileFormat determineAudioFileFormat(std::vector<uint8_t>& fileData);
 
     bool decodeWaveFile(std::vector<uint8_t>& fileData);
+
+    void clearAudioBuffer();
 
     /**
      * 寻找关键词的下标。

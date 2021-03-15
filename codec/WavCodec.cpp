@@ -10,10 +10,8 @@
 
 template<class T>
 WavCodec<T>::WavCodec() {
-    static_assert(std::is_floating_point<T>::value,
-                  "Error: this version of WavCodec only supports float sample formats");
-
-
+//    static_assert(std::is_floating_point<T>::value,
+//                  "Error: this version of WavCodec only supports float sample formats");
 }
 
 template<class T>
@@ -135,7 +133,26 @@ bool WavCodec<T>::decodeWaveFile(std::vector<uint8_t>& fileData) {
     int numSamples = dataChunkSize / (numChannels * mBitDepth / 8);
     int sampleStartIndex = indexOfDataChunk + 8;
 
+    clearAudioBuffer();
+    mSamples.resize(numChannels);
 
+    for (int i = 0; i < numSamples; i++) {
+        for (int channel = 0; channel < numChannels; channel++) {
+            int sampleIndex = sampleStartIndex + (numBytesPerBlock * i) + channel * numBytesPerSample;
+
+            if ((sampleIndex + (mBitDepth / 8) - 1) >= fileData.size()) {
+                printf("Read file error as the metadata indicates more samples than "
+                       "there are in the file data");
+                return false;
+            }
+
+            // TODO: 只对于16位的进行操作
+            if (mBitDepth == 16) {
+                int16_t sampleAsInt = twoByteToInt(fileData, sampleIndex);
+                mSamples[channel].push_back(sampleAsInt);
+            }
+        }
+    }
 
     return true;
 }
@@ -186,7 +203,25 @@ int16_t WavCodec<T>::twoByteToInt(std::vector<uint8_t>& source, int startIndex, 
     return result;
 }
 
+template<class T>
+void WavCodec<T>::clearAudioBuffer() {
+    for (size_t i = 0; i < mSamples.size(); i++)
+        mSamples[i].clear();
+    mSamples.clear();
+}
+
+template<class T>
+bool WavCodec<T>::pcmSave(std::string filePath) {
+    return false;
+}
+
 int main(int argc, char** argv) {
+
+    if (argc != 2) {
+        printf("Usage: %s input_wav_file\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
     WavCodec<float>* wav = new WavCodec<float>();
     wav->load(argv[1]);
 
