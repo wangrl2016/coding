@@ -36,7 +36,9 @@ if __name__ == '__main__':
         'ReturnThread',
         'ScopedThread',
         'VectorThread',
-        'AccumulateParallel'
+        'AccumulateParallel',
+        'ProtectMutex',
+        'PassReference'
     ]
 
     for index, example in enumerate(reversed(examples)):
@@ -62,6 +64,10 @@ if __name__ == '__main__':
             print('Spawns some threads and waits for them to finish')
         elif no == 9:
             print('A naive version of std::accumulate')
+        elif no == 10:
+            print('Protecting a list with a mutex')
+        elif no == 11:
+            print('Accidentally passing out a reference to protected data')
 
         subprocess.run(args)
         print()

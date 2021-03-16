@@ -12,6 +12,8 @@ set(EXAMPLES
         ScopedThread
         VectorThread
         AccumulateParallel
+        ProtectMutex
+        PassReference
         )
 
 foreach (EXAMPLE ${EXAMPLES})
