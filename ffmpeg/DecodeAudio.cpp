@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     AVCodecContext* inputCodecContext = nullptr;
     AVCodec* inputCodec = nullptr;
 
-    if (argc < 2) {
+    if (argc < 3) {
         av_log(nullptr, AV_LOG_ERROR, "Usage: %s input_mp3_file out_file\n", argv[0]);
         exit(EXIT_FAILURE);
     }
@@ -103,8 +103,8 @@ int main(int argc, char* argv[]) {
 
     AVPacket* packet = av_packet_alloc();
     AVFrame* frame = av_frame_alloc();
-
-    while (av_read_frame(inputFormatContext, packet) >= 0) {
+    int count = 0;
+    while (av_read_frame(inputFormatContext, packet) >= 0 && count++ < 200) {
         int ret = avcodec_send_packet(inputCodecContext, packet);
         if (ret < 0) {
             av_log(nullptr, AV_LOG_ERROR, "Error submitting the packet to the decoder\n");
@@ -135,10 +135,6 @@ int main(int argc, char* argv[]) {
     enum AVSampleFormat sfmt = inputCodecContext->sample_fmt;
     if (av_sample_fmt_is_planar(sfmt)) {
         const char* packed = av_get_sample_fmt_name(sfmt);
-        av_log(nullptr, AV_LOG_WARNING, "Warning: the sample format "
-                                        "the decoder produced is planar (%s). "
-                                        "This example will output the first channel only\n",
-               packed ? packed : "?");
         sfmt = av_get_packed_sample_fmt(sfmt);
     }
     const char* fmt;

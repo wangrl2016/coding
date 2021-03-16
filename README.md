@@ -65,9 +65,9 @@ https://github.com/TheAlgorithms/Java
 - [x] Elementary Sorts
 - [x] Mergesort
 - [x] Quicksort
-- [ ] Priority Queues
-- [ ] Symbol Tables
-- [ ] Binary Search Trees
+- [x] Priority Queues
+- [x] Symbol Tables
+- [x] Binary Search Trees
 - [ ] Balanced Search Trees
 - [ ] Hash Tables
 - [ ] Undirected Graphs

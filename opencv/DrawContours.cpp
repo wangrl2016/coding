@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
     std::string path;
     for (auto contour : contours) {
-        for (int j = 0; j < contour.size(); j++) {
+        for (unsigned int j = 0; j < contour.size(); j++) {
             std::string temp = std::to_string(contour[j].x) + std::string(" ") +
                                std::to_string(contour[j].y);
             if (j == 0) {
