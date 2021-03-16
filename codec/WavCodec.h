@@ -73,6 +73,8 @@ public:
      */
     bool pcmSave(std::string filePath);
 
+    void dumpWavInfo();
+
     /**
      * A vector of vectors holding the audio samples for the WavCodec. You can
      * access the samples by channel and then by sample index.

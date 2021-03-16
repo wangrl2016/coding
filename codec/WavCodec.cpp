@@ -8,6 +8,8 @@
 #include <cstring>
 #include "WavCodec.h"
 
+void dumpWavInfo();
+
 template<class T>
 WavCodec<T>::WavCodec() {
 //    static_assert(std::is_floating_point<T>::value,
@@ -212,7 +214,16 @@ void WavCodec<T>::clearAudioBuffer() {
 
 template<class T>
 bool WavCodec<T>::pcmSave(std::string filePath) {
+    std::ofstream file(filePath, std::ios::out | std::ofstream::binary);
+
+    std::copy(mSamples[0].begin(), mSamples[0].end(), std::ostreambuf_iterator<char>(file));
+
     return false;
+}
+
+template<class T>
+void WavCodec<T>::dumpWavInfo() {
+    printf("Sample rate: %d, Sample depth: %d", mSampleRate, mBitDepth);
 }
 
 int main(int argc, char** argv) {
@@ -222,8 +233,10 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    WavCodec<float>* wav = new WavCodec<float>();
+    WavCodec<int16_t>* wav = new WavCodec<int16_t>();
     wav->load(argv[1]);
+    wav->dumpWavInfo();
+    wav->pcmSave("out.pcm");
 
     return 0;
 }

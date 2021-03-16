@@ -27,3 +27,11 @@
 ![BMP](../res/format-bmp-image.png)
 
 - [x] [PBM图片格式](https://zh.wikipedia.org/wiki/PBM格式)
+
+- [ ] miniaudio
+
+https://www.github.com/mackron/miniaudio
+
+- [ ] sfml
+
+https://github.com/SFML/SFML
