@@ -1,3 +1,7 @@
+import edu.princeton.cs.algs4.BinarySearch;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -312,8 +316,167 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
             return x.key;
     }
 
+    /**
+     * Return the number of keys in the symbol table strictly less than key.
+     */
+    public int rank(Key key) {
+        if (key == null)
+            throw new IllegalArgumentException("argument to rank() is null");
+        return rank(key, root);
+    }
+
+    private int rank(Key key, Node x) {
+        if (x == null)
+            return 0;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0)
+            return rank(key, x.left);
+        else if (cmp > 0)
+            return 1 + size(x.left) + rank(key, x.right);
+        else
+            return size(x.left);
+    }
+
+    /**
+     * Return all keys in the symbol table as an Iterable.
+     * To iterate over all of the keys in the symbol table named st
+     * use the foreach notation: for (Key key: st.keys()).
+     */
+    public Iterable<Key> keys() {
+        if (isEmpty())
+            return new Queue<Key>();
+        return keys(min(), max());
+    }
+
+    public Iterable<Key> keys(Key lo, Key hi) {
+        if (lo == null)
+            throw new IllegalArgumentException("First argument to keys() is null");
+        if (hi == null)
+            throw new IllegalArgumentException("Second argument to keys() is null");
+        Queue<Key> queue = new Queue<>();
+        keys(root, queue, lo, hi);
+        return queue;
+    }
+
+    private void keys(Node x, Queue<Key> queue, Key lo, Key hi) {
+        if (x == null)
+            return;
+        int cmplo = lo.compareTo(x.key);
+        int cmphi = hi.compareTo(x.key);
+        if (cmplo < 0) keys(x.left, queue, lo, hi);
+        if (cmplo <= 0 && cmphi >= 0)
+            queue.enqueue(x.key);
+        if (cmphi > 0)
+            keys(x.right, queue, lo, hi);
+    }
+
+    /**
+     * Returns the number of keys in the symbol table in the given range.
+     */
+    public int size(Key lo, Key hi) {
+        if (lo == null)
+            throw new IllegalArgumentException("First argument to size() is null");
+        if (hi == null)
+            throw new IllegalArgumentException("Second argument to size() is null");
+        if (lo.compareTo(hi) > 0) return 0;
+        if (contains(hi))
+            return rank(hi) - rank(lo) + 1;
+        else
+            return rank(hi) - rank(lo);
+    }
+
+    /**
+     * Returns the height of the BST (for debugging).
+     */
+    public int height() {
+        return height(root);
+    }
+
+    private int height(Node x) {
+        if (x == null)
+            return -1;
+        return 1 + Math.max(height(x.left), height(x.right));
+    }
+
+    /**
+     * 广度优先遍历
+     * <p>
+     * Returns the keys in the BST in level order.
+     */
+    public Iterable<Key> levelOrder() {
+        Queue<Key> keys = new Queue<>();
+        Queue<Node> nodes = new Queue<>();
+        nodes.enqueue(root);
+
+        while (!nodes.isEmpty()) {
+            Node x = nodes.dequeue();
+            if (x == null)
+                continue;
+            keys.enqueue(x.key);
+            nodes.enqueue(x.left);
+            nodes.enqueue(x.right);
+        }
+        return keys;
+    }
+
+    private boolean isBST() {
+        return isBST(root, null, null);
+    }
+
+    private boolean isBST(Node x, Key min, Key max) {
+        if (x == null)
+            return true;
+        if (min != null && x.key.compareTo(min) <= 0) return false;
+        if (max != null && x.key.compareTo(max) >= 0) return false;
+        return isBST(x.left, min, x.key) && isBST(x.right, x.key, max);
+    }
+
+    // Are the size fields correct?
+    private boolean isSizeConsistent() {
+        return isSizeConsistent(root);
+    }
+
+    private boolean isSizeConsistent(Node x) {
+        if (x == null)
+            return true;
+        if (x.size != size(x.left) + size(x.right) + 1)
+            return false;
+        return isSizeConsistent(x.left) && isSizeConsistent(x.right);
+    }
+
+    private boolean isRankConsistent() {
+        for (int i = 0; i < size(); i++)
+            if (i != rank(select(i)))
+                return false;
+        for (Key key : keys())
+            if (key.compareTo(select(rank(key))) != 0)
+                return false;
+        return true;
+    }
+
+    private boolean check() {
+        if (!isBST())
+            StdOut.println("Not in symmetric order");
+        if (!isSizeConsistent())
+            StdOut.println("Subtree counts not consistent");
+        if (!isRankConsistent())
+            StdOut.println("Ranks not consistent");
+        return isBST() && isSizeConsistent() && isRankConsistent();
+    }
 
     public static void main(String[] args) {
+        BinarySearchTree<String, Integer> tree = new BinarySearchTree<>();
+        for (int i = 0; !StdIn.isEmpty(); i++) {
+            String key = StdIn.readString();
+            tree.put(key, i);
+        }
 
+        for (String s : tree.levelOrder())
+            StdOut.println(s + " " + tree.get(s));
+
+        StdOut.println("----");
+
+        for (String s : tree.keys())
+            StdOut.println(s + " " + tree.get(s));
     }
 }

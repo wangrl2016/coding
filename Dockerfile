@@ -21,9 +21,10 @@ RUN apt update \
     && cd opencv \
     && mkdir -p build \
     && cd build \
+    && cmake .. \
     && make -j4 \
     && sudo make install \
-    && cd ..\
+    && cd ../.. \
     # 安装CMake构建工具
     && git clone --depth 10 https://github.com/Kitware/CMake/ \
     && cd CMake \
