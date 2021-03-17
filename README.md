@@ -15,6 +15,7 @@ sudo docker run -it coding-develop:0.1.0 /bin/bash
 
 * 欢迎关注今日头条/西瓜视频 `火车上遇见`
 
+* 自动生成各子项目`README.md`文件
 
 ## 简单数据结构和算法 ([sdsa](sdsa/))
 
@@ -159,9 +160,10 @@ https://docs.opencv.org/4.5.1/
 - [ ] Extra modules
 
 
-# 编解码([codec](codec/))
+## 编解码([codec](codec/))
 
 - [x] PPM图片格式
+- [x] PCM音频格式
 - [x] BMP图片格式
 - [ ] WAV音频格式
 - [ ] MP3音频格式
@@ -181,23 +183,14 @@ https://docs.opencv.org/4.5.1/
 参考Digital Image Processing教材编写
 
 - [ ] Digital Image Fundamentals
-
 - [ ] Intensity Transformations and Spatial Filtering
-
 - [ ] Filtering in the Frequency Domain
-
 - [ ] Image Restoration and Reconstruction
-
 - [ ] Color Image Processing
-
 - [ ] Wavelet and Multi-resolution Processing
-
 - [ ] Morphological Image Processing
-
 - [ ] Image Segmentation
-
 - [ ] Representation and Description
-
 - [ ] Object Recognition
 
 ## 手机群控系统 ([harun](harun/))
@@ -219,7 +212,7 @@ https://docs.opencv.org/4.5.1/
 - [ ] 微积分
 
 
-# 多媒体播放器 ([sfml](sfml/))
+## 多媒体播放器 ([sfml](sfml/))
 
 https://github.com/SFML/SFML/
 
@@ -228,16 +221,16 @@ https://github.com/SFML/SFML/
 - [ ] 网络
 
 
-# SVG转GIF项目 ([svg2gif](svg2gif/))
+## SVG转GIF项目 ([svg2gif](svg2gif/))
 
 - [ ] 学习Rust语言
 - [ ] 编写渲染引擎
 
-# 工具 ([tools](tools/))
+## 工具 ([tools](tools/))
 
 - [ ] 命令行工具
 
-# 算法导论 ([ia](ia/))
+## 算法导论 ([ia](ia/))
 
 https://mitpress.mit.edu/books/introduction-algorithms-third-edition
 
@@ -278,7 +271,7 @@ https://mitpress.mit.edu/books/introduction-algorithms-third-edition
 - [ ] Approximation Algorithms　
 
 
-# 计算机系统 ([cs](cs/))
+## 计算机系统 ([cs](cs/))
 
 
 ## 打赏作者

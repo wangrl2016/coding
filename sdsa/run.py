@@ -53,7 +53,14 @@ if __name__ == '__main__':
             download_third_jar(path)
 
     examples = [
-
+        'array/ArrayCopy',
+        'array/ArrayInJava',
+        'array/Introduction',
+        'array/ArrayReverse',
+        'array/ArrayRightRotate',
+        'array/ArrayRotate',
+        'array/ArraySearch',
+        
     ]
 
     jar_paths = ''
