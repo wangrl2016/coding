@@ -3,6 +3,8 @@ use crate::app::render;
 use std::io::Read;
 
 mod app;
+// 学习Rust模块
+mod learn;
 
 struct Args {
     help: bool,
@@ -30,7 +32,7 @@ ARGS:
     format              File format
 ";
 
-/// 删除base64格式中gif中间的空行
+// 删除base64格式中gif中间的空行
 fn delete_gif_newline(s: &String) -> String {
     // 去掉gif中的\n符号
     let mut res_str: String = String::new();        // 构建新的字符串传递到渲染函数中
@@ -100,7 +102,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // 需要正确处理../的情况
         let index = args.input.rfind(".").unwrap();
         if index > 0 {
-            args.output = String::from(&args.input[0..index]) + "." + args.format.as_str();
+            args.output = String::from(&args.input[0..index])
+                + "." + args.format.as_str();
         } else {
             println!("Error parse input file name");
             std::process::exit(1);

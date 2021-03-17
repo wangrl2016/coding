@@ -4,10 +4,10 @@ use std::convert::TryFrom;
 const _FPS: i32 = 24;
 
 
-/// 渲染图片核心函数
-/// source: 输入svg的路径
-/// output: 输出图片的路径
-/// format: 输出图片的格式
+// 渲染图片核心函数
+// source: 输入svg的路径
+// output: 输出图片的路径
+// format: 输出图片的格式
 pub fn render(source: &str, _output: &str, format: &str)
               -> Result<(), Box<dyn std::error::Error>> {
     let _current = std::time::SystemTime::now();
@@ -25,7 +25,6 @@ pub fn render(source: &str, _output: &str, format: &str)
             return Err(Box::try_from("Unsupported format").unwrap());
         }
     }
-
 
     return Ok(());
 }
