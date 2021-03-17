@@ -1,5 +1,6 @@
 // This function takes ownership of the heap allocated memory.
-fn destroy_box(c: Box<i32>) {
+#[warn(dead_code)]
+fn _destroy_box(c: Box<i32>) {
     println!("Destroying a box that contains {}", c);
 }
 
@@ -26,7 +27,7 @@ fn test_ownership() {
     // println!("a contains: {}", a);
 
     // This function take ownership of the heap allocated memory from b.
-    destroy_box(b);
+    _destroy_box(b);
 
     // Since the heap memory has been free at this point, this action would
     // result in dereferencing freed memory, but it's forbidden by the compiler

@@ -3,7 +3,7 @@
 // 同时由析构函数完成资源的释放。
 // Rust enforces RAII, so whenever an object goes out of scope, its destructor is called and
 // its owned resources are freed.
-fn create_box() {
+fn _create_box() {
     // Allocate an integer on the heap
     let _box1 = Box::new(3i32);
 
@@ -36,7 +36,7 @@ fn test_raii() {
     // Creating lots of boxes just for fun.
     // There's no need to manually free memory!
     for _ in 0u32..100 {
-        create_box();
+        _create_box();
     }
 
     // _box2 is destroy here, and memory gets freed.
