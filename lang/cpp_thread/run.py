@@ -94,7 +94,7 @@ if __name__ == '__main__':
             if line.isspace() or line.startswith(' '):
                 continue
             if line.isprintable():
-                print(line, False)
+                print(line)
         write_print(readme, '')
     readme.close()
     exit(0)
