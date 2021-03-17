@@ -1,150 +1,40 @@
-# Simple Data Structures and Algorithms
+* array/ArraySearch
 
-数字序号开头的文字对应头条号里面的文章题目
+查找数组
 
-## 数据结构
+* array/ArrayRightRotate
 
-### Array
+数组向右旋转
 
-#### Introduction
+* array/ArrayReverse
 
-- [x] 数组(Array)介绍 `ArrayIntroduction.java`
+数组倒置
 
-- [x] 在Java中使用数组(Array)
+* array/ArrayRotate
 
-`ArrayInJava.java` `Student.java` `ArrayCopy.java`
+数组旋转
 
-#### Array Rotations
+* array/GCD
 
-- [x] 数组(Array)旋转的三种算法 `GCD.java` `ArrayRotate.java`
+求最大公约数
 
-- [x] 使用反转(Reverse)算法对数组旋转 `ArrayReverse.java`
+* array/ArrayCopy
 
-- [x] 实现数组(Array)向右旋转 `ArrayRightRotate.java`
+数组复制
 
-- [x] 在排好序并旋转的数组中查找元素 `ArraySearch.java`
+* array/Student
 
+创建学生数组
 
-#### Arrangement Rearrangement
+* array/ArrayInJava
 
-#### Order Statistics
+Java语言中数组的使用
 
-#### Range Queries
+* array/ArrayIntroduction
 
-#### Searching and Sorting
+数组介绍
 
-#### Optimization Problems
+* array/HelloWorld
 
-#### Matrix
+进入Java编程环境
 
-#### Misc
-
-#### Quick Links
-
-### Linked List
-
-#### Singly Linked List
-
-- [x] 单链表首、尾、中间的插入操作 `SinglyLinkedListInserted.java`
-
-#### Circular Linked List
-
-#### Doubly Linked List
-
-#### Misc
-
-#### Quick Links
-
-### Stack
-
-#### Introduction
-
-#### Design and Implementation
-
-#### Standard Problems
-
-#### Operations on Stack
-
-#### Misc
-
-#### Quick Links
-
-### Queue
-
-#### Introduction
-
-#### Implementation
-
-#### Standard Problems
-
-#### Operations on Queue
-
-#### Misc
-
-#### Quick Links
-
-### Binary Tree
-
-#### Introduction
-
-#### Traversals
-
-#### Construction & Conversion
-
-#### Checking & Printing
-
-#### Summation
-
-#### Longest Common Ancestor
-
-#### Misc
-
-#### Quick Links
-
-### Binary Search Tree
-
-### Heap
-
-### Hashing
-
-### Graph
-
-### Matrix
-
-### Misc
-
-### Advanced Data Structure
-
-## 算法
-
-### Analysis of Algorithms
-
-### Searching and Sorting
-
-### Greedy Algorithms
-
-### Dynamic Programming
-
-### Pattern Searching
-
-### Other String Algorithms
-
-### Backtracking
-
-### Divide and Conquer
-
-### Geometric Algorithms
-
-### Mathematical Algorithms
-
-### Bit Algorithms
-
-### Graph Algorithms
-
-### Randomized Algorithms
-
-### Branch and Bound
-
-### Quizzes on Algorithms
-
-### Misc

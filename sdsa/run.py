@@ -16,6 +16,16 @@ def java_check():
     return 'java'
 
 
+def write_print(fd, log, new_line=True):
+    """
+    将log在控制台输出，并且写入到README.md文件中。
+    """
+    if new_line:
+        log = log + '\n'
+    print(log)
+    fd.write(log)
+
+
 def download_third_jar(url, dst='./'):
     """
     下载程序需要的包依赖包
@@ -58,7 +68,7 @@ if __name__ == '__main__':
             download_third_jar(path)
 
     examples = [
-        'array/HelloWorld'
+        'array/HelloWorld',
         'array/ArrayIntroduction',
         'array/ArrayInJava',
         'array/Student',
@@ -83,18 +93,42 @@ if __name__ == '__main__':
     for index, example in enumerate(reversed(examples)):
         no = len(examples) - index
 
-        readme.write(str(no) + '. ' + example)
+        readme.write('* ' + example + '\n\n')
 
         if no == 1:
-            print('进入Java编程环境')
-
+            write_print(readme, '进入Java编程环境')
         elif no == 2:
-            print('Java语言中数组的使用')
+            write_print(readme, '数组介绍')
         elif no == 3:
-            print('')
+            write_print(readme, 'Java语言中数组的使用')
+        elif no == 4:
+            write_print(readme, '创建学生数组')
+        elif no == 5:
+            write_print(readme, '数组复制')
+        elif no == 6:
+            write_print(readme, '求最大公约数')
+        elif no == 7:
+            write_print(readme, '数组旋转')
+        elif no == 8:
+            write_print(readme, '数组倒置')
+        elif no == 9:
+            write_print(readme, '数组向右旋转')
+        elif no == 10:
+            write_print(readme, '查找数组')
+
+        # write_print(readme, '')
 
         subprocess.run(['javac', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
         class_path = build_dir + ':' + jar_paths
-        subprocess.run(['java', '--class-path', class_path, example])
-        print()
+        p = subprocess.run(['java', '--class-path', class_path, example], stdout=subprocess.PIPE,
+                           universal_newlines=True)
+        for line in p.stdout.split('\n'):
+            if line.isspace() or line.startswith(' '):
+                continue
+            if line.isprintable():
+                print(line)
+
+        write_print(readme, '')
+
+    readme.close()
