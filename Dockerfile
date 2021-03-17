@@ -8,7 +8,7 @@ WORKDIR /app
 RUN apt update \
     && apt install -y git vim openjdk-11-jdk nasm curl python libstdc++6 libasound \
                         libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
-			libxi-dev \
+			libxi-dev openjdk-11-jdk \
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \

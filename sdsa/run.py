@@ -38,8 +38,13 @@ if __name__ == '__main__':
         os.mkdir(out_dir)
 
     if not java_check():
-        print('请手动安装java库')
+        print('请使用指令手动安装java库')
+        print('sudo apt install openjdk-11-jdk')
         exit(0)
+
+    readme = open('README.md', 'w')
+    # 清空文件
+    readme.truncate()
 
     third_jar_paths = [
     ]
@@ -53,14 +58,16 @@ if __name__ == '__main__':
             download_third_jar(path)
 
     examples = [
-        'array/ArrayCopy',
+        'array/HelloWorld'
+        'array/ArrayIntroduction',
         'array/ArrayInJava',
-        'array/Introduction',
+        'array/Student',
+        'array/ArrayCopy',
+        'array/GCD',
+        'array/ArrayRotate',
         'array/ArrayReverse',
         'array/ArrayRightRotate',
-        'array/ArrayRotate',
         'array/ArraySearch',
-        
     ]
 
     jar_paths = ''
@@ -75,10 +82,19 @@ if __name__ == '__main__':
 
     for index, example in enumerate(reversed(examples)):
         no = len(examples) - index
+
+        readme.write(str(no) + '. ' + example)
+
         if no == 1:
-            subprocess.run(['javac', '-d', build_dir, '--class-path',
-                            jar_paths, example + '.java'])
-            class_path = build_dir + ':' + jar_paths
-            subprocess.run(['java', '--class-path', class_path, example])
-        else:
-            print('Error')
+            print('进入Java编程环境')
+
+        elif no == 2:
+            print('Java语言中数组的使用')
+        elif no == 3:
+            print('')
+
+        subprocess.run(['javac', '-d', build_dir, '--class-path',
+                        jar_paths, example + '.java'])
+        class_path = build_dir + ':' + jar_paths
+        subprocess.run(['java', '--class-path', class_path, example])
+        print()
