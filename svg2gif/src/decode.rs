@@ -80,7 +80,8 @@ impl FrameContainer {
                             // 保存为ppm图片格式
                             println!("{}", timestamp);
                             if timestamp < 40 {
-                                save_ppm_file(&*format!("{}.ppm", timestamp), Pixel::RGB24, width, height, data);
+                                save_ppm_file(&*format!("{}.ppm", timestamp),
+                                              Pixel::RGB24, width, height, data);
                             }
                         }));
                     }

@@ -6,3 +6,4 @@ ffmpeg-next/
 out.*
 out/
 *.gif
+*.ppm
