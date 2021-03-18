@@ -3,6 +3,8 @@ use ffmpeg_next::format::{input, Pixel};
 use ffmpeg_next::util::media::Type;
 use ffmpeg_next::software::scaling::{context, flag};
 use ffmpeg_next::frame::Video;
+use crate::utils::save_ppm_file;
+use ffmpeg_next::sys::AV_PIX_FMT_BGR32;
 
 // 存放解码后的gif帧
 pub struct FrameContainer {
@@ -39,7 +41,7 @@ impl FrameContainer {
                 decoder.format(),
                 decoder.width(),
                 decoder.height(),
-                Pixel::RGBA,
+                Pixel::RGB24,
                 decoder.width(),
                 decoder.height(),
                 flag::Flags::BILINEAR)?;
@@ -57,7 +59,7 @@ impl FrameContainer {
                         if line_size != decoded.width() * 4 {
                             rgba_frame.set_width(decoded.width());
                             rgba_frame.set_height(decoded.height());
-                            rgba_frame.set_format(Pixel::RGBA);
+                            rgba_frame.set_format(Pixel::RGB24);
                             unsafe { ffmpeg_next::ffi::av_frame_get_buffer(rgba_frame.as_mut_ptr(), 1); }
                         }
 
@@ -71,11 +73,15 @@ impl FrameContainer {
 
                         threads.push(std::thread::spawn(move || {
                             let data = rgba_frame.data(0).to_vec();
+                            println!("data size {}", data.len());
                             let width = rgba_frame.width();
                             let height = rgba_frame.height();
 
                             // 保存为ppm图片格式
                             println!("{}", timestamp);
+                            if timestamp < 40 {
+                                save_ppm_file(&*format!("{}.ppm", timestamp), Pixel::RGB24, width, height, data);
+                            }
                         }));
                     }
 

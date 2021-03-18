@@ -26,15 +26,15 @@ pub fn generate(svg_context: &mut SvgContext, render_context: &mut RenderContext
         }
 
         "jpg" | "jpeg" | "png" => {
-            // if gif_count > 0 {
+            if gif_count > 0 {
 
-            // } else {
-                let tree = svg_context.get_tree().unwrap();
-                let pixmap_size = tree.svg_node().size.to_screen_size();
+            } else {
+                let rtree = usvg::Tree::from_str(svg_context.get_svg_str(), &usvg::Options::default()).unwrap();
+                let pixmap_size = rtree.svg_node().size.to_screen_size();
                 let mut pixmap = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
-                resvg::render(&tree, FitTo::Original, pixmap.as_mut()).unwrap();
+                resvg::render(&rtree, FitTo::Original, pixmap.as_mut()).unwrap();
                 pixmap.save_png(render_context.get_output_path());
-            // }
+            }
         }
 
         _ => {

@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Write;
 use ffmpeg_next::Format;
 use ffmpeg_next::format::Pixel;
+use ffmpeg_next::sys::AV_PIX_FMT_BGR32;
 
 // 创建嵌套目录
 fn create_file_dir(path: &str) {
@@ -26,6 +27,33 @@ impl TempFile {
 }
 
 pub fn save_ppm_file(path: &str, pixel_format: Pixel, width: u32, height: u32, data: Vec<u8>) {
-    let file = File::create(path).unwrap();
+    let mut file = File::create(path).unwrap();
+    // let mut pixel_bits;
+    // if pixel_format == Pixel::RGBA {
+    //     pixel_bits = 4;
+    // } else {
+    //     println!("Do not save to ppm file");
+    //     return;
+    // }
+    file.write("P6".as_ref());
+    file.write("\n".as_ref());
+    file.write(width.to_string().as_ref());
+    file.write(" ".as_ref());
+    file.write(height.to_string().as_ref());
+    file.write("\n".as_ref());
+    file.write("255\n".as_ref());
 
+    println!("size {}x{} {}, ", width, height, width * height * 4);
+
+    file.write(data.as_ref());
+    // for j in 0..height {
+    //     for i in 0..width {
+    //         let mut pixel = vec![];
+    //         pixel.push(&data[j * width * 4 + i * 4]);
+    //         pixel.push(&data[j * width * 4 + i * 4 + 1]);
+    //         pixel.push(&data[j * width + 4 + i * 4 + 2]);
+    //         file.write(pixel.as_ref());
+    //     }
+    // }
+    file.try_clone();
 }

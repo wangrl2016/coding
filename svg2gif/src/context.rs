@@ -1,6 +1,7 @@
 use crate::decode::FrameContainer;
 use crate::encode::EncodeContext;
 use crate::utils::TempFile;
+use usvg::Tree;
 
 lazy_static! {
     static ref IMAGE_INDEXES: Vec<String> = vec![
@@ -16,7 +17,7 @@ pub struct SvgContext<'a> {
     // 以像素为单位
     height: u32,
     doc: roxmltree::Document<'a>,
-    tree: Option<usvg::Tree>,
+    pub(crate) tree: Option<usvg::Tree>,
     source: &'a str,
     pub(crate) gif_hrefs: Vec<String>,
 }
@@ -58,8 +59,8 @@ impl<'a> SvgContext<'a> {
         self.height
     }
 
-    pub fn get_tree(&self) -> Option<usvg::Tree> {
-        self.tree.clone()
+    pub fn get_svg_str(&self) -> &'a str {
+        self.source
     }
 
 
