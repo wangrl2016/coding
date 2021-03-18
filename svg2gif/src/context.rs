@@ -1,3 +1,11 @@
+lazy_static! {
+    static ref IMAGE_INDEXES: Vec<String> = vec![
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII=".to_string(),
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2NgYGD8DwABBgEB8Oyl4AAAAABJRU5ErkJggg==".to_string(),
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2NgYGD6DwABCAECAKvsagAAAABJRU5ErkJggg==".to_string(),
+    ];
+}
+
 // 保留和svg相关的信息
 pub struct SvgContext<'a> {
     // 以像素为单位
@@ -6,6 +14,8 @@ pub struct SvgContext<'a> {
     height: u32,
     doc: roxmltree::Document<'a>,
     tree: Option<usvg::Tree>,
+    source: &'a str,
+    gif_hrefs: Vec<String>,
 }
 
 impl<'a> SvgContext<'a> {
@@ -30,11 +40,14 @@ impl<'a> SvgContext<'a> {
             height,
             doc: document,
             tree: None,
+            source,
+            gif_hrefs: vec![],
         })
     }
 
     pub fn map_gif_hrefs(&mut self) -> u32 {
         let mut hrefs = Vec::<String>::new();
+        let mut input = self.source.to_string();
         // svg中含有的gif个数
         let mut gif_count = 0u32;
         for ref node in self.doc.descendants() {
@@ -47,12 +60,17 @@ impl<'a> SvgContext<'a> {
                     !hrefs.contains(&href.to_string()) {
                     // 将base64形式存在的gif放置在vector中
                     hrefs.push(href.to_string());
-
+                    let re_href: String;
+                    match IMAGE_INDEXES.get(count) {
+                        Some(s) => { re_href = s.to_string(); }
+                        _ => { panic!("Max gif count is {}", IMAGE_INDEXES.len()); }
+                    }
+                    input = input.replace(href, &format!("data:image/png;base64,{}", re_href));
                     gif_count += 1;
                 }
             }
         }
-
+        self.gif_hrefs = hrefs;
         return gif_count;
     }
 }
