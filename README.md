@@ -2,7 +2,7 @@
 
 Personal coding exercises (个人代码练习)
 
-* 使用`git_sync_deps.py`下载C/C++程序需要的第三方库。
+* 使用`git_sync_deps.py`下载程序需要的第三方库。
 
 * 每个项目下的`run.py`自动运行示例程序。
 

@@ -1,10 +1,13 @@
 use std::fs::File;
 use crate::app::render;
 use std::io::Read;
+use crate::context::{SvgContext, RenderContext};
 
 mod app;
-// 学习Rust模块
 mod learn;
+mod context;
+
+const FPS: u32 = 24;
 
 struct Args {
     help: bool,
@@ -119,6 +122,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     file.read_to_end(&mut source).unwrap();
     let svg_str = delete_gif_newline(&String::from_utf8(source).unwrap());
 
-    return render(&svg_str, args.output.as_str(),
-                  args.format.as_str());
+    let mut svg_context = SvgContext::new(&svg_str).unwrap();
+
+    let mut render_context = RenderContext::new(&args.output, &args.format, FPS).unwrap();
+
+    render(&svg_context, &render_context);
+
+    Ok(())
 }

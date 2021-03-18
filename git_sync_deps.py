@@ -6,7 +6,8 @@ import sys
 
 # 项目所需要的依赖
 dependencies = {
-    "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3"
+    "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3",
+    "svg2gif/resvg": "https://github.com/RazrFalcon/resvg@38fc6781bd6edffcb8c14b3145b5e5a7342f6761"
 }
 
 
