@@ -126,7 +126,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut render_context = RenderContext::new(&args.output, &args.format, FPS).unwrap();
 
-    render(&svg_context, &render_context);
+    render(&mut svg_context, &render_context);
 
     Ok(())
 }

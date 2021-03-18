@@ -32,6 +32,29 @@ impl<'a> SvgContext<'a> {
             tree: None,
         })
     }
+
+    pub fn map_gif_hrefs(&mut self) -> u32 {
+        let mut hrefs = Vec::<String>::new();
+        // svg中含有的gif个数
+        let mut gif_count = 0u32;
+        for ref node in self.doc.descendants() {
+            if node.has_tag_name("image") {
+                let href = node.attribute("href")
+                    .unwrap_or_else(|| node.attribute("xlink:href")
+                        .unwrap_or_else(|| node.attribute(("http://www.w3.org/1999/xlink", "href"))
+                            .unwrap_or("")));
+                if !href.is_empty() && href.starts_with("data:image/gif;base64") &&
+                    !hrefs.contains(&href.to_string()) {
+                    // 将base64形式存在的gif放置在vector中
+                    hrefs.push(href.to_string());
+
+                    gif_count += 1;
+                }
+            }
+        }
+
+        return gif_count;
+    }
 }
 
 // 保留和渲染相关的信息
@@ -53,4 +76,7 @@ impl<'a> RenderContext<'a> {
             fps,
         })
     }
+
+    // 获取输出文件的类型
+    pub fn get_format() {}
 }
