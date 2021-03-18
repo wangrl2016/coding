@@ -1,6 +1,7 @@
 use chrono::Utc;
 use crate::context::{SvgContext, RenderContext};
 use crate::encode::EncodeContext;
+use usvg::FitTo;
 
 pub fn generate(svg_context: &mut SvgContext, render_context: &mut RenderContext)
                 -> Result<(), Box<dyn std::error::Error>> {
@@ -22,6 +23,18 @@ pub fn generate(svg_context: &mut SvgContext, render_context: &mut RenderContext
 
                 render_context.render(encode_context);
             }
+        }
+
+        "jpg" | "jpeg" | "png" => {
+            // if gif_count > 0 {
+
+            // } else {
+                let tree = svg_context.get_tree().unwrap();
+                let pixmap_size = tree.svg_node().size.to_screen_size();
+                let mut pixmap = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
+                resvg::render(&tree, FitTo::Original, pixmap.as_mut()).unwrap();
+                pixmap.save_png(render_context.get_output_path());
+            // }
         }
 
         _ => {

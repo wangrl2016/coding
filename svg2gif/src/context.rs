@@ -58,6 +58,10 @@ impl<'a> SvgContext<'a> {
         self.height
     }
 
+    pub fn get_tree(&self) -> Option<usvg::Tree> {
+        self.tree.clone()
+    }
+
 
     pub fn map_gif_hrefs(&mut self) -> u32 {
         let mut hrefs = Vec::<String>::new();
@@ -116,7 +120,7 @@ impl<'a> RenderContext<'a> {
     pub fn get_format() {}
 
     // 获取帧率
-    pub fn get_fps(&self) -> u32{
+    pub fn get_fps(&self) -> u32 {
         self.fps
     }
 

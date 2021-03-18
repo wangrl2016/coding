@@ -16,7 +16,7 @@ def main(argv):
     # 编译运行
     subprocess.run(['cargo', 'build', '--release'])
     subprocess.run(['./target/release/svg2gif', '-i', '../res/base64-gif.svg',
-                    '-o', 'out.gif', '-f', 'gif'])
+                    '-o', 'out.png', '-f', 'png'])
 
 
 if __name__ == '__main__':
