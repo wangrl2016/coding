@@ -6,6 +6,13 @@ use crate::context::{SvgContext, RenderContext};
 mod app;
 mod learn;
 mod context;
+mod decode;
+mod encode;
+mod utils;
+
+#[macro_use]
+extern crate lazy_static;
+
 
 const FPS: u32 = 24;
 

@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["wangrl2016 <wangrl2016@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name='svg2gif'
+path="src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -12,7 +15,8 @@ edition = "2018"
 pico-args = "0.4.0"
 chrono = "0.4.19"
 roxmltree="0.14.0"
+lazy_static="1.4.0"
 resvg= {version="0.14.0", path="./resvg"}
 usvg = {version="0.14.0", path="./resvg/usvg"}
 libmath = "0.2.1"
-lazy_static="1.4.0"
+ffmpeg-next = {version ="4.4.0-dev", path="./ffmpeg-next"}

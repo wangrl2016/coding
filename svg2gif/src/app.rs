@@ -9,7 +9,5 @@ pub fn render(svg_context: &mut SvgContext, render_context: &RenderContext)
     let gif_count = svg_context.map_gif_hrefs();
     println!("Svg中含有{}个gif文件", gif_count);
 
-    match render_context.
-
     return Ok(());
 }

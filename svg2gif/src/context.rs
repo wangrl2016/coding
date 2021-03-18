@@ -1,3 +1,5 @@
+
+
 lazy_static! {
     static ref IMAGE_INDEXES: Vec<String> = vec![
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII=".to_string(),
@@ -5,7 +7,6 @@ lazy_static! {
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2NgYGD6DwABCAECAKvsagAAAABJRU5ErkJggg==".to_string(),
     ];
 }
-
 // 保留和svg相关的信息
 pub struct SvgContext<'a> {
     // 以像素为单位
@@ -61,7 +62,7 @@ impl<'a> SvgContext<'a> {
                     // 将base64形式存在的gif放置在vector中
                     hrefs.push(href.to_string());
                     let re_href: String;
-                    match IMAGE_INDEXES.get(count) {
+                    match IMAGE_INDEXES.get(gif_count as usize) {
                         Some(s) => { re_href = s.to_string(); }
                         _ => { panic!("Max gif count is {}", IMAGE_INDEXES.len()); }
                     }
