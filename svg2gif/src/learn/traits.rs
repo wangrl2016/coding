@@ -26,21 +26,42 @@ impl Sheep {
             // Implementor methods can use the implementor's trait methods.
             println!("{} is already naked...", self.name())
         } else {
-            println!("{} get a ha")
+            println!("{} get a haircut!", self.name);
+            self.naked = true;
         }
     }
 }
 
 impl Animal for Sheep {
     fn new(name: &'static str) -> Self {
-        unimplemented!()
+        Sheep { name, naked: false }
     }
 
     fn name(&self) -> &'static str {
-        unimplemented!()
+        self.name
     }
 
     fn noise(&self) -> &'static str {
-        unimplemented!()
+        if self.is_naked() {
+            "bah?"
+        } else {
+            "bah!"
+        }
     }
+
+    // Default trait methods can be overridden.
+    fn talk(&self) {
+        // For example, we can some quiet contemplation.
+        println!("{} pauses briefly... {}", self.name, self.noise());
+    }
+}
+
+#[test]
+fn test_traits() {
+    // Type annotation is necessary in this case.
+    let mut dolly: Sheep = Animal::new("Dolly");
+
+    dolly.talk();
+    dolly.shear();
+    dolly.talk();
 }
