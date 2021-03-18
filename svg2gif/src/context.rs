@@ -1,5 +1,5 @@
-
-
+use crate::decode::FrameContainer;
+use crate::encode::EncodeContext;
 lazy_static! {
     static ref IMAGE_INDEXES: Vec<String> = vec![
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII=".to_string(),
@@ -16,7 +16,7 @@ pub struct SvgContext<'a> {
     doc: roxmltree::Document<'a>,
     tree: Option<usvg::Tree>,
     source: &'a str,
-    gif_hrefs: Vec<String>,
+    pub(crate) gif_hrefs: Vec<String>,
 }
 
 impl<'a> SvgContext<'a> {
@@ -81,10 +81,12 @@ pub struct RenderContext<'a> {
     // 输出路径
     output: &'a str,
     // 输出格式
-    format: &'a str,
+    pub(crate) format: &'a str,
     // 输出帧率
     fps: u32,
-    // 输出大小
+
+    // 保留所有的gif解码的帧
+    frame_container: FrameContainer,
 }
 
 impl<'a> RenderContext<'a> {
@@ -93,9 +95,26 @@ impl<'a> RenderContext<'a> {
             output,
             format,
             fps,
+            frame_container: FrameContainer::new(),
         })
     }
 
     // 获取输出文件的类型
     pub fn get_format() {}
+
+    pub fn decode_svg_gif(splice: Vec<String>) {
+        let mut index = 0u32;
+
+        for href in splice.iter() {
+            if href.starts_with("data:image/gif;base64,") {
+
+                let split_str = href.split("data:image/gif;base64,");
+
+            }
+        }
+    }
+
+    pub fn render(encode_context: EncodeContext) {
+
+    }
 }

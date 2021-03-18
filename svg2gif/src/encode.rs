@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use ffmpeg_next::{format, codec, filter, ffi};
 use ffmpeg_next::format::Pixel;
-use ffmpeg_next::util::option::Type::Dictionary;
+use ffmpeg_next::Dictionary;
 use ffmpeg_next::filter::Graph;
 
 const FILTER_DESC: &'static str = "split[x1][x2];[x1]palettegen[p];[x2][p]paletteuse";
@@ -34,8 +34,8 @@ impl EncodeContext {
         encoder.set_width(self.width);
         encoder.set_height(self.height);
         encoder.set_format(Pixel::PAL8);
-        encoder.set_frame_rate(Some((self.fps, 1i32)));
-        encoder.set_time_base((1i32, self.fps));
+        encoder.set_frame_rate(Some((self.fps as i32, 1i32)));
+        encoder.set_time_base((1i32, self.fps as i32));
 
         let encode_opt = Dictionary::new();
         encoder.open_with(encode_opt)?;
@@ -52,7 +52,7 @@ impl EncodeContext {
 
         // ffi::AV_PIX_FMT_BGR32 = AV_PIX_FMT_RGBA
         let args = format!("video_size={}x{}:pix_fmt={}:time_base={}/{}:pixel_aspect={}/{}",
-                           width, height, ffi::AV_PIX_FMT_BGR32 as i32, 1i32, fps, 1, 1);
+                           self.width, self.height, ffi::AV_PIX_FMT_BGR32 as i32, 1i32, self.fps, 1, 1);
 
         let mut graph = Graph::new();
         graph.add(&buffer_src, "in", &args)?;
@@ -65,7 +65,7 @@ impl EncodeContext {
 
         let inputs = graph.input("out", 0)?;
         let outputs = inputs.output("in", 0)?;
-        output.parse(&FILTER_DESC);
+        outputs.parse(&FILTER_DESC);
 
         graph.validate()?;
 

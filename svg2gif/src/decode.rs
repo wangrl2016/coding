@@ -9,3 +9,19 @@ pub struct FrameContainer {
     // 默认保存为rgba格式
     cache: HashMap<usize, Vec<(u32, u32, Vec<u8>)>>,
 }
+
+impl FrameContainer {
+    // pub fn new(splice: Vec<String>) -> Self {
+    //     FrameContainer {
+    //         splice,
+    //         cache: HashMap::new(),
+    //     }
+    // }
+
+    pub fn new() -> Self {
+        FrameContainer {
+            splice: vec![],
+            cache: Default::default(),
+        }
+    }
+}
