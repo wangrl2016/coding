@@ -1,5 +1,7 @@
 use crate::decode::FrameContainer;
 use crate::encode::EncodeContext;
+use crate::utils::TempFile;
+
 lazy_static! {
     static ref IMAGE_INDEXES: Vec<String> = vec![
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII=".to_string(),
@@ -45,6 +47,17 @@ impl<'a> SvgContext<'a> {
             gif_hrefs: vec![],
         })
     }
+
+    // 获取宽度
+    pub fn get_width(&self) -> u32 {
+        self.width
+    }
+
+    // 获取高度
+    pub fn get_height(&self) -> u32 {
+        self.height
+    }
+
 
     pub fn map_gif_hrefs(&mut self) -> u32 {
         let mut hrefs = Vec::<String>::new();
@@ -102,19 +115,40 @@ impl<'a> RenderContext<'a> {
     // 获取输出文件的类型
     pub fn get_format() {}
 
-    pub fn decode_svg_gif(splice: Vec<String>) {
-        let mut index = 0u32;
+    // 获取帧率
+    pub fn get_fps(&self) -> u32{
+        self.fps
+    }
 
+    pub fn get_output_path(&self) -> String {
+        self.output.to_string()
+    }
+
+    pub fn decode_svg_gif(&mut self, splice: Vec<String>) {
+        println!("解码gif文件");
+        let mut index = 0u32;
         for href in splice.iter() {
             if href.starts_with("data:image/gif;base64,") {
+                let mut split = href.split("data:image/gif;base64,");
+                let mut i = 0usize;
+                let mut b = None;
 
-                let split_str = href.split("data:image/gif;base64,");
-
+                for sp in href.split("data:image/gif;base64,") {
+                    if i == 1usize {
+                        b = Some(sp.to_string());
+                    }
+                    i += 1;
+                }
+                if let Some(b) = b {
+                    if let Ok(data) = base64::decode(&b) {
+                        let file = TempFile::save(&format!("{}.gif", index), &data);
+                        self.frame_container.decode_gif(&file.0, index);
+                    }
+                }
             }
+            index += 1;
         }
     }
 
-    pub fn render(encode_context: EncodeContext) {
-
-    }
+    pub fn render(&mut self, encode_context: EncodeContext) {}
 }

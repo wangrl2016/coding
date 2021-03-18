@@ -5,3 +5,4 @@ resvg/
 ffmpeg-next/
 out.*
 out/
+*.gif

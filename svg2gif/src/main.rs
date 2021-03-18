@@ -1,5 +1,5 @@
 use std::fs::File;
-use crate::app::render;
+use crate::app::generate;
 use std::io::Read;
 use crate::context::{SvgContext, RenderContext};
 
@@ -133,7 +133,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut render_context = RenderContext::new(&args.output, &args.format, FPS).unwrap();
 
-    render(&mut svg_context, &render_context);
+    generate(&mut svg_context, &mut render_context);
 
     Ok(())
 }

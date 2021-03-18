@@ -20,3 +20,4 @@ resvg= {version="0.14.0", path="./resvg"}
 usvg = {version="0.14.0", path="./resvg/usvg"}
 libmath = "0.2.1"
 ffmpeg-next = {version ="4.4.0-dev", path="./ffmpeg-next"}
+base64="0.13.0"
