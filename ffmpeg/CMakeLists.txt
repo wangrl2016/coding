@@ -6,8 +6,8 @@ project(FFmpegTutorials)
 find_package(SDL2 REQUIRED)
 
 # add the executable
-
-SET(EXAMPLES
+SET(
+        EXAMPLES
         Dump
         Metadata
         DecodeVideo
@@ -23,7 +23,7 @@ SET(EXAMPLES
         Muxing
         Remuxing
         FFPlay
-        )
+)
 
 foreach (EXAMPLE ${EXAMPLES})
     add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
