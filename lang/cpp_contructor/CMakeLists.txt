@@ -10,6 +10,7 @@ SET(
         DefaultConstructor
         CopyConstructor
         CopyAssignment
+        MoveConstructor
 )
 
 foreach (EXAMPLE ${EXAMPLES})
