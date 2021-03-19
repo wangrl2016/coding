@@ -24,9 +24,14 @@ impl TempFile {
         file.write(data).unwrap();
         TempFile(path.to_string())
     }
+
+    pub fn delete(self) {
+        std::fs::remove_file(self.0).unwrap();
+    }
 }
 
 pub fn save_ppm_file(path: &str, pixel_format: Pixel, width: u32, height: u32, data: Vec<u8>) {
+    create_file_dir(path);
     let mut file = File::create(path).unwrap();
     // let mut pixel_bits;
     // if pixel_format == Pixel::RGBA {

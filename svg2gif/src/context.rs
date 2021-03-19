@@ -148,6 +148,8 @@ impl<'a> RenderContext<'a> {
                     if let Ok(data) = base64::decode(&b) {
                         let file = TempFile::save(&format!("{}.gif", index), &data);
                         self.frame_container.decode_gif(&file.0, index);
+                        // 删除临时生成的gif文件
+                        file.delete();
                     }
                 }
             }
@@ -155,5 +157,7 @@ impl<'a> RenderContext<'a> {
         }
     }
 
-    pub fn render(&mut self, encode_context: EncodeContext) {}
+    pub fn render(&mut self, encode_context: EncodeContext) {
+
+    }
 }

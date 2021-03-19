@@ -133,9 +133,9 @@ https://learnopengl.com/
 
 https://developer.android.com/
 
-- [ ] Camera使
+- [ ] Camera相机
 - [ ] 多媒体播放器
-
+- [ ] NDK开发
 
 ## OpenCV示例 ([opencv](opencv/))
 
@@ -177,6 +177,7 @@ https://docs.opencv.org/4.5.1/
 
 存放重要的文件
 
+- [ ] Computer Systems - A Programmer's Perspective
 
 ## 数字图像处理 ([dip](dip/))
 
@@ -271,11 +272,9 @@ https://mitpress.mit.edu/books/introduction-algorithms-third-edition
 - [ ] Approximation Algorithms　
 
 
-## 计算机系统 ([cs](cs/))
-
-
 ## 打赏作者
 
 微信/支付宝付款
 
 ![收款码](res/qrcode-wechat-alipay.png)
+
