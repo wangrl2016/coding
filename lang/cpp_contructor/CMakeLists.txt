@@ -9,6 +9,7 @@ SET(
         Memory
         DefaultConstructor
         CopyConstructor
+        CopyAssignment
 )
 
 foreach (EXAMPLE ${EXAMPLES})
