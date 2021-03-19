@@ -3,6 +3,7 @@ use std::io::Write;
 use ffmpeg_next::Format;
 use ffmpeg_next::format::Pixel;
 use ffmpeg_next::sys::AV_PIX_FMT_BGR32;
+use chrono::{Local, Timelike};
 
 // 创建嵌套目录
 fn create_file_dir(path: &str) {
@@ -12,6 +13,13 @@ fn create_file_dir(path: &str) {
             std::fs::create_dir_all(&path[0..split_line_index]).unwrap();
         }
     }
+}
+
+//　整体当前时间的打印格式
+pub fn get_current_time() -> String {
+    let now = Local::now();
+    return format!("{:02}:{:02}:{:02}.{:03}",
+                   now.hour(), now.minute(), now.second(), now.timestamp_subsec_millis());
 }
 
 pub struct TempFile(pub(crate) String);
