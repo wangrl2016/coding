@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     int b;                          // 栈
     char s[] = "abc";               // 栈
     char* p2;                       // 栈
-    char* p3 = "123456";            // 123456\0在常量区, p3在栈上。
+    // char* p3 = "123456";         // 123456\0在常量区, p3在栈上。
     static int c = 0;               // 全局(静态)初始化区域
     // 分配来的10和20字节的区域就在堆区
     p1 = (char*) malloc(10);
