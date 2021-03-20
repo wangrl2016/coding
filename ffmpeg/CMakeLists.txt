@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.15)
 project(FFmpegTutorials)
 
 find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 
 # add the executable
 SET(
@@ -23,6 +24,7 @@ SET(
         Muxing
         Remuxing
         FFPlay
+        Dranger
 )
 
 foreach (EXAMPLE ${EXAMPLES})

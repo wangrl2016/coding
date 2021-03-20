@@ -134,8 +134,14 @@ if __name__ == '__main__':
         elif no == 15:
             print('音视频播放器')
             args.append('../res/big-buck-bunny.mp4')
+        elif no == 16:
+            print('简单的音视频播放器')
+            args.append('../res/big-buck-bunny.mp4')
 
         subprocess.run(args)
         print()
+
+        # 调试开关
+        break
 
     exit(0)
