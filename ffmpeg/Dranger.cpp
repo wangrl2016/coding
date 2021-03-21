@@ -24,6 +24,8 @@
  * SDL播放音频原理
  * 1. 设置音频参数，比如采样率，声道数等。
  * 2. 设置回调函数，SDL会调用回调函数填充数据。
+ *
+ * TODO: 播放时没有做同步
  */
 
 extern "C" {
@@ -227,39 +229,7 @@ void audioCallback(void* userData, uint8_t* stream, int len) {
     }
 }
 
-typedef struct VideoState {
-    AVFormatContext* inputFormatContext;
-    int videoStreamIndex, audioStreamIndex;
-    AVStream* audioStream;
-    AVCodecContext* audioCodecContext;
-    PacketQueue audioQueue;
-    uint8_t audioBuf[(MAX_AUDIO_FRAME_SIZE * 3) / 2];
-    unsigned int audioBufSize;
-    unsigned int audioBufIndex;
-    AVPacket audioPacket;
-    uint8_t* audioPacketData;
-    int audioPacketSize;
-
-    AVStream* videoStream;
-    AVCodecContext* videoContext;
-    PacketQueue videoQueue;
-    struct SwsContext* swsContext;
-
-
-    SDL_Thread* parseThread;
-    SDL_Thread* videoThread;
-
-    char filename[1024];
-    bool quit;
-} VideoState;
-
-// Since we only have one decoding thread, the big struct can be global in case we need it.
-VideoState* globalVideoState;
-
 int main(int argc, char* argv[]) {
-    VideoState* is;
-    is = (VideoState *) (av_malloc(sizeof(VideoState)));
-
     AVFormatContext* formatContext = nullptr;
     AVCodecContext* videoCodecContext = nullptr;
     AVCodecParameters* videoCodecParameters = nullptr;
@@ -273,8 +243,6 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s movie_file\n", argv[0]);
         return EXIT_FAILURE;
     }
-
-    av_strlcpy(is->filename, argv[1], sizeof(is->filename));
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         av_log(nullptr, AV_LOG_ERROR, "Could not initialize SDL - %s\n", SDL_GetError());

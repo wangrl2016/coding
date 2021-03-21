@@ -132,10 +132,10 @@ if __name__ == '__main__':
             args.append('../res/big-buck-bunny.mp4')
             args.append('out/big-buck-bunny.mov')
         elif no == 15:
-            print('音视频播放器')
+            print('简单的音视频播放器')
             args.append('../res/big-buck-bunny.mp4')
         elif no == 16:
-            print('简单的音视频播放器')
+            print('参考ffplay写的音视频播放器')
             args.append('../res/big-buck-bunny.mp4')
 
         subprocess.run(args)

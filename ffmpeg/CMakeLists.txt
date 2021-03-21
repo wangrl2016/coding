@@ -24,6 +24,7 @@ SET(
         Muxing
         Remuxing
         Dranger
+        FFPlay
 )
 
 foreach (EXAMPLE ${EXAMPLES})
