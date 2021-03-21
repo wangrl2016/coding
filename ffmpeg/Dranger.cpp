@@ -119,7 +119,6 @@ static int packetQueueGet(PacketQueue* queue, AVPacket* packet, bool block) {
     return ret;
 }
 
-
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_RendererInfo rendererInfo;
@@ -150,14 +149,22 @@ int decodeAudioFrame(AVCodecContext* audioCodecContext, uint8_t* audioBuf, int b
             audioPacketSize -= decodedAudioLen;
             dataSize = 0;
             if (gotFrame) {
-                // 获取单声道的数据
                 dataSize = av_samples_get_buffer_size(nullptr,
-                                                      1,
+                                                      audioCodecContext->channels,
                                                       frame.nb_samples,
                                                       audioCodecContext->sample_fmt,
                                                       1);
                 assert(dataSize <= bufSize);
-                memcpy(audioBuf, frame.data[0], dataSize);
+                int sampleSize = av_get_bytes_per_sample(audioCodecContext->sample_fmt);
+                uint8_t tempBuf[dataSize];
+
+                int index = 0;
+                for (int i = 0; i < frame.nb_samples; i++) {
+                    for (int ch = 0; ch < frame.channels; ch++)
+                        for (int j = 0; j < sampleSize; j++)
+                            tempBuf[index++] = *(frame.data[ch] + sampleSize * i + j);
+                }
+                memcpy(audioBuf, tempBuf, dataSize);
             }
             if (dataSize <= 0) {
                 // No data yet, get more frame.
@@ -348,7 +355,7 @@ int main(int argc, char* argv[]) {
     SDL_memset(&desiredAudioSpec, 0, sizeof(desiredAudioSpec));
     desiredAudioSpec.freq = audioCodecContext->sample_rate;
     desiredAudioSpec.format = AUDIO_F32LSB;
-    desiredAudioSpec.channels = 1;
+    desiredAudioSpec.channels = audioCodecContext->channels;
     desiredAudioSpec.silence = 0;
     desiredAudioSpec.samples = SDL_AUDIO_BUFFER_SIZE;
     desiredAudioSpec.callback = audioCallback;
