@@ -36,8 +36,89 @@ extern "C" {
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_audio.h>
+#include <cassert>
 
 #define SDL_AUDIO_BUFFER_SIZE 1024
+#define MAX_AUDIO_FRAME_SIZE 19200
+
+bool quit = false;
+
+typedef struct PacketQueue {
+    AVPacketList* firstPacket, * lastPacket;
+    int numberPackets;
+    int size;
+    SDL_mutex* mutex;
+    SDL_cond* cond;
+} PacketQueue;
+
+PacketQueue audioQueue;
+
+void packetQueueInit(PacketQueue* queue) {
+    memset(queue, 0, sizeof(PacketQueue));
+    queue->mutex = SDL_CreateMutex();
+    queue->cond = SDL_CreateCond();
+}
+
+// 将packet放进队列中
+int packetQueuePut(PacketQueue* queue, AVPacket* packet) {
+    AVPacketList* packetList;   // 表示一个节点
+    AVPacket* dstPacket;
+    if (av_packet_ref(dstPacket, packet) < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "Ref packet failed\n");
+        return -1;
+    }
+    packetList = static_cast<AVPacketList*>(av_malloc(sizeof(AVPacketList)));
+    if (!packetList)
+        return -1;
+    packetList->pkt = *dstPacket;
+    packetList->next = nullptr;
+
+    SDL_LockMutex(queue->mutex);
+
+    // 最后一个队列为空
+    if (!queue->lastPacket)
+        queue->firstPacket = packetList;
+    else
+        queue->lastPacket->next = packetList;
+    queue->numberPackets++;
+    queue->size += packetList->pkt.size;
+    // Restart one of the threads that are waiting on the condition variable.
+    SDL_CondSignal(queue->cond);
+
+    SDL_UnlockMutex(queue->mutex);
+    return 0;
+}
+
+static int packetQueueGet(PacketQueue* queue, AVPacket* packet, bool block) {
+    AVPacketList* packetList;
+    int ret = -1;
+
+    SDL_LockMutex(queue->mutex);
+
+    while (!quit) {
+        packetList = queue->firstPacket;
+        if (packetList) {
+            queue->firstPacket = packetList->next;
+            if (!queue->firstPacket)
+                queue->lastPacket = nullptr;
+            queue->numberPackets--;
+            queue->size -= packetList->pkt.size;
+            *packet = packetList->pkt;
+            av_free(packetList);
+            ret = 1;
+            break;
+        } else if (!block) {
+            ret = 0;
+            break;
+        } else {
+            // 等待通知
+            SDL_CondWait(queue->cond, queue->mutex);
+        }
+    }
+    SDL_UnlockMutex(queue->mutex);
+    return ret;
+}
+
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
@@ -47,8 +128,95 @@ static SDL_Event event;
 
 static SDL_AudioSpec desiredAudioSpec, obtainedAudioSpec;
 
-void audioCallback(void* userData, uint8_t* stream, int len) {
+int decodeAudioFrame(AVCodecContext* audioCodecContext, uint8_t* audioBuf, int bufSize) {
+    static AVPacket packet;
+    static uint8_t* audioPacketData = nullptr;
+    static int audioPacketSize = 0;
+    static AVFrame frame;
 
+    int ret;
+    int decodedAudioLen, dataSize = 0;
+    while (!quit) {
+
+        while (audioPacketSize > 0) {
+            int gotFrame = 0;
+            decodedAudioLen = avcodec_decode_audio4(audioCodecContext, &frame, &gotFrame, &packet);
+            if (decodedAudioLen < 0) {
+                // If error, skip frame.
+                audioPacketSize = 0;
+                break;
+            }
+            audioPacketData += decodedAudioLen;
+            audioPacketSize -= decodedAudioLen;
+            dataSize = 0;
+            if (gotFrame) {
+                // 获取单声道的数据
+                dataSize = av_samples_get_buffer_size(nullptr,
+                                                      1,
+                                                      frame.nb_samples,
+                                                      audioCodecContext->sample_fmt,
+                                                      1);
+                assert(dataSize <= bufSize);
+                memcpy(audioBuf, frame.data[0], dataSize);
+            }
+            if (dataSize <= 0) {
+                // No data yet, get more frame.
+                continue;
+            }
+            // We have data, return it and come back for more later.
+            return dataSize;
+        }
+
+        if (packet.data)
+            av_packet_unref(&packet);
+
+        if (packetQueueGet(&audioQueue, &packet, true) < 0)
+            return -1;
+
+        audioPacketData = packet.data;
+        audioPacketSize = packet.size;
+    }
+    return ret;
+}
+
+/**
+ * SDL回调音频数据
+ *
+ * @param userData 用户数据，这里传递AVCodecContext结构体
+ * @param stream 需要的音频数据指针
+ * @param len 需要的音频数据长度
+ */
+void audioCallback(void* userData, uint8_t* stream, int len) {
+    AVCodecContext* audioCodecContext = (AVCodecContext*) userData;
+    int decodedAudioSize, audioLength;
+
+    static uint8_t audioBuf[(MAX_AUDIO_FRAME_SIZE * 3) / 2];
+    static unsigned int audioBufSize = 0;
+    static unsigned int audioBufIndex = 0;
+
+    while (len > 0) {
+        if (audioBufIndex >= audioBufSize) {
+            // We have already sett all our data; get more.
+            decodedAudioSize = decodeAudioFrame(audioCodecContext, audioBuf, sizeof(audioBuf));
+            if (decodedAudioSize < 0) {
+                // If error, output silence.
+                audioBufSize = 1024; //arbitrary?
+                memset(audioBuf, 0, audioBufSize);
+            } else {
+                audioBufSize = decodedAudioSize;
+            }
+            audioBufIndex = 0;
+        }
+        audioLength = audioBufSize - audioBufIndex;
+        if (audioLength > len)
+            audioLength = len;
+        // 将数据复制到流中
+        memcpy(stream, (uint8_t*) audioBuf + audioBufIndex, audioLength);
+        len -= audioLength;
+        stream += audioLength;
+        audioBufIndex += audioLength;
+
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -59,7 +227,7 @@ int main(int argc, char* argv[]) {
     AVCodecContext* audioCodecContext = nullptr;
     AVCodecParameters* audioCodecParameters = nullptr;
     AVCodec* audioCodec = nullptr;
-    bool quit = false;
+
 
     if (argc < 2) {
         printf("Usage: %s movie_file\n", argv[0]);
@@ -67,7 +235,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
-        av_log(nullptr, AV_LOG_ERROR, "Could not initialize SDL - %d\n", SDL_GetError());
+        av_log(nullptr, AV_LOG_ERROR, "Could not initialize SDL - %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
@@ -180,7 +348,7 @@ int main(int argc, char* argv[]) {
     SDL_memset(&desiredAudioSpec, 0, sizeof(desiredAudioSpec));
     desiredAudioSpec.freq = audioCodecContext->sample_rate;
     desiredAudioSpec.format = AUDIO_F32LSB;
-    desiredAudioSpec.channels = audioCodecContext->channels;
+    desiredAudioSpec.channels = 1;
     desiredAudioSpec.silence = 0;
     desiredAudioSpec.samples = SDL_AUDIO_BUFFER_SIZE;
     desiredAudioSpec.callback = audioCallback;
@@ -194,6 +362,7 @@ int main(int argc, char* argv[]) {
                obtainedAudioSpec.freq, obtainedAudioSpec.format, obtainedAudioSpec.channels);
     }
 
+    packetQueueInit(&audioQueue);
     // Start audio playing.
     SDL_PauseAudio(0);
 
@@ -216,10 +385,10 @@ int main(int argc, char* argv[]) {
                     return response;
                 }
 
-                double fps = av_q2d(formatContext->streams[videoStreamIndex]->r_frame_rate);
-                double sleepTime = 1.0 / (double) fps;
-                // Use SDL_Delay in milliseconds to allow for cpu scheduling.
-                SDL_Delay(1000 * sleepTime - 10);
+                // double fps = av_q2d(formatContext->streams[videoStreamIndex]->r_frame_rate);
+                // double sleepTime = 1.0 / (double) fps;
+                // // Use SDL_Delay in milliseconds to allow for cpu scheduling.
+                // SDL_Delay(1000 * sleepTime - 10);
 
                 // The simplest struct in SDL. It contains only four shorts.
                 // x, y which holds the position and w, h which holds width and height.
@@ -253,7 +422,7 @@ int main(int argc, char* argv[]) {
                 SDL_RenderPresent(renderer);
             }
         } else if (packet->stream_index == audioStreamIndex) {
-
+            packetQueuePut(&audioQueue, packet);
         }
         // free the packet that was allocated by av_read_frame
         av_packet_unref(packet);
