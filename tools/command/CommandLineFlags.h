@@ -85,6 +85,8 @@
  * (where 'x' is the type specified in the DEFINE).
  */
 
+class FlagInfo;
+
 class CommandLineFlags {
 public:
     // Call to set the help message to be displayed.
@@ -137,9 +139,22 @@ public:
             fStrings[i] = str;
         }
 
+        std::string begin() const {
+            return fStrings[0];
+        }
+
+        std::string end() const {
+            return fStrings[fStrings.size() - 1];
+        }
+
     private:
         void append(const char* string) {
             fStrings.push_back(string);
+        }
+
+        void reset() {
+            while (!fStrings.empty())
+                fStrings.pop_back();
         }
 
         // SkTArray<T> implements a typical, mostly std::vector-like array.

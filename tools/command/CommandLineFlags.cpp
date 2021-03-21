@@ -3,3 +3,15 @@
 //
 
 #include "CommandLineFlags.h"
+
+void CommandLineFlags::SetUsage(const char* usage) {
+
+}
+
+void CommandLineFlags::PrintUsage() {
+
+}
+
+void CommandLineFlags::Parse(int argc, const char* const* argv) {
+
+}
