@@ -9,7 +9,21 @@
  *
  * http://www.dranger.com/ffmpeg
  *
+ * 播放音频的原理
  *
+ * Digital audio consists of a long stream of samples. Each sample represents a value
+ * of the audio waveform. Sound are recorded at a certain sample rate, which
+ * simple says how fast to play each sample, and is measured in number of samples per
+ * second.
+ *
+ * 常见的采样频率有22050和44100
+ *
+ * In addition, most audio can have more than one channel for stereo or surround, so for
+ * example, if the sample is in stereo, the samples will come 2 at a time.
+ *
+ * SDL播放音频原理
+ * 1. 设置音频参数，比如采样率，声道数等。
+ * 2. 设置回调函数，SDL会调用回调函数填充数据。
  */
 
 extern "C" {
@@ -21,17 +35,31 @@ extern "C" {
 
 #include <SDL.h>
 #include <SDL_thread.h>
+#include <SDL_audio.h>
+
+#define SDL_AUDIO_BUFFER_SIZE 1024
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_RendererInfo rendererInfo;
 static SDL_Texture* texture;
+static SDL_Event event;
+
+static SDL_AudioSpec desiredAudioSpec, obtainedAudioSpec;
+
+void audioCallback(void* userData, uint8_t* stream, int len) {
+
+}
 
 int main(int argc, char* argv[]) {
     AVFormatContext* formatContext = nullptr;
-    AVCodecContext* codecContext = nullptr;
-    AVCodecParameters* codecParameters = nullptr;
-    AVCodec* codec = nullptr;
+    AVCodecContext* videoCodecContext = nullptr;
+    AVCodecParameters* videoCodecParameters = nullptr;
+    AVCodec* videoCodec = nullptr;
+    AVCodecContext* audioCodecContext = nullptr;
+    AVCodecParameters* audioCodecParameters = nullptr;
+    AVCodec* audioCodec = nullptr;
+    bool quit = false;
 
     if (argc < 2) {
         printf("Usage: %s movie_file\n", argv[0]);
@@ -60,51 +88,63 @@ int main(int argc, char* argv[]) {
 
     // find the first video stream
     int videoStreamIndex = -1;
+    int audioStreamIndex = -1;
     for (int i = 0; i < formatContext->nb_streams; i++) {
-        if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+        if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO
+            && videoStreamIndex < 0) {
             videoStreamIndex = i;
-            break;
+        }
+        if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO
+            && audioStreamIndex < 0) {
+            audioStreamIndex = i;
         }
     }
-    if (videoStreamIndex == -1) { return -1; }
 
-    codecParameters = formatContext->streams[videoStreamIndex]->codecpar;
-    codec = avcodec_find_decoder(codecParameters->codec_id);
-    if (!codec) {
-        fprintf(stderr, "unsupported codec\n");
+    if (videoStreamIndex == -1 || audioStreamIndex == -1) { return -1; }
+
+    videoCodecParameters = formatContext->streams[videoStreamIndex]->codecpar;
+    videoCodec = avcodec_find_decoder(videoCodecParameters->codec_id);
+    if (!videoCodec) {
+        fprintf(stderr, "unsupported videoCodec\n");
         return -1;
     }
 
-    codecContext = avcodec_alloc_context3(codec);
-    if (avcodec_parameters_to_context(codecContext, codecParameters)) {
-        fprintf(stderr, "could not copy codec context\n");
+    videoCodecContext = avcodec_alloc_context3(videoCodec);
+    if (avcodec_parameters_to_context(videoCodecContext, videoCodecParameters)) {
+        fprintf(stderr, "could not copy videoCodec context\n");
         return -1;
     }
 
     // initialize the AVCodecContext to use the given AVCodec
-    if (avcodec_open2(codecContext, codec, nullptr) < 0) {
+    if (avcodec_open2(videoCodecContext, videoCodec, nullptr) < 0) {
+        return -1;
+    }
+
+    audioCodecParameters = formatContext->streams[audioStreamIndex]->codecpar;
+    audioCodec = avcodec_find_decoder(audioCodecParameters->codec_id);
+    if (!audioCodec) {
+        fprintf(stderr, "Unsupported audioCodec\n");
+        return -1;
+    }
+
+    audioCodecContext = avcodec_alloc_context3(audioCodec);
+    if (avcodec_parameters_to_context(audioCodecContext, audioCodecParameters)) {
+        fprintf(stderr, "could not copy audioCodec context\n");
+        return -1;
+    }
+
+    if (avcodec_open2(audioCodecContext, audioCodec, nullptr) < 0) {
         return -1;
     }
 
     AVFrame* frame = av_frame_alloc();
     AVPacket* packet = av_packet_alloc();
 
-    // initialize SwsContext for scaling
-    SwsContext* swsContext = sws_getContext(
-            codecContext->width,
-            codecContext->height,
-            codecContext->pix_fmt,
-            codecContext->width,
-            codecContext->height,
-            AV_PIX_FMT_RGB24,
-            SWS_BILINEAR,
-            nullptr, nullptr, nullptr);
-
     window = SDL_CreateWindow("Dranger",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              codecContext->width,
-                              codecContext->height,
+                              videoCodecContext->width,
+                              videoCodecContext->height,
                               SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_RESIZABLE);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
@@ -133,21 +173,42 @@ int main(int argc, char* argv[]) {
             renderer,
             SDL_PIXELFORMAT_YV12,
             SDL_TEXTUREACCESS_STREAMING,
-            codecContext->width,
-            codecContext->height);
+            videoCodecContext->width,
+            videoCodecContext->height);
 
-    while (av_read_frame(formatContext, packet) >= 0) {
+    // Set audio settings from codec info
+    SDL_memset(&desiredAudioSpec, 0, sizeof(desiredAudioSpec));
+    desiredAudioSpec.freq = audioCodecContext->sample_rate;
+    desiredAudioSpec.format = AUDIO_F32LSB;
+    desiredAudioSpec.channels = audioCodecContext->channels;
+    desiredAudioSpec.silence = 0;
+    desiredAudioSpec.samples = SDL_AUDIO_BUFFER_SIZE;
+    desiredAudioSpec.callback = audioCallback;
+    desiredAudioSpec.userdata = audioCodecContext;
+    if (SDL_OpenAudio(&desiredAudioSpec, &obtainedAudioSpec) < 0) {
+        av_log(nullptr, AV_LOG_ERROR, "SDL_OpenAudio: %s\n", SDL_GetError());
+        return EXIT_FAILURE;
+    } else {
+        // format 0x8120 => 33056
+        av_log(nullptr, AV_LOG_INFO, "Audio params - sample_rate %d, format %d, channels %d, ",
+               obtainedAudioSpec.freq, obtainedAudioSpec.format, obtainedAudioSpec.channels);
+    }
+
+    // Start audio playing.
+    SDL_PauseAudio(0);
+
+    while (av_read_frame(formatContext, packet) >= 0 && !quit) {
         // Is this a packet from the video stream?
         if (packet->stream_index == videoStreamIndex) {
             // supply raw packet data as input to a decoder
-            int response = avcodec_send_packet(codecContext, packet);
+            int response = avcodec_send_packet(videoCodecContext, packet);
             if (response < 0) {
                 av_log(nullptr, AV_LOG_ERROR, "Error while sending a packet to the decoder\n");
                 return response;
             }
             while (response >= 0) {
                 // return decode output data (into a frame) from a decoder
-                response = avcodec_receive_frame(codecContext, frame);
+                response = avcodec_receive_frame(videoCodecContext, frame);
                 if (response == AVERROR(EAGAIN) || response == AVERROR_EOF) {
                     break;
                 } else if (response < 0) {
@@ -168,8 +229,8 @@ int main(int argc, char* argv[]) {
                 SDL_Rect rect;
                 rect.x = 0;
                 rect.y = 0;
-                rect.w = codecContext->width;
-                rect.h = codecContext->height;
+                rect.w = videoCodecContext->width;
+                rect.h = videoCodecContext->height;
 
                 // Update a rectangle within a planar YV12 texture with new pixel data.
                 SDL_UpdateYUVTexture(
@@ -191,16 +252,26 @@ int main(int argc, char* argv[]) {
                 // Update the screen with any rendering performed since the previous call.
                 SDL_RenderPresent(renderer);
             }
+        } else if (packet->stream_index == audioStreamIndex) {
+
         }
         // free the packet that was allocated by av_read_frame
         av_packet_unref(packet);
+
+        SDL_PollEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT: {
+                quit = true;
+                break;
+            }
+        }
     }
 
     av_packet_free(&packet);
     av_frame_free(&frame);
 
-    avcodec_free_context(&codecContext);
-    sws_freeContext(swsContext);
+    avcodec_free_context(&videoCodecContext);
+    avcodec_free_context(&audioCodecContext);
     avformat_close_input(&formatContext);
     return 0;
 }
