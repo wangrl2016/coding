@@ -32,11 +32,10 @@ https://github.com/TheAlgorithms/Java
 - [x] Heap
 - [x] Hashing
 - [x] Graph
-- [ ] Matrix
-- [ ] Misc
-- [ ] Advanced Data Structure
-- [ ] Analysis of Algorithms
-- [ ] Searching and Sorting
+- [x] Matrix
+- [x] Advanced Data Structure
+- [x] Analysis of Algorithms
+- [x] Searching and Sorting
 - [ ] Greedy Algorithms
 - [ ] Dynamic Programming
 - [ ] Pattern Searching
@@ -50,7 +49,6 @@ https://github.com/TheAlgorithms/Java
 - [ ] Randomized Algorithms
 - [ ] Branch and Bound
 - [ ] Quizzes on Algorithms
-- [ ] Misc
 
 
 ## 算法(Algorithms)第四版 ([algs4](algs4/))
