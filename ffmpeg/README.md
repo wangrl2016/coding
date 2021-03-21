@@ -91,6 +91,14 @@ ffplay -f rawvideo -pix_fmt rgb24 -video_size 800x600 out/scale-video.raw
 
 - [x] 视频filter处理
 
+```
+                [main]
+input --> split ---------------------> overlay --> output
+            |                             ^
+            |[tmp]                  [flip]|
+            +-----> crop --> vflip -------+
+```
+
 - [x] 音频filter处理
 
 - [x] MP3格式转码成为AAC格式
@@ -108,6 +116,27 @@ pts:262144 pts_time:3.19107e+09 dts:262144 dts_time:3.19107e+09 duration:1024 du
 
 - [x] 容器转换(MP4->MOV)
 
-- [ ] 两个声音混合
+
+- [x] Dranger播放器
 
 - [ ] FFPlay播放器
+
+## 基础知识
+
+* 视频参数SAR, PAR, DAR基础概念
+
+1. PAR (pixel aspect ratio) 单个像素的宽高比
+
+大多数情况像素的宽高比为1:1，也就是正方形像素，常用的PAR比率有(1:1, 10:11, 12:11, 16:11)等。
+
+2. DAR (display aspect ratio) 显示宽高比
+
+即最终播放出来的画面的宽和高之比，常见的有16:9，缩放视频也需要按照该比例进行缩放。
+
+3. SAR (sample aspect ratio) 采样纵横比
+
+表示横向的像素点数和纵向的像素点数的比值
+
+三者的关系为PAR x SAR = DAR
+
+
