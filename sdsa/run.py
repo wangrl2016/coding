@@ -78,6 +78,25 @@ if __name__ == '__main__':
         'array/ArrayReverse',
         'array/ArrayRightRotate',
         'array/ArraySearch',
+        'linkedlist/SinglyLinkedList',
+        'linkedlist/SinglyLinkedListDeleted',
+        'linkedlist/SinglyLinkedListInserted',
+        'linkedlist/SinglyListLength',
+        'linkedlist/DoubleLinkedList',
+        'linkedlist/DoubleListDeleted',
+        'linkedlist/CircularLinkedList',
+        'linkedlist/IsCircularList',
+        'stack/ArrayStack',
+        'stack/LinkedListArray',
+        'queue/ArrayQueue',
+        'queue/LinkedListQueue',
+        'binarytree/BinaryTree',
+        'binarytree/BinaryTreeIntro',
+        'binarytree/BinarySearchTree',
+        'binarytree/BinaryTreeInsert',
+        'binarytree/BinaryTreeTraversal',
+        'heap/MinHeap',
+        'hashing/HashMap'
     ]
 
     jar_paths = ''
@@ -115,8 +134,6 @@ if __name__ == '__main__':
             write_print(readme, '数组向右旋转')
         elif no == 10:
             write_print(readme, '查找数组')
-
-        # write_print(readme, '')
 
         subprocess.run(['javac', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
