@@ -30,8 +30,8 @@ https://github.com/TheAlgorithms/Java
 - [x] Binary Tree
 - [x] Binary Search Tree
 - [x] Heap
-- [ ] Hashing
-- [ ] Graph
+- [x] Hashing
+- [x] Graph
 - [ ] Matrix
 - [ ] Misc
 - [ ] Advanced Data Structure

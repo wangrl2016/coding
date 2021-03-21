@@ -96,7 +96,8 @@ if __name__ == '__main__':
         'binarytree/BinaryTreeInsert',
         'binarytree/BinaryTreeTraversal',
         'heap/MinHeap',
-        'hashing/HashMap'
+        'hashing/HashMap',
+        'graph/GraphRepresent'
     ]
 
     jar_paths = ''
