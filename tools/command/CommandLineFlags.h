@@ -10,6 +10,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "Sort.h"
+
 /**
  * Including this file (and compiling CommandLineFlags.cpp) provides command line
  * parsing. In order to use it, use the following macros in global namespace.

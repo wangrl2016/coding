@@ -50,8 +50,9 @@ package greedy;
  * 输入集合S = {s1, s2, ..., sn}，其S集合的大小为n。
  * 权重集合W = {w1, w2, ..., wn}，其W集合不为负数且wi = weight(si), 1 <= i <= n。
  * 输出一组编码C(S,W)= {c1, c2, ..., cn}，其C集合是一组二进制编码且ci为si相对应的编码。
- *
  */
 
 public class HuffmanCoding {
+    
+
 }
