@@ -4,6 +4,8 @@
 
 #include "CommandLineFlags.h"
 
+FlagInfo* CommandLineFlags::gHead;
+
 void CommandLineFlags::SetUsage(const char* usage) {
 
 }
