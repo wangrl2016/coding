@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 #include <cassert>
+#include <iostream>
 
 /**
  * Including this file (and compiling CommandLineFlags.cpp) provides command line
@@ -208,11 +209,10 @@ public:
      *                      be referenced on the command line as "--name" to set the value of the flag.
      * @param shortName     Short version (1 character) of the name of the flag. This name can
      *                      be referenced on the command line as "-shortName" to set the value of this flag.
-     * @param pBool         Pointer to a global variable which holds the value set by CommandLineFlags.
-     * @param defaultValue  The default value of this flag. The variable pointed to by pBool will
+     * @param pBool   [out] Pointer to a global variable which holds the value set by CommandLineFlags.
+     * @param defaultValue  The default value of this flag. The variable pointed to by p<Type> will
      *                      be set to this value initially. This is also displayed as part of the help output.
      * @param helpString    Explanation of what this flag changes in the program.
-     * @return
      */
     static bool CreateBoolFlag(const char* name,
                                const char* shortName,
@@ -224,6 +224,150 @@ public:
         info->fBoolValue = pBool;
         *info->fBoolValue = info->fDefaultBool = defaultValue;
         return true;
+    }
+
+    /**
+     * @param pStrings          Unlike the others, this is a pointer to an array of values.
+     * @param defaultValue      These default will be parsed so that strings separated by spaces
+     *                          will be added to pStrings.
+     */
+    static bool CreateStringFlag(const char* name,
+                                 const char* shortName,
+                                 CommandLineFlags::StringArray* pStrings,
+                                 const char* defaultValue,
+                                 const char* helpString,
+                                 const char* extendedHelpString);
+
+    static bool CreateIntFlag(const char* name,
+                              int* pInt,
+                              int defaultValue,
+                              const char* helpString) {
+        FlagInfo* info = new FlagInfo(name, nullptr, kInt_FlagType, helpString, nullptr);
+        info->fIntValue = pInt;
+        *info->fIntValue = info->fDefaultInt = defaultValue;
+        return true;
+    }
+
+    static bool CreateIntFlag(const char* name,
+                              const char* shortName,
+                              int* pInt,
+                              int defaultValue,
+                              const char* helpString) {
+        FlagInfo* info = new FlagInfo(name, shortName, kInt_FlagType, helpString, nullptr);
+        info->fIntValue = pInt;
+        *info->fIntValue = info->fDefaultInt = defaultValue;
+        return true;
+    }
+
+    static bool CreateDobuleFlag(const char* name,
+                                 double* pDouble,
+                                 double defaultValue,
+                                 const char* helpString) {
+        FlagInfo* info = new FlagInfo(name, nullptr, kDouble_FlagType, helpString, nullptr);
+        info->fDoubleValue = pDouble;
+        *info->fDoubleValue = info->fDefaultDouble = defaultValue;
+        return true;
+    }
+
+    void resetStrings() {
+        if (kString_FlagType == fFlagType) {
+            fStrings->reset();
+        } else {
+            std::cout << "Can only call resetStrings on kString_FlagType\n";
+        }
+    }
+
+    void append(const char* string) {
+        if (kString_FlagType == fFlagType) {
+            fStrings->append(string);
+        } else {
+            std::cout << "Can only append to kString_FlagType\n";
+        }
+    }
+
+    // 改变全局变量
+    void setBool(bool value) {
+        if (kBool_FlagType == fFlagType) {
+            *fBoolValue = value;
+        } else {
+            std::cout << "Can only call setBool on kBool_FlagType\n";
+        }
+    }
+
+    void setDouble(double value) {
+        if (kDouble_FlagType == fFlagType) {
+            *fDoubleValue = value;
+        } else {
+            std::cout << "Can only call setDouble on kDouble_FlagType\n";
+        }
+    }
+
+    void setInt(int value) {
+        if (kInt_FlagType == fFlagType) {
+            *fIntValue = value;
+        } else {
+            std::cout << "Can only call setInt on kInt_FlagType\n";
+        }
+    }
+
+    FlagTypes getFlagType() const {
+        return fFlagType;
+    }
+
+    FlagInfo* next() {
+        return fNext;
+    }
+
+    const std::string& name() const {
+        return fName;
+    }
+
+    const std::string& shortName() const {
+        return fShortName;
+    }
+
+    const std::string& help() const {
+        return fHelpString;
+    }
+
+    const std::string& extendedHelp() const {
+        return fExtendedHelpString;
+    }
+
+    std::string defaultValue() const {
+        std::string result;
+        switch (fFlagType) {
+            case FlagInfo::kBool_FlagType:
+                result = fDefaultBool ? "true" : "false";
+                break;
+            case FlagInfo::kString_FlagType:
+                return fDefaultString;
+            case FlagInfo::kInt_FlagType:
+                result = std::to_string(fDefaultInt);
+                break;
+            case FlagInfo::kDouble_FlagType:
+                result = std::to_string(fDefaultDouble);
+                break;
+            default:
+                std::cout << "Invalid flag type\n";
+        }
+        return result;
+    }
+
+    std::string typeAsString() const {
+        switch (fFlagType) {
+            case FlagInfo::kBool_FlagType:
+                return std::string("bool");
+            case FlagInfo::kString_FlagType:
+                return std::string("string");
+            case FlagInfo::kInt_FlagType:
+                return std::string("int");
+            case FlagInfo::kDouble_FlagType:
+                return std::string("double");
+            default:
+                std::cout << "Invalid flag type\n";
+                return std::string();
+        }
     }
 
 private:
