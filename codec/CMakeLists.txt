@@ -11,6 +11,7 @@ SET(EXAMPLES
         GifCodec
         Mp3Codec
         H264Codec
+        WebpCodec
         )
 
 foreach (EXAMPLE ${EXAMPLES})
