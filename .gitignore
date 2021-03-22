@@ -1,5 +1,6 @@
 
-
+# 忽视google测试库
+googletest/
 
 .DS_Store
 
