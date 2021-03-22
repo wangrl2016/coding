@@ -177,6 +177,7 @@ public:
     };
 
     static FlagInfo* gHead;
+    static std::string gUsage;
 
     // For access to gHead.
     friend class FlagInfo;
@@ -188,6 +189,46 @@ public:
     bool                  FLAGS_##name;                               \
     static bool unused_##name = FlagInfo::CreateBoolFlag(             \
             TO_STRING(name), nullptr, &FLAGS_##name, defaultValue, helpString)
+
+// bool_s allows specifying a short name. No check is done to ensure that shortName
+// is actually shorter than name.
+#define DEFINE_bool_s(name, shortName, defaultValue, helpString)        \
+    bool FLAGS_##name;                                                  \
+    static bool unused_##name = FlagInfo::CreateBoolFlag(               \
+        TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString)
+
+#define DECLARE_bool(name) extern bool FLAGS_##name;
+
+#define DEFINE_string(name, defaultValue, helpString)                   \
+    CommandLineFlags::StringArray FLAGS_##name;                         \
+    static bool unused_##name = FlagInfo::CreateStringFlag(             \
+        TO_STRING(name), nullptr, &FLAGS_##name, defaultValue, helpString, nullptr)
+
+#define DEFINE_string_s(name, shortName, defaultValue, helpString)      \
+    CommandLineFlags::StringArray FLAGS_##name;                         \
+    static bool unused_##name = FlagInfo::CreateStringFlag(             \
+        TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString, nullptr)
+
+#define DECLARE_string(name) extern CommandLineFlags::StringArray FLAGS_##name;
+
+#define DEFINE_int(name, defaultValue, helpString)                      \
+    int FLAGS_##name;                                                   \
+    static bool unused_##name = FlagInfo::CreateIntFlag(                \
+        TO_STRING(name), &FLAGS_##name, defaultValue, helpString)
+
+#define DEFINE_int_s(name, shortName, defaultValue, helpString)         \
+    int FLAGS_##name;                                                   \
+    static bool unused_##name = FlagInfo::CreateIntFlag(                \
+        TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString)
+
+#define DECLARE_int(name) extern int FLAGS_##name;
+
+#define DEFINE_double(name, defaultValue, helpString)                   \
+    double FLAGS_##name;                                                \
+    static bool unused_##name = FlagInfo::CreateDoubleFlag(             \
+        TO_STRING(name), &FLAGS_##name, defaultValue, helpString)
+
+#define DECLARE_double(name) extern double FLAGS_##name;
 
 class FlagInfo {
 public:
@@ -309,6 +350,21 @@ public:
             std::cout << "Can only call setInt on kInt_FlagType\n";
         }
     }
+
+    /**
+     * Returns true if the string matches this flag.
+     * For a boolean flag, also sets the value, since a boolean flag can be set in a number of
+     * ways without looking at the following string:
+     *      --name
+     *      --noname
+     *      --name=true
+     *      --name=false
+     *      --name=1
+     *      --name=0
+     *      --name=TRUE
+     *      --name=FALSE
+     */
+    bool match(const char* string);
 
     FlagTypes getFlagType() const {
         return fFlagType;
