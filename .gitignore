@@ -1,11 +1,17 @@
 
+
+
 .DS_Store
 
 # 忽略编辑器配置文件
+# 包括子目录下的文件夹所有文件
 .idea/
+build/
+out/
+cmake-build-debug/
+
 coding.iml
 
-out/
 
 # Compiled class file
 *.class
