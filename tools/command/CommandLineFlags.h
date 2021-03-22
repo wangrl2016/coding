@@ -154,6 +154,13 @@ public:
             fStrings.push_back(string);
         }
 
+        void append(const char* string, size_t length) {
+            if (0 == length)
+                return;
+            std::string temp(string, length);
+            fStrings.push_back(temp);
+        }
+
         void reset() {
             while (!fStrings.empty())
                 fStrings.pop_back();
@@ -208,6 +215,11 @@ public:
     CommandLineFlags::StringArray FLAGS_##name;                         \
     static bool unused_##name = FlagInfo::CreateStringFlag(             \
         TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString, nullptr)
+
+#define DEFINE_extended_string(name, defaultValue, helpString, extendedHelpString)  \
+    CommandLineFlags::StringArray FLAGS_##name;                                     \
+    static bool unused_##name = FlagInfo::CreateStringFlag(                         \
+        TO_STRING(name),nullptr, &FLAGS_##name, defaultValue,helpString,extendedHelpString)
 
 #define DECLARE_string(name) extern CommandLineFlags::StringArray FLAGS_##name;
 
@@ -300,7 +312,7 @@ public:
         return true;
     }
 
-    static bool CreateDobuleFlag(const char* name,
+    static bool CreateDoubleFlag(const char* name,
                                  double* pDouble,
                                  double defaultValue,
                                  const char* helpString) {
@@ -451,6 +463,8 @@ private:
         assert(name && strlen(name) > 1);
         assert(nullptr == shortName || 1 == strlen(shortName));
     }
+
+    static void SetDefaultStrings(CommandLineFlags::StringArray* array, const char* defaultStrings);
 
     // Name of the flag, without initial dashes.
     std::string fName;

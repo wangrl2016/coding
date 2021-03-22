@@ -150,3 +150,42 @@ bool FlagInfo::match(const char* string) {
     }
     return false;
 }
+
+bool FlagInfo::CreateStringFlag(const char* name, const char* shortName, CommandLineFlags::StringArray* pStrings,
+                                const char* defaultValue, const char* helpString, const char* extendedHelpString) {
+    FlagInfo* info =
+            new FlagInfo(name, shortName, kString_FlagType, helpString, extendedHelpString);
+    info->fDefaultString = defaultValue;
+    info->fStrings = pStrings;
+    SetDefaultStrings(pStrings, defaultValue);
+    return true;
+}
+
+// defaultValue以空格分开
+void FlagInfo::SetDefaultStrings(CommandLineFlags::StringArray* pStrings, const char* defaultValue) {
+    pStrings->reset();
+    if (nullptr == defaultValue)
+        return;
+    // If default is "", leave the array empty.
+    size_t defaultLength = strlen(defaultValue);
+    if (defaultLength > 0) {
+        const char* const defaultEnd = defaultValue + defaultLength;
+        const char* begin = defaultValue;
+        while (true) {
+            while (begin < defaultEnd && ' ' == *begin) {
+                begin++;
+            }
+            if (begin < defaultEnd) {
+                const char* end = begin + 1;
+                while (end < defaultEnd && ' ' != *end) {
+                    end++;
+                }
+                size_t length = end - begin;
+                pStrings->append(begin, length);
+                begin = end + 1;
+            } else {
+                break;
+            }
+        }
+    }
+}
