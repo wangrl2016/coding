@@ -24,6 +24,6 @@ int main(int argc, char** argv) {
     CommandLineFlags::SetUsage("Convert skottie to a mp4");
     CommandLineFlags::Parse(argc, argv);
 
-    std::cout << FLAGS_loop << std::endl;
-    std::cout << FLAGS_verbose << std::endl;
+    // std::cout << FLAGS_loop << std::endl;
+    // std::cout << FLAGS_verbose << std::endl;
 }

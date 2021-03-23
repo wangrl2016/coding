@@ -3,7 +3,6 @@
 //
 
 #include "CommandLineFlags.h"
-#include "Sort.h"
 
 FlagInfo* CommandLineFlags::gHead;
 std::string CommandLineFlags::gUsage;

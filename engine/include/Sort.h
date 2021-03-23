@@ -4,6 +4,15 @@
 
 #pragma once
 
+#include "gtest/gtest.h"
+
+// 求数组的长度
+template<class T, size_t N>
+constexpr size_t ARRAY_SIZE(T(&)[N]) { return N; }
+
+std::string arr[] = {"S", "O", "R", "T", "E", "X", "A", "M", "P", "L", "E"};
+std::string sorted[] = {"A", "E", "E", "L", "M", "O", "P", "R", "S", "T", "X"};
+
 /**
  * Sifts a broken heap. The input array is a heap from root to bottom
  * except that the root entry may be out of place.
@@ -81,4 +90,16 @@ static void InsertionSort(T* left, int count, const C& lessThan) {
 template<typename T, typename C>
 static void InsertionSort(T* left, T* right, const C& lessThan) {
     InsertionSort(left, right - left - 1, lessThan);
+}
+
+struct CompareByChar {
+    bool operator()(std::string& a, std::string& b) const {
+        return strcmp(a.c_str(), b.c_str()) < 0;
+    }
+};
+
+TEST(Sort, InsertionSort) {
+
+    InsertionSort(arr, ARRAY_SIZE(arr), CompareByChar());
+    ASSERT_TRUE(arr[0] == "A");
 }

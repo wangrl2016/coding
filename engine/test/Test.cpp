@@ -4,6 +4,7 @@
 
 #include "gtest/gtest.h"
 #include "include/Math.h"
+#include "include/Sort.h"
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
