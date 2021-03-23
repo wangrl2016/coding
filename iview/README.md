@@ -29,6 +29,23 @@ https://github.com/jwasham/coding-interview-university
             - postorder (DFS: left, right, self)
             - preorder (DFS: self, left, right)
   
+- ### Heap / Priority Queue / Binary Heap
+    - [ ] [Heap Wiki]
+    - [ ] Introduction
+    - [ ] Naive Implementation
+    - [ ] Binary Trees
+    - [ ] Tree Height Remark
+    - [ ] Basic Operations
+    - [ ] Complete Binary Trees
+    - [ ] Pseudocode
+    - [ ] Heap Sort - Jump to Start
+    - [ ] Heap Sort
+    - [ ] Building a Heap
+    - [ ] MIT: Heaps and Heap Sort
+    - [ ] Priority Queues
+    - [ ] Linear Time Build Heap (Max Heap)
+    - [ ] Implement a Max Heap
+  
 ## Sorting
 
 - [ ] Notes:
