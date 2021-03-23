@@ -1,4 +1,6 @@
 
+venv/
+
 # 忽视google测试库
 googletest/
 
