@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 MAINTAINER wangrl2016
 COPY . /app
@@ -6,7 +6,8 @@ WORKDIR /app
 
 # 下载依赖
 RUN apt update \
-    && apt install -y git vim openjdk-11-jdk nasm curl python libstdc++6 libasound \
+    && apt install -y git vim gcc g++ make openjdk-14-jdk \
+    			 nasm curl python libstdc++6 libasound \
                         libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
 			libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
 			libflac-dev
