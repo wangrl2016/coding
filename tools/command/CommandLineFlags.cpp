@@ -23,6 +23,13 @@ static inline int StrFind(const char string[], const char substring[]) {
     return first - &string[0];
 }
 
+// 重载bool operator()(T a, T b)函数
+struct CompareFlagsByName {
+    bool operator()(FlagInfo* a, FlagInfo* b) const {
+        return strcmp(a->name().c_str(), b->name().c_str()) < 0;
+    }
+};
+
 /**
  * @return the number of entries in an array (not a pointer)
  */
@@ -48,6 +55,7 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
     }
     gOnce = true;
     bool helpPrinted = false;
+    // 用于首次打印"Flags:"字符串
     bool flagsPrinted = false;
 
     // Loop over argv, starting with 1, since the first is just the name of the program.
@@ -55,6 +63,31 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
         if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
             // Print help message.
             helpPrinted = true;
+
+            std::vector<const char*> helpFlags;
+
+            for (int j = i + 1; j < argc; j++) {
+                if (StrStartsWith(argv[j], reinterpret_cast<const char*>('-'))) {
+                    break;
+                }
+            }
+
+            if (0 == helpFlags.size()) {
+                // Only print general help message if help for specific flags is not requested.
+                printf("%s\n%s\n", argv[0], gUsage.c_str());
+            }
+
+            if (!flagsPrinted) {
+                printf("Flags:\n");
+                flagsPrinted = true;
+            }
+            if (0 == helpFlags.size()) {
+                // If no flags followed --help, print them all.
+                std::vector<FlagInfo*> allFlags;
+                for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
+                    allFlags.push_back(flag);
+                }
+            }
         }
         if (!helpPrinted) {
             FlagInfo* matchFlags = nullptr;

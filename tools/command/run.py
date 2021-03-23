@@ -11,8 +11,10 @@ if __name__ == '__main__':
         os.mkdir(build_dir)
 
     subprocess.run(['cmake', '-S', '.', '-B', build_dir])
-    subprocess.run(['cmake', '-C', build_dir])
+    subprocess.run(['make', '-C', build_dir])
 
     exe = os.path.join(build_dir, 'CommandTest')
 
     # 对CommandLine库进行测试输出预期结果
+    subprocess.run([exe, '-h'])
+    subprocess.run([exe, '--help'])

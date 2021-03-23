@@ -44,3 +44,32 @@ void HeapSort(T array[], size_t count, const C& lessThan) {
 
     }
 }
+
+/**
+ * Sorts the array of size count using comparator lessThan using an insertion sort algorithm.
+ *
+ * @tparam T
+ * @tparam C
+ * @param left          the array pointer
+ * @param count         the number of elements in the array
+ * @param lessThan      a functor with bool operator()(T a, T b) which returns true if a comes before b
+ */
+template<typename T, typename C>
+static void InsertionSort(T* left, int count, const C& lessThan) {
+    T* right = left + count - 1;
+    for (T* next = left + 1; next <= right; next++) {
+        if (!lessThan(*next, *(next - 1))) {
+            continue;
+        }
+        // 需要插入的元素
+        T insert = std::move(*next);
+        // 存放临时数据
+        T* hole = next;
+        // 找到需要插入的位置
+        do {
+            *hole = std::move(*(hole - 1));
+            hole--;
+        } while (left < hole && lessThan(insert, *(hole - 1)));
+        *hole = std::move(insert);
+    }
+}
