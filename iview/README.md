@@ -30,7 +30,7 @@ https://github.com/jwasham/coding-interview-university
             - preorder (DFS: self, left, right)
   
 - ### Heap / Priority Queue / Binary Heap
-    - [ ] [Heap Wiki]
+    - [ ] [Heap Wiki](https://en.wikipedia.org/wiki/Heap_(data_structure))
     - [ ] Introduction
     - [ ] Naive Implementation
     - [ ] Binary Trees
