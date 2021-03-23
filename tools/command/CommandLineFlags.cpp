@@ -91,6 +91,12 @@ static void printHelpForFlag(const FlagInfo* flag) {
     printf("\n");
 }
 
+static void printExtendedHelpForFlag(const FlagInfo* flag) {
+    printHelpForFlag(flag);
+    printIndented(flag->extendedHelp());
+    printf("\n");
+}
+
 /**
  * @return the number of entries in an array (not a pointer)
  */
@@ -124,13 +130,14 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
         if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
             // Print help message.
             helpPrinted = true;
-
             std::vector<const char*> helpFlags;
 
             for (int j = i + 1; j < argc; j++) {
+                // 碰到下一个以-开始的符号结束
                 if (StrStartsWith(argv[j], reinterpret_cast<const char*>('-'))) {
                     break;
                 }
+                helpFlags.push_back(argv[j]);
             }
 
             if (0 == helpFlags.size()) {
@@ -150,18 +157,57 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                 for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
                     allFlags.push_back(flag);
                 }
-                // InsertionSort(allFlags[0], allFlags.size(), CompareFlagsByName());
+                std::sort(allFlags.begin(), allFlags.end());
                 for (int i = 0; i < allFlags.size(); i++) {
                     printHelpForFlag(allFlags[i]);
+                    if (allFlags[i]->extendedHelp().size() > 0) {
+                        printf("        Use '--help %s' for more information.\n",
+                               allFlags[i]->name().c_str());
+                    }
+                }
+            } else {
+                for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
+                    for (int k = 0; i < helpFlags.size(); k++) {
+                        if (flag->name() == helpFlags[k] ||
+                            flag->shortName() == helpFlags[k]) {
+                            printExtendedHelpForFlag(flag);
+                            helpFlags.erase(helpFlags.begin() + k);
+                            break;
+                        }
+                    }
                 }
             }
+            if (helpFlags.size() > 0) {
+                printf("Requested help for unrecognized flags:\n");
+                for (int k = 0; k < helpFlags.size(); k++) {
+                    printf("    --%s\n", helpFlags[k]);
+                }
+            }
+            helpPrinted = true;
         }
         if (!helpPrinted) {
-            FlagInfo* matchFlags = nullptr;
+            FlagInfo* matchedFlag = nullptr;
             FlagInfo* flag = gHead;
             int start = i;
             // 遍历flag和命令行的字符串匹配
             while (flag != nullptr) {
+                i = start;
+                if (matchedFlag) {
+                    // Don't redefine the same flag with different types.
+                    assert(matchedFlag->getFlagType() == flag->getFlagType());
+                } else {
+                    matchedFlag = flag;
+                }
+                switch (flag->getFlagType()) {
+                    case FlagInfo::kBool_FlagType: {
+                        // Can be handled by match, above, but can also be set by the next string.
+                        if (i + 1 < argc && !StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
+                            i++;
+                            bool value;
+
+                        }
+                    }
+                }
 
                 flag = flag->next();
             }

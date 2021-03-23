@@ -486,5 +486,3 @@ private:
     // In order to keep a linked list.
     FlagInfo* fNext;
 };
-
-
