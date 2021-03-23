@@ -3,6 +3,7 @@
 //
 
 #include "CommandLineFlags.h"
+#include "Sort.h"
 
 FlagInfo* CommandLineFlags::gHead;
 std::string CommandLineFlags::gUsage;
@@ -28,7 +29,67 @@ struct CompareFlagsByName {
     bool operator()(FlagInfo* a, FlagInfo* b) const {
         return strcmp(a->name().c_str(), b->name().c_str()) < 0;
     }
+
+    bool operator()(FlagInfo& a, FlagInfo& b) const {
+        return strcmp(a.name().c_str(), b.name().c_str()) < 0;
+    }
 };
+
+// Maximum line length for the help message
+#define LINE_LENGTH 72
+
+static void printIndented(const std::string& text) {
+    size_t length = text.size();
+    const char* currLine = text.c_str();
+    const char* stop = currLine + length;
+    while (currLine < stop) {
+        int lineBreak = StrFind(currLine, "\n");
+        if (lineBreak < 0) {
+            lineBreak = static_cast<int>(strlen(currLine));
+        }
+        if (lineBreak > LINE_LENGTH) {
+            // No line break within line length. Will need to insert one.
+            // Find a space before the line break.
+            int spaceIndex = LINE_LENGTH - 1;
+            while (spaceIndex > 0 && currLine[spaceIndex] != ' ') {
+                spaceIndex--;
+            }
+            int gap;
+            if (0 == spaceIndex) {
+                // No spaces on the entire line. Go ahead and break mid word.
+                spaceIndex = LINE_LENGTH;
+                gap = 0;
+            } else {
+                // Skip the space on the next line
+                gap = 1;
+            }
+            printf("        %.*s\n", spaceIndex, currLine);
+            currLine += spaceIndex + gap;
+        } else {
+            // The line break is within the limit.
+            // Break there.
+            lineBreak++;
+            printf("        %.*s", lineBreak, currLine);
+            currLine += lineBreak;
+        }
+    }
+}
+
+static void printHelpForFlag(const FlagInfo* flag) {
+    printf("    --%s", flag->name().c_str());
+    const std::string& shortName = flag->shortName();
+    if (shortName.size() > 0) {
+        printf(" or -%s", shortName.c_str());
+    }
+    printf(":\ttype: %s", flag->typeAsString().c_str());
+    if (flag->defaultValue().size() > 0) {
+        printf("\tdefault: %s", flag->defaultValue().c_str());
+    }
+    printf("\n");
+    const std::string& help = flag->help();
+    printIndented(help);
+    printf("\n");
+}
 
 /**
  * @return the number of entries in an array (not a pointer)
@@ -86,6 +147,10 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                 std::vector<FlagInfo*> allFlags;
                 for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
                     allFlags.push_back(flag);
+                }
+                // InsertionSort(allFlags[0], allFlags.size(), CompareFlagsByName());
+                for (int i = 0; i < allFlags.size(); i++) {
+                    printHelpForFlag(allFlags[i]);
                 }
             }
         }

@@ -73,3 +73,12 @@ static void InsertionSort(T* left, int count, const C& lessThan) {
         *hole = std::move(insert);
     }
 }
+
+/**
+ * @param left      left pointer (inclusive)
+ * @param right     right pointer (exclusive)
+ */
+template<typename T, typename C>
+static void InsertionSort(T* left, T* right, const C& lessThan) {
+    InsertionSort(left, right - left - 1, lessThan);
+}
