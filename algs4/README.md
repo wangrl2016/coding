@@ -20,6 +20,11 @@ https://algs4.cs.princeton.edu/code/
 https://github.com/reneargento/algorithms-sedgewick-wayne
 ```
 
+|算法实现|算法描述|
+|:-------------------|:-------------------|
+|[BubbleSort](BubbleSort.java)|Bubble Sort|
+
+
 ### Fundamental
 
 - [x] Stack `Stack.java` `StackArray.java`
