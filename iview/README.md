@@ -30,7 +30,7 @@ https://github.com/jwasham/coding-interview-university
             - preorder (DFS: self, left, right)
   
 - ### Heap / Priority Queue / Binary Heap
-    - [ ] [Heap Wiki](https://en.wikipedia.org/wiki/Heap_(data_structure))
+    - [x] [Heap Wiki](https://en.wikipedia.org/wiki/Heap_(data_structure))
     - [ ] Introduction
     - [ ] Naive Implementation
     - [ ] Binary Trees
@@ -60,6 +60,28 @@ https://github.com/jwasham/coding-interview-university
 
 ## Even More Knowledge
 
+- ### Design Patterns
+    - [ ] Strategy
+    - [ ] Singleten
+    - [ ] Adapter
+    - [ ] Prototype
+    - [ ] Decorator
+    - [ ] Visitor
+    - [ ] Factory, Abstract factory
+    - [ ] Facade
+    - [ ] Observer
+    - [ ] Proxy
+    - [ ] Delegate
+    - [ ] Command
+    - [ ] State
+    - [ ] Memento
+    - [ ] Iterator
+    - [ ] Composite
+    - [ ] Flyweight
+
+
 ## System Design, Scalability, Data Handling
 
 ## Coding exercises/challenges
+
+
