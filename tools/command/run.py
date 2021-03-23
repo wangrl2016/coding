@@ -17,4 +17,3 @@ if __name__ == '__main__':
 
     # 对CommandLine库进行测试输出预期结果
     subprocess.run([exe, '-h'])
-    subprocess.run([exe, '--help'])

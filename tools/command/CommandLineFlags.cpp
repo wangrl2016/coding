@@ -2,6 +2,7 @@
 // Created by wangrl on 2021/3/15.
 //
 
+#include <algorithm>
 #include "CommandLineFlags.h"
 
 FlagInfo* CommandLineFlags::gHead;
@@ -136,6 +137,8 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                 // Only print general help message if help for specific flags is not requested.
                 printf("%s\n%s\n", argv[0], gUsage.c_str());
             }
+
+            std::sort(helpFlags.begin(), helpFlags.end());
 
             if (!flagsPrinted) {
                 printf("Flags:\n");
