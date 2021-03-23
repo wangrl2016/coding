@@ -56,6 +56,7 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 - [ ] 最大堆实现的优先队列 `MaxPriorityQueue.java`
 
+[Heap Sort](../res/heapsort-trace.png)
 
 ### Searching
 
