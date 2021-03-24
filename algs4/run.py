@@ -74,6 +74,7 @@ if __name__ == '__main__':
         'BinarySearch',
         'Vector',
         'Date',
+        'Point2D',
     ]
 
     jar_paths = ''
@@ -98,6 +99,8 @@ if __name__ == '__main__':
             print('构建不可变的向量')
         elif no == 3:
             print('日期类')
+        elif no == 4:
+            print('二维点坐标')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
