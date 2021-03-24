@@ -73,6 +73,7 @@ if __name__ == '__main__':
     examples = [
         'BinarySearch',
         'Vector',
+        'Date',
     ]
 
     jar_paths = ''
@@ -89,11 +90,14 @@ if __name__ == '__main__':
         no = len(examples) - index
         args = ''
         print(example)
+        print(str(no) + '. ', end='')
         if no == 1:
-            print(str(no) + '. 使用二分法在数组中查找')
+            print('使用二分法在数组中查找')
             args += '../res/int-allow-list.txt'
         elif no == 2:
-            print(str(no) + '. 构建不可变的向量')
+            print('构建不可变的向量')
+        elif no == 3:
+            print('日期类')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
