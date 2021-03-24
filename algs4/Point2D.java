@@ -1,6 +1,6 @@
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdRandom;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
 
 /**
@@ -284,7 +284,8 @@ public class Point2D implements Comparable<Point2D> {
         Point2D p1 = new Point2D(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
         Point2D p2 = new Point2D(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
         Point2D p3 = new Point2D(Double.parseDouble(args[4]), Double.parseDouble(args[5]));
-        // 默认(512, 512)大小
+        DecimalFormat df = new DecimalFormat("0.00");
+        // 默认窗口(1024, 1024)大小
         int DEFAULT_WIDTH = 512;
         int DEFAULT_HEIGHT = 512;
         StdDraw.setXscale(0, DEFAULT_WIDTH);
@@ -303,6 +304,23 @@ public class Point2D implements Comparable<Point2D> {
         p1.drawTo(p2);
         p2.drawTo(p3);
         p3.drawTo(p1);
+
+        System.out.println("p1 coordinate (" + p1.x() + ", " + p1.y() + ")");
+        System.out.println("p1 polar radius " + df.format(p1.r()));
+        System.out.println("p1 angle in polar coordinate " + df.format(p1.theta()));
+
+        System.out.println("The area (p1, p2, p3) is " + df.format(Point2D.area(p1, p2, p3)));
+        System.out.println("The distance of (p1, p2) is " + df.format(p1.distanceTo(p2)));
+
+        System.out.println("X order (p1, p2) is " + new XOrder().compare(p1, p2));
+        System.out.println("Y Order (p1, p2) is " + new YOrder().compare(p1, p2));
+        System.out.println("R order (p1, p2) is " + new ROrder().compare(p1, p2));
+        Atan2Order atan2Order = p1.new Atan2Order();
+        System.out.println("Atan2 order (p2, p3) relative p1 is " + atan2Order.compare(p2, p3));
+        PolarOrder polarOrder = p1.new PolarOrder();
+        System.out.println("Polar order (p2, p3) relative p1 is " + polarOrder.compare(p2, p3));
+        DistanceToOrder distanceToOrder = p1.new DistanceToOrder();
+        System.out.println("Distance order (p2, p3) relative p1 is " + distanceToOrder.compare(p2, p3));
 
         StdDraw.show();
         StdDraw.save("out/point-2d.png");
