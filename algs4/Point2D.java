@@ -1,3 +1,8 @@
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdRandom;
+
+import java.util.Comparator;
+
 /**
  * The Point2D class is an immutable data type to encapsulate a
  * two-dimensional point with real-value coordinates.
@@ -151,7 +156,156 @@ public class Point2D implements Comparable<Point2D> {
         return Double.compare(this.x, that.x);
     }
 
-    public static void main(String[] args) {
+    // Compare points according to their x-coordinate.
+    private static class XOrder implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            return Double.compare(p.x, q.x);
+        }
+    }
 
+    // Compare points according to their y-coordinate.
+    private static class YOrder implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            return Double.compare(p.y, q.y);
+        }
+    }
+
+    // Compare points according to their polar radius.
+    private static class ROrder implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            double delta = (p.x * p.x + p.y * p.y) - (q.x * q.x + q.y * q.y);
+            if (delta < 0)
+                return -1;
+            else if (delta > 0)
+                return +1;
+            else
+                return 0;
+        }
+    }
+
+    // Compare other points relative to atan2 angle (between -pi/2 and pi/2) they make with this Point.
+    private class Atan2Order implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            double angle1 = angleTo(p);
+            double angle2 = angleTo(q);
+            return Double.compare(angle1, angle2);
+        }
+    }
+
+    // Compare other points relative to polar angle (between 0 and 2pi) they make with this Point.
+    private class PolarOrder implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            double dx1 = p.x - x;
+            double dy1 = p.y - y;
+            double dx2 = q.x - x;
+            double dy2 = q.y - y;
+            if (dy1 >= 0 && dy2 < 0)
+                return -1;  // p above; q below
+            else if (dy2 >= 0 && dy1 < 0)
+                return +1; // p below; q above
+            else if (dy1 == 0 && dy2 == 0) {
+                if (dx1 >= 0 && dx2 < 0)
+                    return -1;
+                else if (dx2 >= 0 && dx1 < 0)
+                    return +1;
+                else
+                    return 0;
+            } else
+                return -counterClockwise(Point2D.this, p, q);
+        }
+    }
+
+    // Compare points according to their distance to this point.
+    private class DistanceToOrder implements Comparator<Point2D> {
+        @Override
+        public int compare(Point2D p, Point2D q) {
+            double dist1 = distanceSquaredTo(p);
+            double dist2 = distanceSquaredTo(q);
+            return Double.compare(dist1, dist2);
+        }
+    }
+
+    /**
+     * Compare this point to the specified point.
+     *
+     * @param other the other point
+     * @return true if this point equals other; false otherwise
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Point2D that = (Point2D) other;
+        return Double.compare(that.x, x) == 0 &&
+                Double.compare(that.y, y) == 0;
+    }
+
+    /**
+     * Returns a string representation of this point.
+     *
+     * @return a string representation of this point in the format (x, y)
+     */
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
+
+    /**
+     * Plot this point using standard draw.
+     */
+    public void draw() {
+        StdDraw.point(x, y);
+    }
+
+    /**
+     * Plot a line from this point to that point using standard draw.
+     *
+     * @param that the other point
+     */
+    public void drawTo(Point2D that) {
+        StdDraw.line(this.x, this.y, that.x, that.y);
+    }
+
+    @Override
+    public int hashCode() {
+        int hashX = ((Double) x).hashCode();
+        int hashY = ((Double) y).hashCode();
+        return 31 * hashX + hashY;
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 6)
+            System.exit(1);
+        Point2D p1 = new Point2D(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
+        Point2D p2 = new Point2D(Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+        Point2D p3 = new Point2D(Double.parseDouble(args[4]), Double.parseDouble(args[5]));
+        // 默认(512, 512)大小
+        int DEFAULT_WIDTH = 512;
+        int DEFAULT_HEIGHT = 512;
+        StdDraw.setXscale(0, DEFAULT_WIDTH);
+        StdDraw.setYscale(0, DEFAULT_HEIGHT);
+        StdDraw.setPenRadius(0.05);
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.enableDoubleBuffering();
+
+        // 绘制三个点
+        p1.draw();
+        p2.draw();
+        p3.draw();
+
+        // 连接三条线
+        StdDraw.setPenRadius(0.01);
+        p1.drawTo(p2);
+        p2.drawTo(p3);
+        p3.drawTo(p1);
+
+        StdDraw.show();
+        StdDraw.save("out/point-2d.png");
+        System.exit(0);
     }
 }

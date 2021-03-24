@@ -87,23 +87,26 @@ if __name__ == '__main__':
         else:
             jar_paths += ':' + jar
 
+    class_path = build_dir + ':' + jar_paths
+
     for index, example in enumerate(reversed(examples)):
         no = len(examples) - index
-        args = ''
+        args = ['java', '--class-path', class_path, example]
         print(example)
         print(str(no) + '. ', end='')
         if no == 1:
             print('使用二分法在数组中查找')
-            args += '../res/int-allow-list.txt'
+            args.append('../res/int-allow-list.txt')
         elif no == 2:
             print('构建不可变的向量')
         elif no == 3:
             print('日期类')
         elif no == 4:
             print('二维点坐标')
+            args += [str(54.0), str(154.0), str(122.0), str(64.0), str(160.0), str(198.0)]
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
-        class_path = build_dir + ':' + jar_paths
-        subprocess.run(['java', '--class-path', class_path, example, args])
+
+        subprocess.run(args)
         print()
