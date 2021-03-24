@@ -22,6 +22,7 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 |算法实现|算法描述|
 |:-------------------|:-------------------|
+|[BinarySearch](BinarySearch.java)|Binary Search|
 |[BubbleSort](BubbleSort.java)|Bubble Sort|
 
 

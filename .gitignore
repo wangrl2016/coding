@@ -1,4 +1,8 @@
 
+# IDEA编辑器配置
+algs4/algs4.iml
+sdsa/sdsa.iml
+
 venv/
 
 # 忽视google测试库

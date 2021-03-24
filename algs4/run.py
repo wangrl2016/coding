@@ -53,21 +53,26 @@ if __name__ == '__main__':
         if not os.path.exists(filename):
             download_third_jar(path)
 
+    # examples = [
+    #     'InsertionSort',
+    #     'MergeSort',
+    #     'PriorityElementary',
+    #     'Queue',
+    #     'QueueArray',
+    #     'QuickSort',
+    #     'QuickWithCutoff',
+    #     'QuickWithSentinels',
+    #     'SelectionSort',
+    #     'ShellSort',
+    #     'Stack',
+    #     'StackArray',
+    #     'MaxPriorityQueue',
+    #     'MinPriorityQueue'
+    # ]
+
     examples = [
-        'InsertionSort',
-        'MergeSort',
-        'PriorityElementary',
-        'Queue',
-        'QueueArray',
-        'QuickSort',
-        'QuickWithCutoff',
-        'QuickWithSentinels',
-        'SelectionSort',
-        'ShellSort',
-        'Stack',
-        'StackArray',
-        'MaxPriorityQueue',
-        'MinPriorityQueue'
+        'BinarySearch',
+        'Vector',
     ]
 
     jar_paths = ''
@@ -82,10 +87,16 @@ if __name__ == '__main__':
 
     for index, example in enumerate(reversed(examples)):
         no = len(examples) - index
+        args = ''
+        print(example)
         if no == 1:
-            subprocess.run(['javac', '-d', build_dir, '--class-path',
-                            jar_paths, example + '.java'])
-            class_path = build_dir + ':' + jar_paths
-            subprocess.run(['java', '--class-path', class_path, example])
-        else:
-            print('Error')
+            print(str(no) + '. 使用二分法在数组中查找')
+            args += '../res/int-allow-list.txt'
+        elif no == 2:
+            print(str(no) + '. 构建不可变的向量')
+
+        subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
+                        jar_paths, example + '.java'])
+        class_path = build_dir + ':' + jar_paths
+        subprocess.run(['java', '--class-path', class_path, example, args])
+        print()
