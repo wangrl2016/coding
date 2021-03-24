@@ -16,4 +16,4 @@ if __name__ == '__main__':
     exe = os.path.join(build_dir, 'CommandTest')
 
     # 对CommandLine库进行测试输出预期结果
-    subprocess.run([exe, '-h'])
+    subprocess.run([exe, '-input', 'input.file'])

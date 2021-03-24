@@ -6,6 +6,9 @@ project(FFmpegTutorials)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
+include_directories(${CMAKE_SOURCE_DIR}/../tools/command)
+add_subdirectory(${CMAKE_SOURCE_DIR}/../tools/command build)
+
 # add the executable
 SET(
         EXAMPLES
@@ -32,6 +35,8 @@ foreach (EXAMPLE ${EXAMPLES})
     target_link_libraries(${EXAMPLE}
             ${SDL2_LIBRARIES}
             avformat avcodec swresample
-            swscale avutil avfilter avdevice)
+            swscale avutil avfilter avdevice
+            CommandLine
+            )
 endforeach ()
 

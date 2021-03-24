@@ -10,11 +10,12 @@ RUN apt update \
     			 nasm curl python libstdc++6 libasound \
                         libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
 			libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
-			libflac-dev
+			libflac-dev libmp3lame-dev libx264-dev libx11-dev \
+			xorg-dev 
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \
-    && ./configure --enable-shared --enable-libmp3lame --enable-libx264 --enable-gpl \
+    && ./configure --enable-ffplay --enable-shared --enable-libmp3lame --enable-libx264 --enable-gpl \
     && make \
     && sudo make install \
     && cd .. \

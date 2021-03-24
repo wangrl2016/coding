@@ -15,6 +15,8 @@ extern "C" {
 #include <SDL2/SDL.h>
 #include <csignal>
 
+#include "CommandLineFlags.h"
+
 #define CONFIG_AVDEVICE 1
 
 const char programName[] = "FFplay";
@@ -31,7 +33,8 @@ typedef struct VideoState {
 // // Demuxing only, set by avformat_open_input().
 // } AVFormatContext;
 static AVInputFormat* fileInputFormat;  // 输入文件容器格式
-static const char* inputFilename;       // 输入音视频文件
+DEFINE_string(input, "", "Input movie file path");
+// static const char* inputFilename;       // 输入音视频文件
 static int defaultWidth = 640;          // 默认播放窗口的宽度
 static int defaultHeight = 480;         // 默认播放窗口的高度
 static const char* windowTitle;
@@ -106,11 +109,14 @@ int main(int argc, char** argv) {
     avformat_network_init();
 
     // 初始化command参数
+    CommandLineFlags::SetUsage("Simple media player");
+    CommandLineFlags::Parse(argc, argv);
+    printf("Input file %s\n", FLAGS_input[0]);
 
     signal(SIGINT, sigtermHandler);     // interrupt
     signal(SIGTERM, sigtermHandler);    // termination
 
-    if (!inputFilename) {
+    if (!FLAGS_input[0]) {
         showUsage();
         av_log(nullptr, AV_LOG_FATAL, "An input file must be specified\n");
         av_log(nullptr, AV_LOG_FATAL, "Use -h to get full help\n");
@@ -177,7 +183,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    is = streamOpen(inputFilename, fileInputFormat);
+    is = streamOpen(FLAGS_input[0], fileInputFormat);
     if (!is) {
         av_log(nullptr, AV_LOG_FATAL, "Failed to initialize VideoState!\n");
         doExit(nullptr);

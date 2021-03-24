@@ -36,12 +36,12 @@ https://github.com/TheAlgorithms/Java
 - [x] Advanced Data Structure
 - [x] Analysis of Algorithms
 - [x] Searching and Sorting
-- [ ] Greedy Algorithms
-- [ ] Dynamic Programming
+- [x] Greedy Algorithms
+- [x] Dynamic Programming
 - [ ] Pattern Searching
 - [ ] Other String Algorithms
-- [ ] Backtracking
-- [ ] Divide and Conquer
+- [x] Backtracking
+- [x] Divide and Conquer
 - [ ] Geometric Algorithms
 - [ ] Mathematical Algorithms
 - [ ] Bit Algorithms
@@ -66,13 +66,13 @@ https://algs4.cs.princeton.edu/home/
 - [x] Symbol Tables
 - [x] Binary Search Trees
 - [ ] Balanced Search Trees
-- [ ] Hash Tables
+- [x] Hash Tables
 - [ ] Undirected Graphs
 - [ ] Directed Graphs
 - [ ] Minimum Spanning Trees
 - [ ] Shortest Paths
 - [ ] String Sorts
-- [ ] Tries
+- [x] Tries
 - [ ] Substring Search
 - [ ] Regular Expressions
 - [ ] Data Compression 

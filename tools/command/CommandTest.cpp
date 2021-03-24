@@ -25,4 +25,6 @@ int main(int argc, char** argv) {
 
     // std::cout << FLAGS_loop << std::endl;
     // std::cout << FLAGS_verbose << std::endl;
+
+    printf("Input file %s\n", FLAGS_input[0]);
 }

@@ -168,7 +168,7 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
 
             for (int j = i + 1; j < argc; j++) {
                 // 碰到下一个以-开始的符号结束
-                if (StrStartsWith(argv[j], reinterpret_cast<const char*>('-'))) {
+                if (StrStartsWith(argv[j], "-")) {
                     break;
                 }
                 helpFlags.push_back(argv[j]);
@@ -236,7 +236,7 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                     switch (flag->getFlagType()) {
                         case FlagInfo::kBool_FlagType: {
                             // Can be handled by match, above, but can also be set by the next string.
-                            if (i + 1 < argc && !StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
+                            if (i + 1 < argc && !StrStartsWith(argv[i + 1], "-")) {
                                 i++;
                                 bool value;
                                 if (parseBoolArg(argv[i], &value)) {
@@ -253,7 +253,7 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                                 // Negative number aren't flags.
                                 ignoreResult(strtod(argv[i], &end));
                                 if (end == argv[i + 1] &&
-                                    StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
+                                    StrStartsWith(argv[i + 1], "-")) {
                                     break;
                                 }
                                 i++;
@@ -299,10 +299,11 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
 
 
 bool FlagInfo::match(const char* string) {
-    if (StrStartsWith(string, reinterpret_cast<const char*>('-')) && strlen(string) > 1) {
+    const char* pre = "-";
+    if (StrStartsWith(string, pre) && strlen(string) > 1) {
         string++;
         std::string compareName;
-        if (StrStartsWith(string, reinterpret_cast<const char*>('-')) && strlen(string) > 1) {
+        if (StrStartsWith(string, "-") && strlen(string) > 1) {
             string++;
             // There are two dashes. Compare against full name.
             compareName = fName;

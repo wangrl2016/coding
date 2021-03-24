@@ -136,6 +136,7 @@ if __name__ == '__main__':
             args.append('../res/big-buck-bunny.mp4')
         elif no == 16:
             print('参考ffplay写的音视频播放器')
+            args.append('--input')
             args.append('../res/big-buck-bunny.mp4')
 
         subprocess.run(args)
