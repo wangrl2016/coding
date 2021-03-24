@@ -7,7 +7,7 @@ find_package(glfw3 REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-include_directories(glm)
+include_directories(glm/)
 
 set(EXAMPLES
         HelloWindow
@@ -29,7 +29,7 @@ foreach (EXAMPLE ${EXAMPLES})
             glad/glad.c
             Sphere.cpp
             Cuboid.cpp
-            Utils.cpp)
+            Utils.cpp Camera.h)
     target_link_libraries(${EXAMPLE} ${OPENGL_LIBRARIES} glfw dl)
 endforeach ()
 
