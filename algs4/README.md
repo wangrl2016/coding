@@ -28,7 +28,7 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ### Fundamental
 
-- [x] Stack `Stack.java` `StackArray.java`
+- [x] Stack `Stack.java` `ResizingArrayStack.java`
 
 ![Stack](../res/stack.jpeg)
 

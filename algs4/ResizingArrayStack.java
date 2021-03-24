@@ -5,12 +5,20 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * Stack implementation with a resizing array.
+ *
+ * The ResizingArrayStack class represents a last-in-first-out (LIFO) stack of generic items.
+ *
+ * It supports the usual push and pop operations, along with methods for peeking at the
+ * top item, testing if the stack is empty, and iterating through the items in LIFO order.
+ *
  * This implementation uses a resizing array, which double the underlying array
  * when it is full and halves the underlying array when it is one-quarter full.
  *
- * Input: to be or not to - be - - that - - - is
+ * The push and pop operations take constant amortized time.
+ * The size, peek, and isEmpty operations takes constants time in the worse case.
  */
-public class StackArray<Item> implements Iterable<Item> {
+public class ResizingArrayStack<Item> implements Iterable<Item> {
 
     // Initial capacity of underlying resizing array.
     private static final int INIT_CAPACITY = 8;
@@ -18,7 +26,10 @@ public class StackArray<Item> implements Iterable<Item> {
     private Item[] a;   // array of items
     private int n;      // number of elements on stack
 
-    public StackArray() {
+    /**
+     * Initializes an empty stack.
+     */
+    public ResizingArrayStack() {
         a = (Item[]) new Object[INIT_CAPACITY];
         n = 0;
     }
@@ -101,7 +112,7 @@ public class StackArray<Item> implements Iterable<Item> {
     }
 
     public static void main(String[] args) {
-        StackArray<String> stack = new StackArray<>();
+        ResizingArrayStack<String> stack = new ResizingArrayStack<>();
         while (!StdIn.isEmpty()) {
             String item = StdIn.readString();
             if (!item.equals("-"))

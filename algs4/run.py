@@ -75,6 +75,7 @@ if __name__ == '__main__':
         'Vector',
         'Date',
         'Point2D',
+        'ResizingArrayStack',
     ]
 
     jar_paths = ''
@@ -104,6 +105,8 @@ if __name__ == '__main__':
         elif no == 4:
             print('二维点坐标')
             args += [str(54.0), str(154.0), str(122.0), str(64.0), str(160.0), str(198.0)]
+        elif no == 5:
+            print('使用数组实现可变大小的栈')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
