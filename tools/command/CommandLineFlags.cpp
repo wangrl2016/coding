@@ -105,6 +105,37 @@ char (& ArrayCountHelper(T (& array)[N]))[N];
 
 #define ARRAY_COUNT(array) (sizeof(ArrayCountHelper(array)))
 
+/**
+ * 检查target是否在长度为len的set集合中。
+ *
+ * @param target　   被检查的字符串
+ * @param set       检查集合
+ * @param len       集合长度
+ * @return          ture如何字符串在集合中
+ */
+static bool stringIsIn(const char* target, const char* set[], size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        if (0 == strcmp(target, set[i]))
+            return true;
+    }
+    return false;
+}
+
+static bool parseBoolArg(const char* string, bool* result) {
+    static const char* trueValues[] = {"1", "TRUE", "true"};
+    if (stringIsIn(string, trueValues, ARRAY_COUNT(trueValues))) {
+        *result = true;
+        return true;
+    }
+    static const char* falseValues[] = {"0", "FALSE", "false"};
+    if (stringIsIn(string, falseValues, ARRAY_COUNT(falseValues))) {
+        *result = false;
+        return true;
+    }
+    std::cout << "Parameter %s not supported\n" << string;
+    return false;
+}
+
 void CommandLineFlags::SetUsage(const char* usage) {
     gUsage = std::string(usage);
 }
@@ -112,6 +143,9 @@ void CommandLineFlags::SetUsage(const char* usage) {
 void CommandLineFlags::PrintUsage() {
     std::cout << gUsage.c_str();
 }
+
+template<typename T>
+static void ignoreResult(const T&) {}
 
 void CommandLineFlags::Parse(int argc, const char* const* argv) {
     // Only allow calling this function once.
@@ -191,60 +225,78 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
             int start = i;
             // 遍历flag和命令行的字符串匹配
             while (flag != nullptr) {
-                i = start;
-                if (matchedFlag) {
-                    // Don't redefine the same flag with different types.
-                    assert(matchedFlag->getFlagType() == flag->getFlagType());
-                } else {
-                    matchedFlag = flag;
-                }
-                switch (flag->getFlagType()) {
-                    case FlagInfo::kBool_FlagType: {
-                        // Can be handled by match, above, but can also be set by the next string.
-                        if (i + 1 < argc && !StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
-                            i++;
-                            bool value;
-
+                if (flag->match(argv[start])) {
+                    i = start;
+                    if (matchedFlag) {
+                        // Don't redefine the same flag with different types.
+                        assert(matchedFlag->getFlagType() == flag->getFlagType());
+                    } else {
+                        matchedFlag = flag;
+                    }
+                    switch (flag->getFlagType()) {
+                        case FlagInfo::kBool_FlagType: {
+                            // Can be handled by match, above, but can also be set by the next string.
+                            if (i + 1 < argc && !StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
+                                i++;
+                                bool value;
+                                if (parseBoolArg(argv[i], &value)) {
+                                    flag->setBool(value);
+                                }
+                            }
+                            break;
                         }
+                        case FlagInfo::kString_FlagType: {
+                            flag->resetStrings();
+                            // Add all arguments until another flag is reached.
+                            while (i + 1 < argc) {
+                                char* end = nullptr;
+                                // Negative number aren't flags.
+                                ignoreResult(strtod(argv[i], &end));
+                                if (end == argv[i + 1] &&
+                                    StrStartsWith(argv[i + 1], reinterpret_cast<const char*>('-'))) {
+                                    break;
+                                }
+                                i++;
+                                flag->append(argv[i]);
+                            }
+                            break;
+                        }
+                        case FlagInfo::kInt_FlagType: {
+                            i++;
+                            flag->setInt(atoi(argv[i]));
+                            break;
+                        }
+                        case FlagInfo::kDouble_FlagType: {
+                            i++;
+                            flag->setDouble(atof(argv[i]));
+                            break;
+                        }
+                        default:
+                            printf("Invalid flag type\n");
                     }
                 }
-
                 flag = flag->next();
+            }
+            if (!matchedFlag) {
+                printf("Got unknown flag %s. Exiting\n", argv[i]);
+                exit(EXIT_FAILURE);
             }
         }
     }
+    // Since all of the flags have been set, release the memory used by each flag.
+    // FLAGS_x can still be used after this.
+    FlagInfo* flag = gHead;
+    gHead = nullptr;
+    while (flag != nullptr) {
+        FlagInfo* next = flag->next();
+        delete flag;
+        flag = next;
+    }
+    if (helpPrinted) {
+        exit(EXIT_SUCCESS);
+    }
 }
 
-/**
- * 检查target是否在长度为len的set集合中。
- *
- * @param target　   被检查的字符串
- * @param set       检查集合
- * @param len       集合长度
- * @return          ture如何字符串在集合中
- */
-static bool stringIsIn(const char* target, const char* set[], size_t len) {
-    for (size_t i = 0; i < len; i++) {
-        if (0 == strcmp(target, set[i]))
-            return true;
-    }
-    return false;
-}
-
-static bool parseBoolArg(const char* string, bool* result) {
-    static const char* trueValues[] = {"1", "TRUE", "true"};
-    if (stringIsIn(string, trueValues, ARRAY_COUNT(trueValues))) {
-        *result = true;
-        return true;
-    }
-    static const char* falseValues[] = {"0", "FALSE", "false"};
-    if (stringIsIn(string, falseValues, ARRAY_COUNT(falseValues))) {
-        *result = false;
-        return true;
-    }
-    std::cout << "Parameter %s not supported\n" << string;
-    return false;
-}
 
 bool FlagInfo::match(const char* string) {
     if (StrStartsWith(string, reinterpret_cast<const char*>('-')) && strlen(string) > 1) {
@@ -290,9 +342,6 @@ bool FlagInfo::match(const char* string) {
             }
         }
         return compareName == string;
-    } else {
-        // Has no dash
-        return false;
     }
     return false;
 }
