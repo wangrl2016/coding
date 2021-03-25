@@ -77,6 +77,7 @@ if __name__ == '__main__':
         'Point2D',
         'ResizingArrayStack',
         'LinkedListStack',
+        'ResizingArrayQueue',
     ]
 
     jar_paths = ''
@@ -112,6 +113,10 @@ if __name__ == '__main__':
         elif no == 6:
             print('使用单链表表示栈')
             args.append("to be or not to - be - - that - - - is")
+        elif no == 7:
+            print("使用数组实现可变大小的队列")
+            args.append("to be or not to - be - - that - - - is a question "
+                        "whether it is nobler - - in the mind to suffer")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
