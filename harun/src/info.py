@@ -27,7 +27,7 @@ activities = {
     # 17-20
     'eleme': '#me.ele/.application.ui.splash.SplashActivity',
     'changdou': '#com.zf.shuashua/.MainActivity',
-    
+
     # 49-52
     'qutoutiao': 'com.jifen.qukan/com.jifen.qkbase.main.MainActivity',
     'baidu': 'com.baidu.searchbox.lite/com.baidu.searchbox.MainActivity',

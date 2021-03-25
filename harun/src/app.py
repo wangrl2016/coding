@@ -4,15 +4,14 @@ from random import randrange
 from src import phone
 
 
-# ~~~~~~~~~~今日头条极速版~~~~~~~~~~
+def watch_video(device, w, h, num):
+    print('看视频' + str(num) + '次 ' + datetime.now().time().__str__())
+    for i in range(0, num):
+        phone.swipe_down_to_up(device, w / 2, h, randrange(5, 16))
 
-def toutiao_benefit_page(device, w, h, gap=3):
-    # 点击福利
-    phone.tap(device, w / 2, h - 80, gap)  # modify
 
-
-def read_toutiao_article(device, w, h, num):
-    print('阅读今日头条文章 ' + datetime.now().time().__str__())
+def read_article(device, w, h, num):
+    print('看文章' + str(num) + '次 ' + datetime.now().time().__str__())
     for i in range(0, num):
         # 获取文章目录
         phone.swipe_up_to_down(device, w / 2, h)
@@ -23,6 +22,13 @@ def read_toutiao_article(device, w, h, num):
             phone.swipe_down_to_up(device, w / 2, h, randrange(2, 5), internal=300)
         # 返回上级目录
         phone.go_back(device)
+
+
+# ~~~~~~~~~~今日头条极速版~~~~~~~~~~
+
+def toutiao_benefit_page(device, w, h, gap=3):
+    # 点击福利
+    phone.tap(device, w / 2, h - 80, gap)  # modify
 
 
 # ~~~~~~~~~~快手极速版~~~~~~~~~~
