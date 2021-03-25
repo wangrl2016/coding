@@ -80,11 +80,6 @@ def toutiao(device, w, h):
 
 
 def kuaishou(device, w, h):
-    def open_treasure():
-        print('抖音极速版开宝箱 ' + datetime.now().time().__str__())
-        phone.tap(device, w / 2, h - 100)  # modify
-        phone.tap(device, w - 160, h - 200)  # modify
-
     checkin.kuaishou(device)
     # [x] 看快手视频
     app.watch_video(device, w, h, num=10)
@@ -92,9 +87,16 @@ def kuaishou(device, w, h):
 
 
 def douyin(device, w, h):
+    def open_treasure():
+        print('抖音极速版开宝箱 ' + datetime.now().time().__str__())
+        phone.tap(device, w / 2, h - 100)  # modify
+        phone.tap(device, w - 160, h - 200)  # modify
+
     checkin.douyin(device)
     # [x] 看抖音视频
     app.watch_video(device, w, h, num=10)
+    # [x] 开宝箱
+    open_treasure()
     phone.stop_app(device, info.packages['douyin'])
 
 
