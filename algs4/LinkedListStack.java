@@ -25,12 +25,6 @@ public class LinkedListStack<Item> implements Iterable<Item> {
         private Node<Item> next;
     }
 
-    // 非静态内部类表示
-    // private class StackNode {
-    //    private Item item;
-    //    private StackNode next;
-    // }
-
     // 检查Stack是否合法
     // Check internal invariants.
     private boolean check() {

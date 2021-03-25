@@ -32,9 +32,9 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ![LinkedListStack](../res/stack.jpeg)
 
-- [x] Queue `Queue.java`
+- [x] LinkedListQueue `LinkedListQueue.java`
 
-![Queue](../res/queue.png)
+![LinkedListQueue](../res/queue.png)
 
 ### Sorting
 

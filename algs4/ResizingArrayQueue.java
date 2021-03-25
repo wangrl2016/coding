@@ -140,6 +140,11 @@ public class ResizingArrayQueue<Item> implements Iterable<Item> {
         }
     }
 
+    /**
+     * 绘制队列，同时将大小、首尾的位置进行标记。
+     *
+     * @param row 绘制的行数
+     */
     public void draw(int row) {
         StdDraw.text(1 / 15.0, row / 30.0, String.valueOf(q.length));
         StdDraw.text(2 / 15.0, row / 30.0, String.valueOf(first));

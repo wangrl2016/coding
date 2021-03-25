@@ -78,6 +78,7 @@ if __name__ == '__main__':
         'ResizingArrayStack',
         'LinkedListStack',
         'ResizingArrayQueue',
+        'LinkedListQueue',
     ]
 
     jar_paths = ''
@@ -114,7 +115,11 @@ if __name__ == '__main__':
             print('使用单链表表示栈')
             args.append("to be or not to - be - - that - - - is")
         elif no == 7:
-            print("使用数组实现可变大小的队列")
+            print('使用数组实现可变大小的队列')
+            args.append("to be or not to - be - - th at - - - is a qu es ti on "
+                        "wh et - her - - it is")
+        elif no == 8:
+            print('使用单链表实现队列')
             args.append("to be or not to - be - - th at - - - is a qu es ti on "
                         "wh et - her - - it is")
 
