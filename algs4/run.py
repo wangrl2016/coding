@@ -80,6 +80,7 @@ if __name__ == '__main__':
         'ResizingArrayQueue',
         'LinkedListQueue',
         'ResizingArrayBag',
+        'LinkedListBag',
     ]
 
     jar_paths = ''
@@ -125,6 +126,9 @@ if __name__ == '__main__':
                         "wh et - her - - it is")
         elif no == 9:
             print('使用数组实现背包')
+            args.append("Hello world how are you")
+        elif no == 10:
+            print('使用链表实现背包')
             args.append("Hello world how are you")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
