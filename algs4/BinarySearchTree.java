@@ -1,8 +1,7 @@
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Binary Search Trees
@@ -49,7 +48,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     private Node root;              // root of BST
 
     private class Node {
-        private Key key;            // sorted by key
+        private final Key key;            // sorted by key
         private Value val;          // associated data
         private Node left, right;   // left and right subtrees
         // 包含本身，只有root节点size为1。
@@ -345,10 +344,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
             return x;
         if (cmp < 0) {
             Node t = ceiling(x.left, key);
-            if (t != null)
-                return t;
-            else
-                return x;
+            return Objects.requireNonNullElse(t, x);
         }
         return ceiling(x.right, key);
     }
@@ -416,7 +412,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      */
     public Iterable<Key> keys() {
         if (isEmpty())
-            return new Queue<Key>();
+            return new Queue<>();
         return keys(min(), max());
     }
 
@@ -440,12 +436,12 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     private void keys(Node x, Queue<Key> queue, Key lo, Key hi) {
         if (x == null)
             return;
-        int cmplo = lo.compareTo(x.key);
-        int cmphi = hi.compareTo(x.key);
-        if (cmplo < 0) keys(x.left, queue, lo, hi);
-        if (cmplo <= 0 && cmphi >= 0)
+        int cmpLow = lo.compareTo(x.key);
+        int cmpHigh = hi.compareTo(x.key);
+        if (cmpLow < 0) keys(x.left, queue, lo, hi);
+        if (cmpLow <= 0 && cmpHigh >= 0)
             queue.enqueue(x.key);
-        if (cmphi > 0)
+        if (cmpHigh > 0)
             keys(x.right, queue, lo, hi);
     }
 
@@ -504,10 +500,15 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return keys;
     }
 
+    // Does this binary tree satisfy symmetric order?
+    // Note: this test also ensures that data structures is a binary tree since order is strict.
     private boolean isBST() {
         return isBST(root, null, null);
     }
 
+    // Is the tree rooted at x a BST will all keys strictly between min and max.
+    // (if min or max is null, treat as empty constraint)
+    // Credit: Bob Dondero's elegant solution.
     private boolean isBST(Node x, Key min, Key max) {
         if (x == null)
             return true;
@@ -529,6 +530,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return isSizeConsistent(x.left) && isSizeConsistent(x.right);
     }
 
+    // Check that ranks are consistent.
     private boolean isRankConsistent() {
         for (int i = 0; i < size(); i++)
             if (i != rank(select(i)))
@@ -541,27 +543,29 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     private boolean check() {
         if (!isBST())
-            StdOut.println("Not in symmetric order");
+            System.out.println("Not in symmetric order");
         if (!isSizeConsistent())
-            StdOut.println("Subtree counts not consistent");
+            System.out.println("Subtree counts not consistent");
         if (!isRankConsistent())
-            StdOut.println("Ranks not consistent");
+            System.out.println("Ranks not consistent");
         return isBST() && isSizeConsistent() && isRankConsistent();
     }
 
     public static void main(String[] args) {
-        BinarySearchTree<String, Integer> tree = new BinarySearchTree<>();
-        for (int i = 0; !StdIn.isEmpty(); i++) {
-            String key = StdIn.readString();
-            tree.put(key, i);
+        BinarySearchTree<String, Integer> bst = new BinarySearchTree<>();
+        String[] ss = args[0].split(" ");
+        for (int i = 0; i < ss.length; i++) {
+            bst.put(ss[i], i);
         }
 
-        for (String s : tree.levelOrder())
-            StdOut.println(s + " " + tree.get(s));
+        for (String s : bst.levelOrder())
+            System.out.print("(" + s + " " + bst.get(s) + ")");
 
-        StdOut.println("----");
-
-        for (String s : tree.keys())
-            StdOut.println(s + " " + tree.get(s));
+        System.out.println("\nBST height " + bst.height());
+        bst.deleteMin();
+        bst.deleteMax();
+        System.out.println("Floor I is " + bst.floor("I"));
+        System.out.println("Ceiling I is " + bst.ceiling("I"));
+        System.out.println("Floor J is " + bst.floor2("J"));
     }
 }

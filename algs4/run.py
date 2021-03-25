@@ -82,6 +82,7 @@ if __name__ == '__main__':
         'ResizingArrayBag',
         'LinkedListBag',
         'SeqSearchSymbolTable',
+        'BinarySearchTree'
     ]
 
     jar_paths = ''
@@ -134,6 +135,9 @@ if __name__ == '__main__':
         elif no == 11:
             print('使用单链表实现符号表')
             args.append("to be or not to - be - - that - - - is")
+        elif no == 12:
+            print('二分查找树')
+            args.append("S E A R C H E X A M P L E")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
