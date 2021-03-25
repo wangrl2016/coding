@@ -2,8 +2,8 @@
 activities_dict = {
     # 1-4
     'toutiao': 'com.ss.android.article.lite/.activity.SplashActivity',
-    'kuaishou': 'com.kuaishou.nebula/com.yxcorp.gifshow.HomeActivity',
-    'douyin': 'com.ss.android.ugc.aweme.lite/com.ss.android.ugc.aweme.splash.SplashActivity',
+    # 'kuaishou': 'com.kuaishou.nebula/com.yxcorp.gifshow.HomeActivity',
+    # 'douyin': 'com.ss.android.ugc.aweme.lite/com.ss.android.ugc.aweme.splash.SplashActivity',
 }
 
 # 所有程序名
@@ -16,6 +16,7 @@ packages_dict = {}
 contexts = {}
 
 # 高配置手机
-high_serials = [
+high_serials = ['9598552235004UD']
 
-]
+# 程序的定时任务为30分钟
+SCHEDULE_TIME = 30

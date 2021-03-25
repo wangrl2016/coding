@@ -2,10 +2,12 @@
 
 import argparse
 import os
+import signal
+import sys
 import threading
 from datetime import datetime
 
-from src import utils, info, phone, checkin, sign
+from src import utils, info, phone, checkin, sign, schedule
 
 MAX_PHOTOS_STORE = 50
 
@@ -35,17 +37,7 @@ def run(device):
     # 回到手机主页
     phone.go_home(device)
 
-    properties = phone.get_device_properties(device)
-    for p in properties:
-        if p.__contains__('vivo'):
-            for line in properties:
-                if line.__contains__('ro.vivo.market.name'):
-                    info.contexts[device]['phone_name'] = 'vivo'
-                    print(line)
-        if p.__contains__('Xiaomi'):
-            for line in properties:
-                if line.__contains__('ro.product.model'):
-                    print(line)
+    # 代码测试位置
 
     while True:
         while datetime.now().hour.__eq__(0):
@@ -60,7 +52,13 @@ def run(device):
                     phone.stop_app(device, info.packages_dict[a])
 
         while datetime.now().hour == 1:
-            print('今日头条的工作内容')
+            print()
+
+        while datetime.now().hour == 2:
+            print()
+
+        while datetime.now().hour == 16:
+            utils.schedule_apps(device, w, h)
 
 
 def main(args):
@@ -104,6 +102,27 @@ def main(args):
             threads.append(t)
             pts_dict[device] = t.ident
             t.start()
+
+    # noinspection PyUnusedLocal
+    def signal_handler(sig, frame):
+        # 结束前关闭所有程序
+        for d in devices:
+            ats = phone.get_top_activities(d)
+            if ats is None:
+                sys.exit(0)
+            for a in info.apps:
+                if ats.__contains__(info.packages_dict[a]):
+                    print('关闭运行程序 ' + info.packages_dict[a])
+                    phone.stop_app(d, info.packages_dict[a], 0.1)
+        sys.exit(0)
+
+    # 处理中断情况
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.pause()
+
+    # 等待所有线程退出
+    for t in threads:
+        t.join()
 
 
 if __name__ == '__main__':
