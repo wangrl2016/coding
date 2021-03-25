@@ -40,6 +40,9 @@ def run(device):
     # 代码测试位置
 
     while True:
+        if datetime.now().hour != 0:
+            utils.schedule_apps(device, w, h)
+
         while datetime.now().hour.__eq__(0):
             print('所有程序的签到工作 ' + datetime.now().time().__str__())
             for a in info.apps:
@@ -53,12 +56,95 @@ def run(device):
 
         while datetime.now().hour == 1:
             print()
+            utils.tail_work(device, w, h, hour=1)
 
         while datetime.now().hour == 2:
             print()
+            utils.tail_work(device, w, h, hour=2)
+
+        while datetime.now().hour == 3:
+            print()
+            utils.tail_work(device, w, h, hour=3)
+
+        while datetime.now().hour == 4:
+            print()
+            utils.tail_work(device, w, h, hour=4)
+
+        while datetime.now().hour == 5:
+            print()
+            utils.tail_work(device, w, h, hour=5)
+
+        while datetime.now().hour == 6:
+            print()
+            utils.tail_work(device, w, h, hour=6)
+
+        while datetime.now().hour == 7:
+            print()
+            utils.tail_work(device, w, h, hour=7)
+
+        while datetime.now().hour == 8:
+            print()
+            utils.tail_work(device, w, h, hour=8)
+
+        while datetime.now().hour == 9:
+            print()
+            utils.tail_work(device, w, h, hour=9)
+
+        while datetime.now().hour == 10:
+            print()
+            utils.tail_work(device, w, h, hour=10)
+
+        while datetime.now().hour == 11:
+            print()
+            utils.tail_work(device, w, h, hour=11)
+
+        while datetime.now().hour == 12:
+            print()
+            utils.tail_work(device, w, h, hour=12)
+
+        while datetime.now().hour == 13:
+            print()
+            utils.tail_work(device, w, h, hour=13)
+
+        while datetime.now().hour == 14:
+            print()
+            utils.tail_work(device, w, h, hour=14)
+
+        while datetime.now().hour == 15:
+            print()
+            utils.tail_work(device, w, h, hour=15)
 
         while datetime.now().hour == 16:
-            utils.schedule_apps(device, w, h)
+            print()
+            utils.tail_work(device, w, h, hour=16)
+
+        while datetime.now().hour == 17:
+            print()
+            utils.tail_work(device, w, h, hour=17)
+
+        while datetime.now().hour == 18:
+            print()
+            utils.tail_work(device, w, h, hour=18)
+
+        while datetime.now().hour == 19:
+            print()
+            utils.tail_work(device, w, h, hour=19)
+
+        while datetime.now().hour == 20:
+            print()
+            utils.tail_work(device, w, h, hour=20)
+
+        while datetime.now().hour == 21:
+            print()
+            utils.tail_work(device, w, h, hour=21)
+
+        while datetime.now().hour == 22:
+            print()
+            utils.tail_work(device, w, h, hour=22)
+
+        while datetime.now().hour == 23:
+            print()
+            utils.tail_work(device, w, h, hour=23)
 
 
 def main(args):
