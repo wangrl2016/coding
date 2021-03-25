@@ -1,12 +1,31 @@
-import edu.princeton.cs.algs4.Heap;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Heap定义
+ *
+ * A binary tree is heap-ordered if the key in each node is larger than or equal to the keys in that node's
+ * two children (if any).
+ *
+ * 定理
+ *
+ * The largest key in a heap-ordered binary tree is found at the root.
+ *
+ * A binary heap is a collection of keys arranged in a complete heap-ordered binary tree, represented in
+ * level order in an array.
+ *
+ * We represent complete binary trees sequentially within an array by putting the nodes in level order,
+ * with the root at position 1, its children at position 2 and 3,and so on.
+ * In a heap, the parent of the node in position k is position [k/2] and, conversely, the two children
+ * of the node in position k are in positions 2k and 2k+1.
+ *
+ * Instead of using explicit links, we can travel up and down by doing simple arithmetic on array indices:
+ * to move up the tree from a[k] we set k to k/2; to move down the tree we set k to 2k or 2k + 1.
+ */
 public class MaxPriorityQueue<Key> implements Iterable<Key> {
     private Key[] pq;       // store items at indices 1 to n
     private int n;          // number of items on priority queue

@@ -82,7 +82,8 @@ if __name__ == '__main__':
         'ResizingArrayBag',
         'LinkedListBag',
         'SeqSearchSymbolTable',
-        'BinarySearchTree'
+        'BinarySearchTree',
+        'MaxPriorityQueue',
     ]
 
     jar_paths = ''
