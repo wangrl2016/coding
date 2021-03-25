@@ -1,10 +1,38 @@
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Queue;
 
-public class SymbolTableSeqSearch<Key, Value> {
+/**
+ * Symbol table implementation with sequential search in an unordered linked list
+ * of key-value pairs.
+ *
+ * The SeqSearchSymbolTable class represents an (unordered) symbol table of generic
+ * key-value pairs.
+ *
+ * 提供的操作
+ *
+ * It supports the usual put, get, contains, delete, size and isEmpty methods. It
+ * also provides a keys method for iterating over all of the keys.
+ *
+ * A symbol table implements the associative array abstraction: when associating a
+ * value with a key that is already in the symbol table, the convention is to replace
+ * the old value with the new value.
+ * The class also uses the convention that values cannot be null. Setting the value
+ * associated with a key to null is equivalent to deleting the key from the symbol table.
+ *
+ * It relies on the equals method to test whether two keys are equal. It does not call
+ * either the compareTo() or hashCode() method.
+ *
+ * 时间消耗
+ *
+ * This implementation uses a singly linked list and sequential search.
+ * The put and delete operations take O(n).
+ * The get and contains operations take O(n) time in the worse case.
+ * The size and isEmpty operations take O(1) time.
+ */
+public class SeqSearchSymbolTable<Key, Value> {
     private int n;      // number of key-value pairs
     private Node first; // the linked list of key-value pairs
 
+    // A helper linked list data type.
     private class Node {
         private Key key;
         private Value val;
@@ -17,20 +45,36 @@ public class SymbolTableSeqSearch<Key, Value> {
         }
     }
 
-    SymbolTableSeqSearch() {
+    /**
+     * Initializes an empty symbol table.
+     */
+    SeqSearchSymbolTable() {
     }
 
+    /**
+     * Return the number of key-value pairs in this symbol table.
+     *
+     * @return the number of key-value pairs in this symbol table
+     */
     public int size() {
         return n;
     }
 
     /**
      * Returns true if this symbol table is empty.
+     *
+     * @return true if this symbol table is empty; false otherwise
      */
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * Returns true if this symbol table contains the specified key.
+     *
+     * @param key the key
+     * @return true if this symbol table contains key; false otherwise
+     */
     public boolean contains(Key key) {
         if (key == null)
             throw new IllegalArgumentException("Argument to contain() is null");
@@ -62,7 +106,6 @@ public class SymbolTableSeqSearch<Key, Value> {
      *
      * @param key the key
      * @param val the value
-     * @return IllegalArgumentException if key is null
      */
     public void put(Key key, Value val) {
         if (key == null)
@@ -82,6 +125,12 @@ public class SymbolTableSeqSearch<Key, Value> {
         n++;
     }
 
+    /**
+     * Removes the specified key and its associated value from this symbol table
+     * (if the key is in this symbol table).
+     *
+     * @param key the key
+     */
     public void delete(Key key) {
         if (key == null)
             throw new IllegalArgumentException("Argument to delete is null");
@@ -103,7 +152,8 @@ public class SymbolTableSeqSearch<Key, Value> {
 
     /**
      * Returns all keys in the symbol table as an Iterable.
-     * To iterate over all of the keys in the symbol table.
+     * To iterate over all of the keys in the symbol table name st,
+     * use the foreach notation: for(Key key : st.keys()).
      */
     public Iterable<Key> keys() {
         Queue<Key> queue = new Queue<>();
@@ -113,12 +163,14 @@ public class SymbolTableSeqSearch<Key, Value> {
     }
 
     public static void main(String[] args) {
-        SymbolTableSeqSearch<String, Integer> symbolTable = new SymbolTableSeqSearch<>();
-        for (int i = 0; !StdIn.isEmpty(); i++) {
-            String key = StdIn.readString();
-            symbolTable.put(key, i);
+        String[] ss = args[0].split(" ");
+        SeqSearchSymbolTable<String, Integer> st = new SeqSearchSymbolTable<>();
+        for (int i = 0; i < ss.length; i++) {
+            st.put(ss[i], i);
         }
-        for (String s : symbolTable.keys())
-            StdOut.println(s + "    " + symbolTable.get(s));
+        for (String s : st.keys())
+            System.out.println(s + " " + st.get(s));
+        System.out.println("Symbol table " + ((st.contains("that") ? "" : "not "))
+                + "contains " + "'that'");
     }
 }

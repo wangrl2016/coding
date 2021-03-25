@@ -81,6 +81,7 @@ if __name__ == '__main__':
         'LinkedListQueue',
         'ResizingArrayBag',
         'LinkedListBag',
+        'SeqSearchSymbolTable',
     ]
 
     jar_paths = ''
@@ -130,6 +131,9 @@ if __name__ == '__main__':
         elif no == 10:
             print('使用链表实现背包')
             args.append("Hello world how are you")
+        elif no == 11:
+            print('使用单链表实现符号表')
+            args.append("to be or not to - be - - that - - - is")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
