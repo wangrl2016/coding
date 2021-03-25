@@ -115,8 +115,8 @@ if __name__ == '__main__':
             args.append("to be or not to - be - - that - - - is")
         elif no == 7:
             print("使用数组实现可变大小的队列")
-            args.append("to be or not to - be - - that - - - is a question "
-                        "whether it is nobler - - in the mind to suffer")
+            args.append("to be or not to - be - - th at - - - is a qu es ti on "
+                        "wh et - her - - it is")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])

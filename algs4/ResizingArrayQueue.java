@@ -1,7 +1,7 @@
-import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Arrays;
+import java.awt.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -140,18 +140,40 @@ public class ResizingArrayQueue<Item> implements Iterable<Item> {
         }
     }
 
+    public void draw(int row) {
+        StdDraw.text(1 / 15.0, row / 30.0, String.valueOf(q.length));
+        StdDraw.text(2 / 15.0, row / 30.0, String.valueOf(first));
+        StdDraw.text(3 / 15.0, row / 30.0, String.valueOf(last));
+
+        for (int i = 0; i < n; i++)
+            StdDraw.text((i + 4) / 15.0, row / 30.0, String.valueOf(q[(first + i) % q.length]));
+    }
+
     public static void main(String[] args) {
         if (args.length < 1)
             System.exit(1);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.BLACK);
         ResizingArrayQueue<String> queue = new ResizingArrayQueue<>();
         String[] ss = args[0].split(" ");
-        for (String item : ss)
+        StdDraw.text(1 / 15.0, 1 / 30.0, "S");
+        StdDraw.text(2 / 15.0, 1 / 30.0, "F");
+        StdDraw.text(3 / 15.0, 1 / 30.0, "L");
+        int row = 2;
+        for (String item : ss) {
             if (!item.equals("-"))
                 queue.enqueue(item);
             else if (!queue.isEmpty())
                 System.out.print(queue.dequeue() + " ");
+            queue.draw(row++);
+        }
+
         System.out.println("\nFirst element '" + queue.peek() + "'");
         queue.forEach((node) -> StdOut.print(node + " "));
         StdOut.println("(" + queue.size() + " left on queue)");
+
+        StdDraw.show();
+        StdDraw.save("out/resizing-array-queue.png");
+        System.exit(0);
     }
 }
