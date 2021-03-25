@@ -2,9 +2,14 @@
 import inspect
 
 from src import phone
-from src.info import activities_dict
+from src.info import activities
 
 
 def toutiao(device, gap=10):
-    phone.start_app(device, activities_dict[
+    phone.start_app(device, activities[
+        inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)
+
+
+def kuaishou(device, gap=10):
+    phone.start_app(device, activities[
         inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)

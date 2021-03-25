@@ -7,7 +7,7 @@ import sys
 import threading
 from datetime import datetime
 
-from src import utils, info, phone, checkin, sign, schedule
+from src import utils, info, phone, checkin, sign
 
 MAX_PHOTOS_STORE = 50
 
@@ -24,8 +24,8 @@ def cycle(device):
 
     phone_packages = phone.list_packages(device)
     run_apps = []
-    for p in info.packages_dict:
-        if phone_packages.__contains__(info.packages_dict[p]):
+    for p in info.packages:
+        if phone_packages.__contains__(info.packages[p]):
             run_apps.append(p)
 
 
@@ -41,7 +41,7 @@ def run(device):
 
     while True:
         while datetime.now().hour.__eq__(0):
-            print('所有程序的签到工作 ' + datetime.now().__str__())
+            print('所有程序的签到工作 ' + datetime.now().time().__str__())
             for a in info.apps:
                 if utils.is_coordinate_checkin(a):
                     getattr(checkin, a)(device, w, h)
@@ -49,7 +49,7 @@ def run(device):
                     getattr(checkin, a)(device)
                     # 所有程序的签到工作
                     getattr(sign, a)(device, w, h)
-                    phone.stop_app(device, info.packages_dict[a])
+                    phone.stop_app(device, info.packages[a])
 
         while datetime.now().hour == 1:
             print()
@@ -73,8 +73,8 @@ def main(args):
             os.remove(p)
 
     # 初始化全局变量
-    info.apps = list(info.activities_dict.keys())
-    info.packages_dict = utils.get_packages_dict(info.activities_dict)
+    info.apps = list(info.activities.keys())
+    info.packages = utils.get_packages_dict(info.activities)
 
     # 获取设备号
     devices = []
@@ -111,9 +111,9 @@ def main(args):
             if ats is None:
                 sys.exit(0)
             for a in info.apps:
-                if ats.__contains__(info.packages_dict[a]):
-                    print('关闭运行程序 ' + info.packages_dict[a])
-                    phone.stop_app(d, info.packages_dict[a], 0.1)
+                if ats.__contains__(info.packages[a]):
+                    print('关闭运行程序 ' + info.packages[a])
+                    phone.stop_app(d, info.packages[a], 0.1)
         sys.exit(0)
 
     # 处理中断情况
