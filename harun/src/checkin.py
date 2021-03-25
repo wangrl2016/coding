@@ -10,22 +10,22 @@ from src.info import activities
 
 def jingdong(device, w, h, gap=10):
     phone.go_home(device)
-    phone.tap(device, w, h, gap)
+    phone.tap(device, w * 1 / 5, h, gap)
 
 
 def fanqie(device, w, h, gap=10):
     phone.go_home(device)
-    phone.tap(device, w, h, gap)
+    phone.tap(device, w * 2 / 5, h, gap)
 
 
 def fanchang(device, w, h, gap=10):
     phone.go_home(device)
-    phone.tap(device, w, h, gap)
+    phone.tap(device, w * 3 / 5, h, gap)
 
 
 def kuchang(device, w, h, gap=10):
     phone.go_home(device)
-    phone.tap(device, w, h, gap)
+    phone.tap(device, w * 4 / 5, h, gap)
 
 
 def shuqi(device, w, h, gap=10):
@@ -74,6 +74,11 @@ def eleme(device, w, h, gap=10):
 
 
 def changdou(device, w, h, gap=10):
+    phone.go_home(device)
+    phone.tap(device, w, h, gap)
+
+
+def kuaikandian(device, w, h, gap=10):
     phone.go_home(device)
     phone.tap(device, w, h, gap)
 
@@ -128,6 +133,11 @@ def uc(device, gap=10):
         inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)
 
 
-def kuaikandian(device, gap=10):
+def diantao(device, gap=10):
+    phone.start_app(device, activities[
+        inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)
+
+
+def huitoutiao(device, gap=10):
     phone.start_app(device, activities[
         inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)

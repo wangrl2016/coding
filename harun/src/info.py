@@ -1,3 +1,6 @@
+# 手机参数
+
+
 # 无法通过activity启动的app前使用#标记
 activities = {
     # 1-4
@@ -27,6 +30,7 @@ activities = {
     # 17-20
     'eleme': '#me.ele/.application.ui.splash.SplashActivity',
     'changdou': '#com.zf.shuashua/.MainActivity',
+    'kuaikandian': '#com.yuncheapp.android.pearl/com.kuaishou.athena.MainActivity',
 
     # 49-52
     'qutoutiao': 'com.jifen.qukan/com.jifen.qkbase.main.MainActivity',
@@ -37,7 +41,8 @@ activities = {
     # 53-56
     'chejia': 'com.autohome.speed/com.cubic.autohome.MainActivity',
     'uc': 'com.UCMobile/com.uc.browser.InnerUCMobile',
-    'kuaikandian': 'com.yuncheapp.android.pearl/com.kuaishou.athena.MainActivity',
+    'diantao': 'com.taobao.live/.home.activity.TaoLiveHomeActivity',
+    'huitoutiao': 'com.cashtoutiao/.account.ui.main.MainTabActivity',
 
 }
 

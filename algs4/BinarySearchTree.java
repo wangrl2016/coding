@@ -1,4 +1,4 @@
-import edu.princeton.cs.algs4.BinarySearch;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -7,20 +7,46 @@ import java.util.NoSuchElementException;
 /**
  * Binary Search Trees
  *
+ * 定义
  *
+ * A binary search tree (BST) is a binary tree where each node has a Comparable key (and an associated value)
+ * and satisfies the restriction that the key in any node is larger than the keys in all nodes in that node's
+ * left subtree and smaller than the keys in all nodes in that node's right subtree.
  *
  *
  * Definition: A binary search tree (BST) is a binary tree where each node has a
  * Comparable key (and an associated value) and satisfies the restriction that the key
  * in any node is larger than the key in all nodes in that node's left subtree and smaller
  * than the keys in all nodes in the node's right subtree.
- * <p>
+ *
  * The BinarySearchTree class represent an ordered symbol table of generic
  * key-value pairs.
  * It supports the usual put, get, contains, delete, size, and is-empty methods.
+ *
+ * 实现
+ * We define a private nested class to define nodes in BSTs, just as we did for linked lists.
+ * Each node contains a key, a value, a left link, a right link, and a node count(子节点的个数+自身).
+ *
+ * 求大小(Size)
+ *
+ * size(x) = size(x.left) + size(s.right) +1
+ *
+ * 查找(Search, Get)
+ *
+ * A recursive algorithm to search for a key in a BST follows immediately from the recursive
+ * structure: if the tree is empty, we have a search miss; if the search key is equal to the
+ * key at the root, we have a search hit. Otherwise, we search (recursively) in the appropriate
+ * subtree, moving left if the search key is smaller, right if it is larger.
+ *
+ * 插入(Insert, Put)
+ *
+ * If the tree is empty, we return a new node containing the key and value; if the search key is
+ * less than the key at the root, we set the left link to the result of inserting the key into
+ * the left subtree; otherwise, we set the right link to the result of inserting the key into the
+ * right subtree.
  */
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
-    private Node root;
+    private Node root;              // root of BST
 
     private class Node {
         private Key key;            // sorted by key
@@ -44,15 +70,23 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns true if this symbol table is empty.
+     *
+     * @return true if this symbol table is empty; false otherwise
      */
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * Returns the number of key-value pairs in this symbol table.
+     *
+     * @return the number of key-value pairs in this symbol table
+     */
     public int size() {
         return size(root);
     }
 
+    // Return number of key-value pairs in BST rooted at x.
     private int size(Node x) {
         if (x == null) return 0;
         else return x.size;
@@ -60,6 +94,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Does this symbol table contain the given key?
+     *
+     * @param key the key
+     * @return true if this symbol table contains key and false otherwise
      */
     public boolean contains(Key key) {
         if (key == null)
@@ -67,14 +104,17 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return get(key) != null;
     }
 
-
+    /**
+     * Returns the value associated with the given key.
+     *
+     * @param key the key
+     * @return the value associated with the given key if the key is in the symbol table
+     * and null if the key is not in the symbol table
+     */
     public Value get(Key key) {
         return get(root, key);
     }
 
-    /**
-     * Return the value associated with the given key.
-     */
     private Value get(Node x, Key key) {
         if (key == null)
             throw new IllegalArgumentException("Calls get() with a null key");
@@ -94,6 +134,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      * the old with the new value if the symbol table already contains the specified key.
      * Deletes the specified key (and its associated value) from this symbol table
      * if the specified value is null.
+     *
+     * @param key the key
+     * @param val the value
      */
     public void put(Key key, Value val) {
         if (key == null)
@@ -139,6 +182,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return x;
     }
 
+    /**
+     * Removes the largest key and associated value from the symbol table.
+     */
     public void deleteMax() {
         if (isEmpty())
             throw new NoSuchElementException("Symbol table underflow");
@@ -188,6 +234,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the smallest key in the symbol table.
+     *
+     * @return the smallest key in the symbol table
      */
     public Key min() {
         if (isEmpty())
@@ -204,6 +252,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the largest key in the symbol table.
+     *
+     * @return the largest key in the symbol table
      */
     public Key max() {
         if (isEmpty())
@@ -220,6 +270,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the largest key in the symbol table less than or equal to key.
+     *
+     * @param key the key
+     * @return the largest key in the symbol table less than or equal to key
      */
     public Key floor(Key key) {
         if (key == null)
@@ -268,6 +321,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the smallest key in the symbol table greater than or equal to key.
+     *
+     * @param key the key
+     * @return the smallest key in the symbol table greater than or equal to key
      */
     public Key ceiling(Key key) {
         if (key == null)
@@ -302,6 +358,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      * This key has the property that there are rank keys in
      * the symbol table that are smaller. In other words, this key is the
      * rank+1st smallest key in the symbol table.
+     *
+     * @param rank the order statistic
+     * @return the key in the symbol table of given rank
      */
     public Key select(int rank) {
         if (rank < 0 || rank > size())
@@ -309,6 +368,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return select(root, rank);
     }
 
+    // Return key in BST rooted at x of given rank
+    // Precondition:rank is in legal range.
     private Key select(Node x, int rank) {
         if (x == null)
             return null;
@@ -323,6 +384,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Return the number of keys in the symbol table strictly less than key.
+     *
+     * @param key the key
+     * @return the number of keys in the symbol table strictly less than key
      */
     public int rank(Key key) {
         if (key == null)
@@ -330,6 +394,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return rank(key, root);
     }
 
+    // Number of keys in the subtree less than key.
     private int rank(Key key, Node x) {
         if (x == null)
             return 0;
@@ -346,6 +411,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      * Return all keys in the symbol table as an Iterable.
      * To iterate over all of the keys in the symbol table named st
      * use the foreach notation: for (Key key: st.keys()).
+     *
+     * @return all keys in the symbol table
      */
     public Iterable<Key> keys() {
         if (isEmpty())
@@ -353,6 +420,13 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return keys(min(), max());
     }
 
+    /**
+     * Returns all keys in the symbol table in the given range, as Iterable.
+     *
+     * @param lo minimum endpoint
+     * @param hi hi maximum endpoint
+     * @return all keys in the symbol table between lo (inclusive) and hi (inclusive)
+     */
     public Iterable<Key> keys(Key lo, Key hi) {
         if (lo == null)
             throw new IllegalArgumentException("First argument to keys() is null");
@@ -377,6 +451,10 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the number of keys in the symbol table in the given range.
+     *
+     * @param lo minimum endpoint
+     * @param hi maximum endpoint
+     * @return the number of keys in the symbol table between lo (inclusive) and hi (inclusive)
      */
     public int size(Key lo, Key hi) {
         if (lo == null)
@@ -405,8 +483,10 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * 广度优先遍历
-     * <p>
+     *
      * Returns the keys in the BST in level order.
+     *
+     * @return the keys in the BST in level order traversal
      */
     public Iterable<Key> levelOrder() {
         Queue<Key> keys = new Queue<>();

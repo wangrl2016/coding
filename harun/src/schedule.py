@@ -4,63 +4,69 @@ from src import checkin, app, phone, info
 
 
 def jingdong(device, w, h):
-    print()
+    return None
 
 
 def fanqie(device, w, h):
-    print()
+    return None
 
 
 def fanchang(device, w, h):
-    print()
+    return None
 
 
 def kuchang(device, w, h):
-    print()
+    return None
 
 
 def shuqi(device, w, h):
-    print()
+    return None
 
 
 def yingke(device, w, h):
-    print()
+    return None
 
 
 def kugou(device, w, h):
-    print()
+    return None
 
 
 def zhongqing(device, w, h):
-    print()
+    return None
 
 
 def kuaiyin(device, w, h):
-    print()
+    return None
 
 
 def kuge(device, w, h):
-    print()
+    return None
 
 
 def momo(device, w, h):
-    print()
+    return None
 
 
 def qingtuanshe(device, w, h):
-    print()
+    return None
 
 
 def eleme(device, w, h):
-    print()
+    return None
 
 
 def changdou(device, w, h):
-    print()
+    return None
+
+
+def kuaikandian(device, w, h):
+    checkin.kuaikandian(device, w, h)
+    app.read_article(device, w, h, num=1)
+    phone.stop_app(device, info.packages['kuaikandian'])
 
 
 def zhaoshang(device, w, h):
-    print()
+    return None
 
 
 def toutiao(device, w, h):
@@ -115,14 +121,22 @@ def douhuo(device, w, h):
 
 
 def chejia(device, w, h):
-    print()
+    return None
 
 
 def uc(device, w, h):
-    print()
+    return None
 
 
-def kuaikandian(device, w, h):
-    checkin.kuaikandian(device)
-    app.read_article(device, w, h, num=1)
-    phone.stop_app(device, info.packages['kuaikandian'])
+def diantao(device, w, h):
+    checkin.diantao(device)
+
+    # [x] 点击进入直播页面
+    phone.tap(device, w / 3, h / 3, gap=5)
+    app.watch_video(device, w, h, num=10)
+
+    phone.stop_app(device, info.packages['diantao'])
+
+
+def huitoutiao(device, w, h):
+    return None

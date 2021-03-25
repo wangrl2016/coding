@@ -69,4 +69,5 @@ def schedule_apps(device, w, h):
 
 # 每个小时的收尾工作
 def tail_work(device, w, h, hour):
+    schedule_apps(device, w, h)
     print()
