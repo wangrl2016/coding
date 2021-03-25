@@ -107,6 +107,7 @@ if __name__ == '__main__':
             args += [str(54.0), str(154.0), str(122.0), str(64.0), str(160.0), str(198.0)]
         elif no == 5:
             print('使用数组实现可变大小的栈')
+            args.append("to be or not to - be - - that - - - is")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
