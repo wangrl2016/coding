@@ -79,6 +79,7 @@ if __name__ == '__main__':
         'LinkedListStack',
         'ResizingArrayQueue',
         'LinkedListQueue',
+        'ResizingArrayBag',
     ]
 
     jar_paths = ''
@@ -122,6 +123,9 @@ if __name__ == '__main__':
             print('使用单链表实现队列')
             args.append("to be or not to - be - - th at - - - is a qu es ti on "
                         "wh et - her - - it is")
+        elif no == 9:
+            print('使用数组实现背包')
+            args.append("Hello world how are you")
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])
