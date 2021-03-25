@@ -28,9 +28,9 @@ https://github.com/reneargento/algorithms-sedgewick-wayne
 
 ### Fundamental
 
-- [x] Stack `Stack.java` `ResizingArrayStack.java`
+- [x] LinkedListStack `LinkedListStack.java` `ResizingArrayStack.java`
 
-![Stack](../res/stack.jpeg)
+![LinkedListStack](../res/stack.jpeg)
 
 - [x] Queue `Queue.java`
 

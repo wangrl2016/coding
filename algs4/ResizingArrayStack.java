@@ -1,6 +1,3 @@
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -143,8 +140,7 @@ public class ResizingArrayStack<Item> implements Iterable<Item> {
                 System.out.print(stack.pop() + " ");
 
         System.out.println("\nTop element '" + stack.peek() + "'");
-        for (String item : stack)
-            StdOut.print(item + " ");
-        StdOut.println("(" + stack.size() + " left on stack)");
+        stack.forEach((item) -> System.out.print(item + " "));
+        System.out.println("(" + stack.size() + " left on stack)");
     }
 }
