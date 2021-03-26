@@ -1,11 +1,8 @@
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
 /**
  * The MergeSort class provides methods for sorting an array using
  * a top-down, recursive version of merge sort.
  *
- * This implementation take o(nlogn) time to sort any array of length n
+ * This implementation take o(NlogN) time to sort any array of length n
  * (assuming comparisons take constant time.
  */
 public class MergeSort {
