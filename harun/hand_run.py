@@ -125,7 +125,6 @@ class Application(tk.Frame):
 
         self.home = tk.Button(self.button_frame, text='回到主页', command=self.go_home)
         self.reboot = tk.Button(self.button_frame, text='重启手机', command=self.reboot)
-        self.update = tk.Button(self.button_frame, text='更新代码', command=self.update_code)
 
         self.master = master
         self.pack()
@@ -188,12 +187,11 @@ class Application(tk.Frame):
 
         # 第1排按钮
         self.home.grid(row=1, column=0)
-        self.update.grid(row=1, column=1)
-        self.reboot.grid(row=1, column=2)
+        self.reboot.grid(row=1, column=1)
 
     @staticmethod
     def mouse_left_click(event):
-        print('点击鼠标左键 (' + str(event.x) + ', ' + str(event.y) + ')')
+        print('点击鼠标左键 (' + str(int(event.x / scale)) + ', ' + str(int(event.y / scale)) + ')')
         for pid in devices:
             tid = threading.Thread(target=phone.tap, args=(pid, int(event.x / scale), int(event.y / scale)))
             tid.start()
@@ -269,11 +267,6 @@ class Application(tk.Frame):
         if self.continue_update_image:
             root.after(10, self.update_page)
 
-    @staticmethod
-    def update_code():
-        print('更新代码 ' + datetime.now().time().__str__())
-        subprocess.run(['git', 'checkout', 'https://username:password@github.com/wangrl2016/runner'])
-
 
 class UpdatePageThread(threading.Thread):
     def __init__(self, pid, od):
@@ -301,10 +294,12 @@ if __name__ == '__main__':
     root.title('手机手动控制系统')
 
     devices = phone.get_devices()
-    if devices.__contains__('13bfd6e6'):
-        devices.remove('13bfd6e6')
-    if devices.__contains__('8aa89ae87d94'):
-        devices.remove('8aa89ae87d94')
+
+    # 只做高配置手机
+    for d in devices:
+        if not info.high_serials.__contains__(d):
+            devices.remove(d)
+
     if not devices:
         print('没有发现手机设备')
         exit(0)
@@ -316,7 +311,7 @@ if __name__ == '__main__':
 
     (w, h) = phone.get_size(devices[0])
 
-    scale = 0.5
+    scale = 0.4
 
     app = Application(master=root)
 
