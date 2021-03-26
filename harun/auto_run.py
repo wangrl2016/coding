@@ -7,7 +7,7 @@ import sys
 import threading
 from datetime import datetime
 
-from src import utils, info, phone, checkin, sign
+from src import utils, info, phone, checkin, sign, schedule
 
 MAX_PHOTOS_STORE = 50
 
@@ -38,6 +38,7 @@ def run(device):
     phone.go_home(device)
 
     # 代码测试位置
+    schedule.test(device, w, h)
 
     while True:
         if datetime.now().hour != 0:

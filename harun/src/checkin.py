@@ -7,8 +7,8 @@ from src.info import activities
 # 不同手机位置不同
 # 设置成为4x6的图标布局模式
 
-ROWS = [360, 600, 900, 1150, 1400, 1700]
-COLUMNS = [160, 400, 660, 900]
+ROWS = [340, 600, 900, 1170, 1420, 1690]
+COLUMNS = [160, 420, 660, 910]
 
 
 def jingdong(device, w, h, gap=10):

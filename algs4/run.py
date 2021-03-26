@@ -84,6 +84,7 @@ if __name__ == '__main__':
         'SeqSearchSymbolTable',
         'BinarySearchTree',
         'MaxPriorityQueue',
+        'MinPriorityQueue',
     ]
 
     jar_paths = ''
@@ -140,7 +141,10 @@ if __name__ == '__main__':
             print('二分查找树')
             args.append('S E A R C H E X A M P L E')
         elif no == 13:
-            print('使用堆实现优先队列')
+            print('使用堆实现最大优先队列')
+            args.append('P Q E - X A M - P L E -')
+        elif no == 14:
+            print('使用堆实现最小优先队列')
             args.append('P Q E - X A M - P L E -')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',

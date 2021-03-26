@@ -24,6 +24,14 @@ def read_article(device, w, h, num):
         phone.go_back(device)
 
 
+def read_novel(device, w, h, num):
+    print('看小说 ' + str(num) + '次 ' + datetime.now().time().__str__())
+    for i in range(0, num):
+        for j in range(0, 10):
+            phone.swipe_right_to_left(device, w, h / 2, randrange(2, 5), internal=300)
+    phone.go_back(device)
+
+
 # ~~~~~~~~~~今日头条极速版~~~~~~~~~~
 
 def toutiao_benefit_page(device, w, h, gap=3):

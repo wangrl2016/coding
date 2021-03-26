@@ -3,15 +3,25 @@ from datetime import datetime
 from src import checkin, app, phone, info
 
 
+def test(device, w, h):
+    return None
+
+
 def jingdong(device, w, h):
     return None
 
 
 def fanqie(device, w, h):
-    return None
+    checkin.fanqie(device, w, h)
+    # [x] 阅读番茄小说
+    phone.tap(device, w / 3, h / 3)
+    app.read_novel(device, w, h, num=1)
+    phone.stop_app(device, info.packages['fanqie'])
 
 
 def fanchang(device, w, h):
+    checkin.fanchang(device, w, h)
+
     return None
 
 
