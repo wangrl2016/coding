@@ -72,8 +72,6 @@ if __name__ == '__main__':
         'InsertionSort',
         'MergeSort',
         'QuickSort',
-        'QuickWithCutoff',
-        'QuickWithSentinels',
         'SelectionSort',
         'ShellSort',
         'RedBlackTree',
