@@ -77,6 +77,42 @@ https://algs4.cs.princeton.edu/home/
 - [ ] Regular Expressions
 - [ ] Data Compression 
 
+## 设计模式 ([dp](dp/))
+
+https://github.com/iluwatar/java-design-patterns
+
+- [ ] Abstract Document
+- [ ] Abstract Factory
+- [ ] Active Object
+- [ ] Acyclic Visitor
+- [ ] Adapter
+- [ ] Ambassador
+- [ ] Bridge
+- [ ] Builder
+- [ ] Bytecode
+- [ ] Caching
+- [ ] Callback
+- [ ] Chain
+- [ ] Command
+- [ ] Commander
+- [ ] Composite
+- [ ] Decorator
+- [ ] Delegation
+- [ ] Facade
+- [ ] Factory
+- [ ] Flyweight
+- [ ] Iterator
+- [ ] Model View Controller
+- [ ] Model View Presenter
+- [ ] Observer
+- [ ] Promise
+- [ ] Proxy
+- [ ] Registry
+- [ ] Singleton
+- [x] Stragegy
+- [ ] Thread Pool
+- [ ] Throttling
+- [ ] Visitor 
 
 ## FFmpeg示例 ([ffmpeg](ffmpeg/))
 
