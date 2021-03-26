@@ -22,6 +22,7 @@ public class BubbleSort {
                     exch(a, j, j + 1);
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean less(Comparable v, Comparable w) {
         return v.compareTo(w) < 0;
     }
@@ -39,8 +40,8 @@ public class BubbleSort {
     }
 
     public static void main(String[] args) {
-        String[] arr = {"S", "O", "R", "T", "E", "X", "A", "M", "P", "L", "E"};
-        BubbleSort.sort(arr);
-        BubbleSort.print(arr);
+        String[] ss = args[0].split(" ");
+        BubbleSort.sort(ss);
+        BubbleSort.print(ss);
     }
 }

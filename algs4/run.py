@@ -52,24 +52,6 @@ if __name__ == '__main__':
         third_jars.append(filename)
         if not os.path.exists(filename):
             download_third_jar(path)
-
-    # examples = [
-    #     'InsertionSort',
-    #     'MergeSort',
-    #     'PriorityElementary',
-    #     'Queue',
-    #     'QueueArray',
-    #     'QuickSort',
-    #     'QuickWithCutoff',
-    #     'QuickWithSentinels',
-    #     'SelectionSort',
-    #     'ShellSort',
-    #     'Stack',
-    #     'StackArray',
-    #     'MaxPriorityQueue',
-    #     'MinPriorityQueue'
-    # ]
-
     examples = [
         'BinarySearch',
         'Vector',
@@ -85,6 +67,16 @@ if __name__ == '__main__':
         'BinarySearchTree',
         'MaxPriorityQueue',
         'MinPriorityQueue',
+        'BubbleSort',
+        'HeapSort',
+        'InsertionSort',
+        'MergeSort',
+        'QuickSort',
+        'QuickWithCutoff',
+        'QuickWithSentinels',
+        'SelectionSort',
+        'ShellSort',
+        'RedBlackTree',
     ]
 
     jar_paths = ''
@@ -146,6 +138,35 @@ if __name__ == '__main__':
         elif no == 14:
             print('使用堆实现最小优先队列')
             args.append('P Q E - X A M - P L E -')
+        elif no == 15:
+            print('冒泡排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 16:
+            print('堆排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 17:
+            print('插入排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 18:
+            print('归并排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 19:
+            print('快速排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 20:
+            print('快速排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 21:
+            print('快速排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 22:
+            print('选择排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 23:
+            print('希尔排序')
+            args.append('S O R T E X A M P L E')
+        elif no == 24:
+            print('红黑树')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',
                         jar_paths, example + '.java'])

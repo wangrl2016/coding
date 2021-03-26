@@ -53,4 +53,8 @@
  * is red and false if it is black. By convention, null links are black.
  */
 public class RedBlackTree {
+
+    public static void main(String[] args) {
+
+    }
 }
