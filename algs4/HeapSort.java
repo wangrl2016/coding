@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
  * The HeapSort class provides a static method to sort an array
  * using heapsort.
  *
- * This implementation takes Q(nlogn) time to sort any array of length n
+ * This implementation takes Q(NlogN) time to sort any array of length n
  * (assuming comparisons take constant time). It makes at most
  * 2nlog2n compares.
  *
@@ -52,19 +52,21 @@ public class HeapSort {
     }
 
     // Indices are off-by-one to support 1-based indexing.
+    @SuppressWarnings("unchecked")
     private static boolean less(Comparable[] pq, int i, int j) {
         return pq[i - 1].compareTo(pq[j - 1]) < 0;
     }
 
     private static void show(Comparable[] a) {
-        for (int i = 0; i < a.length; i++) {
-            StdOut.print(a[i] + " ");
+        for (Comparable comparable : a) {
+            System.out.print(comparable + " ");
         }
+        System.out.println();
     }
 
     public static void main(String[] args) {
-        String[] a = {"S", "O", "R", "T", "E", "X", "A", "M", "P", "L", "E"};
-        HeapSort.sort(a);
-        show(a);
+        String[] ss = args[0].split(" ");
+        HeapSort.sort(ss);
+        show(ss);
     }
 }
