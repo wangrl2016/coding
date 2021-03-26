@@ -152,18 +152,12 @@ if __name__ == '__main__':
             print('快速排序')
             args.append('S O R T E X A M P L E')
         elif no == 20:
-            print('快速排序')
-            args.append('S O R T E X A M P L E')
-        elif no == 21:
-            print('快速排序')
-            args.append('S O R T E X A M P L E')
-        elif no == 22:
             print('选择排序')
             args.append('S O R T E X A M P L E')
-        elif no == 23:
+        elif no == 21:
             print('希尔排序')
             args.append('S O R T E X A M P L E')
-        elif no == 24:
+        elif no == 22:
             print('红黑树')
 
         subprocess.run(['javac', '-Xlint:unchecked', '-d', build_dir, '--class-path',

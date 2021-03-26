@@ -1,12 +1,20 @@
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
+/**
+ * The MergeSort class provides methods for sorting an array using
+ * a top-down, recursive version of merge sort.
+ *
+ * This implementation take o(nlogn) time to sort any array of length n
+ * (assuming comparisons take constant time.
+ */
 public class MergeSort {
 
     // This class should not be instantiated.
     private MergeSort() {
     }
 
+    // Merge sort a[lo..hi] using auxiliary array aux[lo..hi].
     public static void sort(Comparable[] a) {
         Comparable[] aux = new Comparable[a.length];
         sort(a, aux, 0, a.length - 1);
@@ -29,9 +37,7 @@ public class MergeSort {
         assert isSorted(a, mid + 1, hi);
 
         // copy to aux[]
-        for (int k = lo; k <= hi; k++) {
-            aux[k] = a[k];
-        }
+        if (hi + 1 - lo >= 0) System.arraycopy(a, lo, aux, lo, hi + 1 - lo);
 
         // merge back to a[]
         int i = lo, j = mid + 1;
@@ -46,6 +52,7 @@ public class MergeSort {
     }
 
     // Is v < w ?
+    @SuppressWarnings("unchecked")
     private static boolean less(Comparable v, Comparable w) {
         return v.compareTo(w) < 0;
     }
@@ -61,17 +68,17 @@ public class MergeSort {
         return true;
     }
 
-
     // Print array to standard output.
     private static void show(Comparable[] a) {
         for (int i = 0; i < a.length; i++) {
-            StdOut.println(a[i]);
+            System.out.print(a[i] + " ");
         }
+        System.out.println();
     }
 
     public static void main(String[] args) {
-        String[] a = StdIn.readAllStrings();
-        MergeSort.sort(a);
-        show(a);
+        String[] ss = args[0].split(" ");
+        MergeSort.sort(ss);
+        show(ss);
     }
 }
