@@ -41,6 +41,7 @@ public class MinPriorityQueue<Key> implements Iterable<Key> {
      * Initializes an empty priority queue with the given initial capacity,
      * using the given comparator.
      */
+    @SuppressWarnings("unchecked")
     public MinPriorityQueue(int initCapacity, Comparator<Key> comparator) {
         this.comparator = comparator;
         pq = (Key[]) new Object[initCapacity + 1];

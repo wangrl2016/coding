@@ -43,6 +43,20 @@ import java.util.Objects;
  * less than the key at the root, we set the left link to the result of inserting the key into
  * the left subtree; otherwise, we set the right link to the result of inserting the key into the
  * right subtree.
+ *
+ * 分析
+ *
+ * The running times of algorithms on binary search trees depend on the shapes of the trees,
+ * which, in turn, depend on  the order in which keys are inserted. In the best case, a tree
+ * with N nodes could be perfectly balanced, with ~lgN nodes between the root and each null
+ * link. In worse case there could be N nodes on the search path.
+ *
+ * 查找最大最小值
+ *
+ * If the left link of the root is null, the smallest key in a BST is the key at the root;
+ * if the left link is not null, the smallest key in the BST is the smallest key in the
+ * subtree rooted at the node referenced by the left link. Find the maximum key is similar,
+ * moving to the right instead of to the left.
  */
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     private Node root;              // root of BST
@@ -134,6 +148,11 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      * Deletes the specified key (and its associated value) from this symbol table
      * if the specified value is null.
      *
+     * In simple BSTs, the only new link is the one at the bottom, but resetting the links
+     * higher up on the path is as easy as the test to avoid setting them. Also, we just
+     * need to increment the node count on each node on the path, but we use more general
+     * code that sets each to one plus the sum of the counts in its subtrees.
+     *
      * @param key the key
      * @param val the value
      */
@@ -209,6 +228,17 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         assert check();
     }
 
+    /**
+     * 被删除节点含有左右子树的情况
+     *
+     * 1. Save a link to the node to be deleted in t.
+     * 2. Set x to point to its successor min(t.right).
+     * 3. Set the right link of x(which is supposed to point to the BST containing
+     * all the keys larger than x.key) to deleteMin(t.right), the link to the
+     * BST containing all the keys that are larger than x.key after the deletion.
+     * 4. Set the left link of x (which was null) to t.left (all the keys that are
+     * less than both the deleted key and its successor).
+     */
     private Node delete(Node x, Key key) {
         if (x == null)
             return null;
@@ -269,6 +299,13 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     /**
      * Returns the largest key in the symbol table less than or equal to key.
+     *
+     * If a given key is less than the key at the root of a BST, then the floor
+     * of key (the largest key in the BST less than or equal to key) must be in
+     * the left subtree. If key is greater than the key at the root, then the
+     * floor of key could be in the right subtree, but only if there is a key
+     * smaller than or equal to key in the right subtree; if not, then the key
+     * at the root is the floor of key.
      *
      * @param key the key
      * @return the largest key in the symbol table less than or equal to key
@@ -364,8 +401,16 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return select(root, rank);
     }
 
-    // Return key in BST rooted at x of given rank
-    // Precondition:rank is in legal range.
+    /**
+     * Return key in BST rooted at x of given rank
+     * Precondition:rank is in legal range.
+     *
+     * Suppose that we seek the key of rank k, if the number of keys t in the left
+     * subtree is larger than k, we look (recursively) for the key of rank k in the
+     * left subtree; if t is equal to k, we return the key at the root; af if t is
+     * smaller than k, we look (recursively) for the key of rank k - t - 1 in the
+     * right subtree.
+     */
     private Key select(Node x, int rank) {
         if (x == null)
             return null;
@@ -390,7 +435,16 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return rank(key, root);
     }
 
-    // Number of keys in the subtree less than key.
+    /**
+     * Number of keys in the subtree less than key.
+     *
+     * The inverse method rank() that returns the rank of a given key is similar: if the
+     * given key is equal to hte key at the root, we return the number of keys t in the
+     * left subtree; if the given key is less than the key at the root, we return the
+     * rank of the key in the left subtree (recursively computed); and if the given key
+     * is larger than the key at the root, we return t plus one (to count the key at the
+     * root) plus the rank of the key in the right subtree (recursively computed).
+     */
     private int rank(Key key, Node x) {
         if (x == null)
             return 0;

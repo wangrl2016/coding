@@ -1,6 +1,3 @@
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -25,12 +22,21 @@ import java.util.NoSuchElementException;
  *
  * Instead of using explicit links, we can travel up and down by doing simple arithmetic on array indices:
  * to move up the tree from a[k] we set k to k/2; to move down the tree we set k to 2k or 2k + 1.
+ *
+ * The heap operations that we consider work by first making a simple modification that could violate
+ * the heap condition, then traveling through the heap, modifying the heap as required to ensure that
+ * the heap condition is satisfied everywhere. We refer to this process as reheapifying, or restoring
+ * heap order.
+ *
+ * In a N-key priority queue, the heap algorithms require no more than 1 + lgN compares for insert and
+ * no more than 2lgN compares for remove the maximum.
  */
 public class MaxPriorityQueue<Key> implements Iterable<Key> {
     private Key[] pq;       // store items at indices 1 to n
     private int n;          // number of items on priority queue
     private Comparator<Key> comparator; // optional comparator
 
+    @SuppressWarnings("unchecked")
     public MaxPriorityQueue(int initCapacity) {
         pq = (Key[]) new Object[initCapacity + 1];
         n = 0;
@@ -40,8 +46,11 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         this(1);
     }
 
+    @SuppressWarnings("unchecked")
     public MaxPriorityQueue(int initCapacity, Comparator<Key> comparator) {
         this.comparator = comparator;
+        // Represent a heap of size N in private array pq[] of length N +1, with
+        // pq[0] unused and the heap in pq[1] through pq[n].
         pq = (Key[]) new Object[initCapacity + 1];
         n = 0;
     }
@@ -56,11 +65,11 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
      *
      * @param keys the array of keys
      */
+    @SuppressWarnings("unchecked")
     public MaxPriorityQueue(Key[] keys) {
         n = keys.length;
         pq = (Key[]) new Object[keys.length + 1];
-        for (int i = 0; i < n; i++)
-            pq[i + 1] = keys[i];
+        System.arraycopy(keys, 0, pq, 1, n);
         for (int k = n / 2; k >= 1; k--)
             sink(k);
         assert isMaxHeap();
@@ -80,15 +89,18 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         return pq[1];
     }
 
+    @SuppressWarnings("unchecked")
     private void resize(int capacity) {
         assert capacity > n;
         Key[] temp = (Key[]) new Object[capacity];
-        for (int i = 1; i <= n; i++) {
-            temp[i] = pq[i];
-        }
+        if (n >= 0) System.arraycopy(pq, 1, temp, 1, n);
         pq = temp;
     }
 
+    /**
+     * We add the new key at the end of the array, increment the size of the heap, and then
+     * swim up through the heap with that key to restore the heap condition.
+     */
     public void insert(Key x) {
         if (n == pq.length - 1)
             resize(2 * pq.length);
@@ -98,6 +110,10 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         assert isMaxHeap();
     }
 
+    /**
+     * We take the largest key off the top, put the item from the end of the heap at the top, decrement
+     * the size of the heap, and then sink down through the heap with that key to restore the heap condition.
+     */
     public Key delMax() {
         if (isEmpty())
             throw new NoSuchElementException("Priority queue underflow");
@@ -110,6 +126,15 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         return max;
     }
 
+    /**
+     * Bottom-up reheapify (swim)
+     *
+     * If the heap order is violated because a node's key becomes larger than the node's parent's key, then
+     * we can make progress toward fixing the violation by exchanging the node with its parent. After the
+     * exchange, the node is larger than both its children, but the node may still be larger than its parent.
+     * We can fix that violation in the same way, and so forth, moving up the heap until we reach a node
+     * with a larger key, or the root.
+     */
     private void swim(int k) {
         while (k > 1 && less(k / 2, k)) {
             exch(k, k / 2);
@@ -117,6 +142,15 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         }
     }
 
+    /**
+     * Top-down reheapify (sink)
+     *
+     * If the heap order is violated because a node's key becomes smaller than one or both of that node's
+     * children's keys, then we can make progress toward fixing the violation by exchanging the node with
+     * the larger of its two children. This switch may cause a violation at the child; we fix that violation
+     * in the same way, and so forth, moving down the heap until we reach a node with both children
+     * smaller (or equal), or the bottom.
+     */
     private void sink(int k) {
         while (2 * k <= n) {
             int j = 2 * k;
@@ -127,6 +161,7 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private boolean less(int i, int j) {
         if (comparator == null) {
             return ((Comparable<Key>) pq[i]).compareTo(pq[j]) < 0;
@@ -174,7 +209,7 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
 
     private class HeapIterator implements Iterator<Key> {
         // create a new pq
-        private MaxPriorityQueue<Key> copy;
+        private final MaxPriorityQueue<Key> copy;
 
         public HeapIterator() {
             if (comparator == null)
@@ -200,13 +235,17 @@ public class MaxPriorityQueue<Key> implements Iterable<Key> {
 
     public static void main(String[] args) {
         MaxPriorityQueue<String> pq = new MaxPriorityQueue<>();
-        while (!StdIn.isEmpty()) {
-            String item = StdIn.readString();
-            if (!item.equals("-"))
-                pq.insert(item);
+        String[] ss = args[0].split(" ");
+        System.out.print("删除元素 ");
+        for (String s : ss) {
+            if (!s.equals("-"))
+                pq.insert(s);
             else if (!pq.isEmpty())
-                StdOut.print(pq.delMax() + " ");
+                System.out.print(pq.delMax() + " ");
         }
-        StdOut.println("(" + pq.size() + " left on pq");
+        System.out.println("\nPriority queue max key " + pq.max());
+        for (String key : pq)
+            System.out.print(key + " ");
+        System.out.println("(" + pq.size() + " left on pq)");
     }
 }
