@@ -23,6 +23,7 @@ RUN apt update \
     && ./configure --enable-ffplay --enable-shared --enable-libmp3lame --enable-libx264 --enable-gpl \
     && make \
     && sudo make install \
+    && sudo ldconfig \
     && cd .. \
     # 安装OpenCV依赖库
     && git clone --depth 10 https://github.com/opencv/opencv \

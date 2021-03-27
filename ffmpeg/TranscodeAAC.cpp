@@ -202,17 +202,6 @@ static int openOutputFile(const char* filename,
 }
 
 /**
- * Initialize one data packet for reading or writing.
- * @param packet Packet to be initialized
- */
-static void initPacket(AVPacket* packet) {
-    av_init_packet(packet);
-    // Set the packet data and size so that it is recognized as being empty.
-    packet->data = nullptr;
-    packet->size = 0;
-}
-
-/**
  * Initialize one audio frame for reading from the input file.
  * @param[out] frame Frame to be initialized
  * @return Error code (0 if successful)
@@ -316,11 +305,10 @@ static int decodeAudioFrame(AVFrame* frame,
                             AVCodecContext* inputCodecContext,
                             int* dataPresent, int* finished) {
     // Packet used for temporary storage.
-    AVPacket input_packet;
+    AVPacket* input_packet = av_packet_alloc();
     int error;
-    initPacket(&input_packet);
     // Read one audio frame from the input file into a temporary packet.
-    if ((error = av_read_frame(inputFormatContext, &input_packet)) < 0) {
+    if ((error = av_read_frame(inputFormatContext, input_packet)) < 0) {
         // If we are at the end of the file, flush the decoder below.
         if (error == AVERROR_EOF)
             *finished = 1;
@@ -331,7 +319,7 @@ static int decodeAudioFrame(AVFrame* frame,
     }
     // Send the audio frame stored in the temporary packet to the decoder.
     // The input audio stream decoder is used to do this.
-    if ((error = avcodec_send_packet(inputCodecContext, &input_packet)) < 0) {
+    if ((error = avcodec_send_packet(inputCodecContext, input_packet)) < 0) {
         av_log(nullptr, AV_LOG_ERROR, "Could not send packet for decoding\n");
         return error;
     }
@@ -356,7 +344,7 @@ static int decodeAudioFrame(AVFrame* frame,
         goto cleanup;
     }
     cleanup:
-    av_packet_unref(&input_packet);
+    av_packet_unref(input_packet);
     return error;
 }
 
@@ -571,9 +559,8 @@ static int encodeAudioFrame(AVFrame* frame,
                             AVCodecContext* outputCodecContext,
                             int* dataPresent) {
     // Packet used for temporary storage. */
-    AVPacket outputPacket;
+    AVPacket* outputPacket = av_packet_alloc();
     int error;
-    initPacket(&outputPacket);
     // Set a timestamp based on the sample rate for the container.
     if (frame) {
         frame->pts = pts;
@@ -591,7 +578,7 @@ static int encodeAudioFrame(AVFrame* frame,
         return error;
     }
     // Receive one encoded frame from the encoder.
-    error = avcodec_receive_packet(outputCodecContext, &outputPacket);
+    error = avcodec_receive_packet(outputCodecContext, outputPacket);
     // If the encoder asks for more data to be able to provide an
     // encoded frame, return indicating that no data is present.
     if (error == AVERROR(EAGAIN)) {
@@ -610,12 +597,12 @@ static int encodeAudioFrame(AVFrame* frame,
     }
     // Write one audio frame from the temporary packet to the output file.
     if (*dataPresent &&
-        (error = av_write_frame(outputFormatContext, &outputPacket)) < 0) {
+        (error = av_write_frame(outputFormatContext, outputPacket)) < 0) {
         av_log(nullptr, AV_LOG_ERROR, "Could not write frame\n");
         goto cleanup;
     }
     cleanup:
-    av_packet_unref(&outputPacket);
+    av_packet_unref(outputPacket);
     return error;
 }
 

@@ -206,8 +206,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    av_dump_format(formatContext, 0, filename, true);
-
+    // av_dump_format(formatContext, 0, filename, true);
     // Open the output file, if needed.
     if (!(fmt->flags & AVFMT_NOFILE)) {
         ret = avio_open(&formatContext->pb, filename, AVIO_FLAG_WRITE);

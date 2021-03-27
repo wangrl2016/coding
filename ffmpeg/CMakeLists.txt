@@ -12,11 +12,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/../tools/command build)
 # add the executable
 SET(
         EXAMPLES
-        Dump
-        Metadata
         DecodeVideo
         EncodeVideo
-        RGBA2Video
         EncodeAudio
         DecodeAudio
         ScaleVideo

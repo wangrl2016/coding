@@ -26,7 +26,7 @@ static int videoDstBufsize;
 
 static int videoStreamIdx = -1, audioStreamIdx = -1;
 static AVFrame* frame = nullptr;
-static AVPacket pkt;
+static AVPacket* pkt;
 
 static int videoFrameCount = 0;
 static int audioFrameCount = 0;
@@ -190,6 +190,7 @@ int main(int argc, char** argv) {
     srcFilename = argv[1];
     videoDstFilename = argv[2];
     audioDstFilename = argv[3];
+    int64_t timestamp = 5 * AV_TIME_BASE;
     /* open input file, and allocate format context */
     if (avformat_open_input(&inputFormatContext, srcFilename, nullptr, nullptr) < 0) {
         fprintf(stderr, "Could not open source file %s\n", srcFilename);
@@ -229,8 +230,7 @@ int main(int argc, char** argv) {
             goto end;
         }
     }
-    /* dump input information to stderr */
-    av_dump_format(inputFormatContext, 0, srcFilename, 0);
+    // av_dump_format(inputFormatContext, 0, srcFilename, 0);
     if (!audioStream && !videoStream) {
         fprintf(stderr, "Could not find audio or video stream in the input, aborting\n");
         ret = 1;
@@ -242,23 +242,25 @@ int main(int argc, char** argv) {
         ret = AVERROR(ENOMEM);
         goto end;
     }
-    /* initialize packet, set data to nullptr, let the demuxer fill it */
-    av_init_packet(&pkt);
-    pkt.data = nullptr;
-    pkt.size = 0;
+
+    // Initialize packet, set data to nullptr, let the demuxer fill it.
+    pkt = av_packet_alloc();
+    pkt->data = nullptr;
+    pkt->size = 0;
     if (videoStream)
         printf("Demuxing video from file '%s' into '%s'\n", srcFilename, videoDstFilename);
     if (audioStream)
         printf("Demuxing audio from file '%s' into '%s'\n", srcFilename, audioDstFilename);
-    /* read frames from the file */
-    while (av_read_frame(inputFormatContext, &pkt) >= 0) {
+
+    av_seek_frame(inputFormatContext, videoStreamIdx, timestamp, AVSEEK_FLAG_BACKWARD);
+    while (av_read_frame(inputFormatContext, pkt) >= 0) {
         // check if the packet belongs to a stream we are interested in, otherwise
         // skip it
-        if (pkt.stream_index == videoStreamIdx)
-            ret = decode_packet(videoDecodeContext, &pkt);
-        else if (pkt.stream_index == audioStreamIdx)
-            ret = decode_packet(audioDecodeContext, &pkt);
-        av_packet_unref(&pkt);
+        if (pkt->stream_index == videoStreamIdx)
+            ret = decode_packet(videoDecodeContext, pkt);
+        else if (pkt->stream_index == audioStreamIdx)
+            ret = decode_packet(audioDecodeContext, pkt);
+        av_packet_unref(pkt);
         if (ret < 0)
             break;
     }

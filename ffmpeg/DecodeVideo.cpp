@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Dump information about file onto standard output.
-    av_dump_format(formatContext, 0, argv[1], 0);
+    // av_dump_format(formatContext, 0, argv[1], 0);
 
     // find the first video stream
     int videoStreamIndex = -1;

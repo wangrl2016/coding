@@ -11,7 +11,7 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
-#define STREAM_DURATION   10.0
+#define STREAM_DURATION  10.0
 
 int64_t NEXT_PTS;
 
