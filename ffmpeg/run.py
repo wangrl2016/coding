@@ -137,9 +137,15 @@ if __name__ == '__main__':
             args.append('--input')
             args.append('../res/big-buck-bunny.mp4')
 
-        subprocess.run(args)
-        print()
+        try:
+            p = subprocess.run(args, check=True, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, universal_newlines=True)
+            for ln in p.stdout.split('\n'):
+                print(ln)
+        except Exception as e:
+            print(e)
+            exit(1)
         # debug
-        break
+        # break
 
     exit(0)
