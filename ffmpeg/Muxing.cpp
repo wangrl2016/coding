@@ -14,6 +14,10 @@ extern "C" {
 
 #define STREAM_FRAME_RATE 24
 #define STREAM_DURATION 10
+#define CODEC_CAP_VARIABLE_FRAME_SIZE (1u << 16u)
+#define CH_FRONT_LEFT             0x00000001u
+#define CH_FRONT_RIGHT            0x00000002u
+#define CH_LAYOUT_STEREO          (CH_FRONT_LEFT|CH_FRONT_RIGHT)
 
 // A wrapper around a single output AVStream.
 typedef struct OutputStream {
@@ -39,7 +43,6 @@ typedef struct OutputStream {
 static void addStream(OutputStream* outputStream, AVFormatContext* formatContext,
                       AVCodec** codec, enum AVCodecID codecId) {
     AVCodecContext* codecContext;
-    int i;
     // find the encoder
     *codec = avcodec_find_encoder(codecId);
     if (!(*codec)) {
@@ -53,7 +56,7 @@ static void addStream(OutputStream* outputStream, AVFormatContext* formatContext
         av_log(nullptr, AV_LOG_ERROR, "Could not allocate stream\n");
         exit(EXIT_FAILURE);
     }
-    outputStream->stream->id = formatContext->nb_streams - 1;
+    outputStream->stream->id = ((int) formatContext->nb_streams) - 1;
     codecContext = avcodec_alloc_context3(*codec);
     if (!codecContext) {
         av_log(nullptr, AV_LOG_ERROR, "Could not alloc an encoding context\n");
@@ -68,18 +71,18 @@ static void addStream(OutputStream* outputStream, AVFormatContext* formatContext
             codecContext->sample_rate = 44100;
             if ((*codec)->supported_samplerates) {
                 codecContext->sample_rate = (*codec)->supported_samplerates[0];
-                for (int i = 0; (*codec)->supported_samplerates[i]; i++) {
-                    if ((*codec)->supported_samplerates[i] == 44100)
+                for (int c = 0; (*codec)->supported_samplerates[c]; c++) {
+                    if ((*codec)->supported_samplerates[c] == 44100)
                         codecContext->sample_rate = 44100;
                 }
             }
             codecContext->channels = av_get_channel_layout_nb_channels(codecContext->channel_layout);
-            codecContext->channel_layout = AV_CH_LAYOUT_STEREO;
+            codecContext->channel_layout = CH_LAYOUT_STEREO;
             if ((*codec)->channel_layouts) {
                 codecContext->channel_layout = (*codec)->channel_layouts[0];
                 for (int i = 0; (*codec)->channel_layouts[i]; i++) {
-                    if ((*codec)->channel_layouts[i] == AV_CH_LAYOUT_STEREO)
-                        codecContext->channel_layout = AV_CH_LAYOUT_STEREO;
+                    if ((*codec)->channel_layouts[i] == CH_LAYOUT_STEREO)
+                        codecContext->channel_layout = CH_LAYOUT_STEREO;
                 }
             }
             codecContext->channels = av_get_channel_layout_nb_channels(codecContext->channel_layout);
@@ -140,8 +143,7 @@ static AVFrame* allocPicture(enum AVPixelFormat pixelFormat, int width, int heig
     return frame;
 }
 
-static void openVideo(AVFormatContext* formatContext,
-                      AVCodec* codec, OutputStream* outputStream, AVDictionary* option) {
+static void openVideo(AVCodec* codec, OutputStream* outputStream, AVDictionary* option) {
     int ret;
     AVCodecContext* codecContext = outputStream->codecContext;
     AVDictionary* opt = nullptr;
@@ -205,8 +207,7 @@ static AVFrame* allocAudioFrame(enum AVSampleFormat sampleFormat,
     return frame;
 }
 
-static void openAudio(AVFormatContext* formatContext, AVCodec* codec, OutputStream* outputStream,
-                      AVDictionary* option) {
+static void openAudio(AVCodec* codec, OutputStream* outputStream, AVDictionary* option) {
     AVCodecContext* codecContext;
     int nbSamples;
     int ret;
@@ -224,10 +225,11 @@ static void openAudio(AVFormatContext* formatContext, AVCodec* codec, OutputStre
 
     // Init signal generator.
     outputStream->t = 0;
-    outputStream->tincr = 2 * M_PI * 110.0 / codecContext->sample_rate;
-    outputStream->tincr2 = 2 * M_PI * 110.0 / codecContext->sample_rate / codecContext->sample_rate;
+    outputStream->tincr = 2.0f * ((float) M_PI) * 110.0f / (float) codecContext->sample_rate;
+    outputStream->tincr2 =
+            2.0f * ((float) M_PI) * 110.0f / (float) codecContext->sample_rate / (float) codecContext->sample_rate;
 
-    if (codecContext->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+    if (((unsigned) codecContext->codec->capabilities) & ((unsigned) CODEC_CAP_VARIABLE_FRAME_SIZE))
         nbSamples = 10000;
     else
         nbSamples = codecContext->frame_size;
@@ -263,11 +265,14 @@ static void openAudio(AVFormatContext* formatContext, AVCodec* codec, OutputStre
     // Initialize the resampling context.
     if ((ret = swr_init(outputStream->swrContext)) < 0) {
         av_log(nullptr, AV_LOG_ERROR, "Failed to initialize the resampling context\n");
-        exit(EXIT_FAILURE);
+        exit(ret);
     }
 }
 
-static void logPacket(const AVFormatContext* formatContext, const AVPacket* packet) {
+static int logCount = 0;
+
+static void LogPacket(const AVFormatContext* formatContext, const AVPacket* packet) {
+    logCount++;
     AVRational* timeBase = &formatContext->streams[packet->stream_index]->time_base;
     char packetPts[AV_TS_MAX_STRING_SIZE];
     char packetPtsTime[AV_TS_MAX_STRING_SIZE];
@@ -275,14 +280,16 @@ static void logPacket(const AVFormatContext* formatContext, const AVPacket* pack
     char packetDtsTime[AV_TS_MAX_STRING_SIZE];
     char duration[AV_TS_MAX_STRING_SIZE];
     char durationTime[AV_TS_MAX_STRING_SIZE];
-    printf("pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s stream_index:%d\n",
-           av_ts_make_string(packetPts, packet->pts),
-           av_ts_make_time_string(packetPtsTime, reinterpret_cast<int64_t>(packetPts), timeBase),
-           av_ts_make_string(packetDts, packet->dts),
-           av_ts_make_time_string(packetDtsTime, reinterpret_cast<int64_t>(packetDts), timeBase),
-           av_ts_make_string(duration, packet->duration),
-           av_ts_make_time_string(durationTime, packet->duration, timeBase),
-           packet->stream_index);
+    if (logCount > 20 && logCount < 25) {
+        printf("pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s stream_index:%d\n",
+               av_ts_make_string(packetPts, packet->pts),
+               av_ts_make_time_string(packetPtsTime, reinterpret_cast<int64_t>(packetPts), timeBase),
+               av_ts_make_string(packetDts, packet->dts),
+               av_ts_make_time_string(packetDtsTime, reinterpret_cast<int64_t>(packetDts), timeBase),
+               av_ts_make_string(duration, packet->duration),
+               av_ts_make_time_string(durationTime, packet->duration, timeBase),
+               packet->stream_index);
+    }
 }
 
 static bool writeFrame(AVFormatContext* formatContext, AVCodecContext* codecContext,
@@ -297,7 +304,7 @@ static bool writeFrame(AVFormatContext* formatContext, AVCodecContext* codecCont
     }
 
     while (ret >= 0) {
-        AVPacket packet = {0};
+        AVPacket packet = {nullptr};
         ret = avcodec_receive_packet(codecContext, &packet);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             break;
@@ -312,7 +319,7 @@ static bool writeFrame(AVFormatContext* formatContext, AVCodecContext* codecCont
         packet.stream_index = stream->index;
 
         // Write the compressed frame to the media file.
-        logPacket(formatContext, &packet);
+        LogPacket(formatContext, &packet);
         ret = av_interleaved_write_frame(formatContext, &packet);
         av_packet_unref(&packet);
         if (ret < 0) {
@@ -393,7 +400,7 @@ static AVFrame* getAudioFrame(OutputStream* outputStream) {
                       STREAM_DURATION, (AVRational) {1, 1}) > 0)
         return nullptr;
 
-    int16_t* q = (int16_t*) frame->data[0];
+    auto* q = (int16_t*) frame->data[0];
     for (int j = 0; j < frame->nb_samples; j++) {
         int v = (int) (sin(outputStream->t) * 10000);
         for (int i = 0; i < outputStream->codecContext->channels; i++) {
@@ -443,10 +450,10 @@ static bool writeAudioFrame(AVFormatContext* formatContext, OutputStream* output
 }
 
 int main(int argc, char** argv) {
-    OutputStream videoStream = {0}, audioStream = {0};
+    OutputStream videoStream = {nullptr}, audioStream = {nullptr};
 
     const char* filename;
-    AVOutputFormat* outputFormat = nullptr;
+    AVOutputFormat* outputFormat;
     AVFormatContext* formatContext = nullptr;
 
     AVCodec* audioCodec, * videoCodec;
@@ -492,14 +499,14 @@ int main(int argc, char** argv) {
     // Now that all the parameters are set, we can open the audio and
     // video codecs and allocate the necessary encode buffers.
     if (hasVideo)
-        openVideo(formatContext, videoCodec, &videoStream, option);
+        openVideo(videoCodec, &videoStream, option);
     if (hasAudio)
-        openAudio(formatContext, audioCodec, &audioStream, option);
+        openAudio(audioCodec, &audioStream, option);
 
-    av_dump_format(formatContext, 0, filename, true);
+    // av_dump_format(formatContext, 0, filename, true);
 
     // Open the output file, if needed.
-    if (!(outputFormat->flags & AVFMT_NOFILE)) {
+    if (!((unsigned) outputFormat->flags & (unsigned) AVFMT_NOFILE)) {
         ret = avio_open(&formatContext->pb, filename, AVIO_FLAG_WRITE);
         if (ret < 0) {
             av_log(nullptr, AV_LOG_ERROR, "Could not open %s\n", filename);
