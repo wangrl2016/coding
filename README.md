@@ -4,18 +4,9 @@ Personal coding exercises (个人代码练习)
 
 * 使用`git_sync_deps.py`下载程序需要的第三方库。
 
-* 每个项目下的`run.py`自动运行示例程序。
+* 每个项目下的`run.py`自动运行示例。
 
-* `Dockerfile`展示项目构建过程。
-
-```
-sudo docker build -t coding-develop:0.1.0 .
-sudo docker run -it coding-develop:0.1.0 /bin/bash
-```
-
-* 欢迎关注今日头条/西瓜视频 `火车上遇见`
-
-* 自动生成各子项目`README.md`文件
+* 欢迎关注今日头条/西瓜视频/B站 `火车上遇见'
 
 ## 简单数据结构和算法 ([sdsa](sdsa/))
 
@@ -39,7 +30,6 @@ https://github.com/TheAlgorithms/Java
 - [x] Greedy Algorithms
 - [x] Dynamic Programming
 - [ ] Pattern Searching
-- [ ] Other String Algorithms
 - [x] Backtracking
 - [x] Divide and Conquer
 - [ ] Geometric Algorithms
@@ -48,7 +38,6 @@ https://github.com/TheAlgorithms/Java
 - [ ] Graph Algorithms
 - [ ] Randomized Algorithms
 - [ ] Branch and Bound
-- [ ] Quizzes on Algorithms
 
 
 ## 算法(Algorithms)第四版 ([algs4](algs4/))
@@ -79,40 +68,32 @@ https://algs4.cs.princeton.edu/home/
 
 ## 设计模式 ([dp](dp/))
 
+Design Patterns: Elements of Reusable Object-Oriented Software
+
 https://github.com/iluwatar/java-design-patterns
 
-- [ ] Abstract Document
 - [ ] Abstract Factory
-- [ ] Active Object
-- [ ] Acyclic Visitor
-- [ ] Adapter
-- [ ] Ambassador
-- [ ] Bridge
 - [ ] Builder
-- [ ] Bytecode
-- [ ] Caching
-- [ ] Callback
-- [ ] Chain
-- [ ] Command
-- [ ] Commander
+- [ ] Prototype
+- [ ] Singleton
+- [ ] Adapter
+- [ ] Bridge
 - [ ] Composite
 - [ ] Decorator
-- [ ] Delegation
 - [ ] Facade
-- [ ] Factory
 - [ ] Flyweight
-- [ ] Iterator
-- [ ] Model View Controller
-- [ ] Model View Presenter
-- [ ] Observer
-- [ ] Promise
 - [ ] Proxy
-- [ ] Registry
-- [ ] Singleton
-- [x] Stragegy
-- [ ] Thread Pool
-- [ ] Throttling
-- [ ] Visitor 
+- [ ] Chain of Responsibility
+- [ ] Command
+- [ ] Iterator
+- [ ] Mediator
+- [ ] Memento
+- [ ] Observer
+- [ ] State
+- [ ] Strategy
+- [ ] Visitor
+
+
 
 ## FFmpeg示例 ([ffmpeg](ffmpeg/))
 
@@ -129,6 +110,7 @@ https://ffmpeg.org/doxygen/trunk/examples.html
 
 ![FFmpeg](res/ffmpeg.png)
 
+- [ ] FFplay
 
 ## OpenGL示例 ([opengl](opengl/))
 
@@ -160,16 +142,15 @@ https://learnopengl.com/
 - [ ] Shadows
 - [ ] Normal Mapping
 - [ ] PBR
-- [ ] In Practice
 
 
 ## Android ([android](android/))
 
 https://developer.android.com/
 
-- [ ] Camera相机
-- [ ] 多媒体播放器
-- [ ] NDK开发
+- [ ] Camera
+- [ ] Media Player
+- [ ] NDK
 
 ## OpenCV示例 ([opencv](opencv/))
 
@@ -213,20 +194,6 @@ https://docs.opencv.org/4.5.1/
 
 - [ ] Computer Systems - A Programmer's Perspective
 
-## 数字图像处理 ([dip](dip/))
-
-参考Digital Image Processing教材编写
-
-- [ ] Digital Image Fundamentals
-- [ ] Intensity Transformations and Spatial Filtering
-- [ ] Filtering in the Frequency Domain
-- [ ] Image Restoration and Reconstruction
-- [ ] Color Image Processing
-- [ ] Wavelet and Multi-resolution Processing
-- [ ] Morphological Image Processing
-- [ ] Image Segmentation
-- [ ] Representation and Description
-- [ ] Object Recognition
 
 ## 手机群控系统 ([harun](harun/))
 
@@ -263,7 +230,7 @@ https://github.com/SFML/SFML/
 
 ## 工具 ([tools](tools/))
 
-- [ ] 命令行工具
+- [x] 命令行工具
 
 ## 算法导论 ([ia](ia/))
 

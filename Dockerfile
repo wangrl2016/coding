@@ -1,5 +1,10 @@
 FROM ubuntu:20.04
 
+#
+# sudo docker build -t coding-develop:0.1.0 .
+# sudo docker run -it coding-develop:0.1.0 /bin/bash
+#
+
 MAINTAINER wangrl2016
 COPY . /app
 WORKDIR /app
