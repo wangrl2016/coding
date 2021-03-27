@@ -137,19 +137,6 @@ static int initFilters(AVFormatContext* formatContext,
     return ret;
 }
 
-static void printFrame(const AVFrame* frame) {
-    const int n = frame->nb_samples * av_get_channel_layout_nb_channels(frame->channel_layout);
-    const uint16_t* p = (uint16_t*) frame->data[0];
-    const uint16_t* pEnd = p + n;
-
-    while (p < pEnd) {
-        fputc(*p & 0xff, stdout);
-        fputc(*p >> 8 & 0xff, stdout);
-        p++;
-    }
-    fflush(stdout);
-}
-
 int main(int argc, char** argv) {
     AVFormatContext* formatContext = nullptr;
     AVCodecContext* codecContext = nullptr;
@@ -167,11 +154,12 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    if (argc != 2) {
+    if (argc != 3) {
         av_log(nullptr, AV_LOG_ERROR, "Usage: %s input_file | %s\n", argv[0], PLAYER);
         exit(EXIT_FAILURE);
     }
     const char* filename = argv[1];
+    FILE* file = fopen(argv[2], "wb");
 
     if ((ret = avformat_open_input(&formatContext, filename, nullptr, nullptr)) < 0) {
         av_log(nullptr, AV_LOG_ERROR, "Cannot open input file\n");
@@ -235,7 +223,9 @@ int main(int argc, char** argv) {
                         ret = av_buffersink_get_frame(bufferSinkContext, filterFrame);
                         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
                             break;
-                        printFrame(filterFrame);
+                        for (int i = 0; i < filterFrame->nb_samples; i++) {
+                            fwrite(filterFrame->data[0] + sizeof(uint16_t) * i, 1, sizeof(uint16_t), file);
+                        }
                         av_frame_unref(filterFrame);
                     }
                     av_frame_unref(frame);
@@ -244,6 +234,8 @@ int main(int argc, char** argv) {
         }
         av_packet_unref(&packet);
     }
+
+    av_log(nullptr, AV_LOG_INFO, "Play command: ffplay -f s16le -ar 8000 -ac 1 %s\n", argv[2]);
 
     end:
     avfilter_graph_free(&filterGraph);

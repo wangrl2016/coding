@@ -121,6 +121,7 @@ if __name__ == '__main__':
         elif no == 11:
             print('音频filter处理')
             args.append('../res/big-buck-bunny.mp4')
+            args.append('out/mono-s16le-8000.pcm')
         elif no == 12:
             print('MP3格式转码成为AAC格式')
             args.append('../res/moon-night.mp3')
