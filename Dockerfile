@@ -16,7 +16,7 @@ RUN apt update \
                         libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
 			libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
 			libflac-dev libmp3lame-dev libx264-dev libx11-dev \
-			xorg-dev libglfw3-dev 
+			xorg-dev libglfw3-dev python3-tk python3-pil.imagetk 
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \

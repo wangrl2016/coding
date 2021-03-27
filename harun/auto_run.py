@@ -6,6 +6,7 @@ import signal
 import sys
 import threading
 from datetime import datetime
+from random import randrange
 
 from src import utils, info, phone, checkin, sign, schedule
 
@@ -29,6 +30,12 @@ def cycle(device):
             run_apps.append(p)
 
 
+def single(device):
+    (w, h) = phone.get_size(device)
+    while True:
+        phone.swipe_down_to_up(device, w / 2, h, randrange(5, 16))
+
+
 def run(device):
     # 获取手机的大小
     (w, h) = phone.get_size(device)
@@ -48,11 +55,23 @@ def run(device):
             print('所有程序的签到工作 ' + datetime.now().time().__str__())
             for a in info.apps:
                 if utils.is_coordinate_checkin(a):
-                    getattr(checkin, a)(device, w, h)
+                    try:
+                        getattr(checkin, a)(device, w, h)
+                    except NotImplementedError as e:
+                        print(a + ' checkin not implemented')
+                        continue
                 else:
-                    getattr(checkin, a)(device)
+                    try:
+                        getattr(checkin, a)(device)
+                    except NotImplementedError as e:
+                        print(a + ' checkin not implemented')
+                        continue
                     # 所有程序的签到工作
-                    getattr(sign, a)(device, w, h)
+                    try:
+                        getattr(sign, a)(device, w, h)
+                    except NotImplementedError as e:
+                        print(a + ' sign not implemented')
+                        continue
                     phone.stop_app(device, info.packages[a])
 
             utils.tail_work(device, w, h, 0)
@@ -151,6 +170,9 @@ def main(args):
 
     print(devices)
 
+    if args.serial and args.operate == 'video':
+        single(args.serial)
+
     # 为每部手机设备创建单独的线程
     threads = []
     # 设备号对应的线程号(device:thread_id)
@@ -194,5 +216,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='PROG', conflict_handler='resolve')
     parser.add_argument('-s', '--serial', help='phone serial number')
+    # video audio article novel advert
+    parser.add_argument('-o', '--operate')
 
     main(parser.parse_args())

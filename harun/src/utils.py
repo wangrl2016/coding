@@ -53,7 +53,11 @@ def schedule_apps(device, w, h):
     if datetime.now().minute < info.SCHEDULE_TIME:
         print('第1次定时任务 ' + datetime.now().time().__str__())
         for a in info.apps:
-            getattr(schedule, a)(device, w, h)
+            try:
+                getattr(schedule, a)(device, w, h)
+            except NotImplementedError as e:
+                print(a + ' schedule not implemented')
+                continue
 
     if (datetime.now().hour % 4) == 1:
         # 手机休息180s
@@ -68,7 +72,11 @@ def schedule_apps(device, w, h):
 
     print('第2次定时任务 ' + datetime.now().time().__str__())
     for a in info.apps:
-        getattr(schedule, a)(device, w, h)
+        try:
+            getattr(schedule, a)(device, w, h)
+        except NotImplementedError as e:
+            print(a + ' schedule not implemented')
+            continue
 
 
 # 每个小时的收尾工作

@@ -1,9 +1,12 @@
+from src import phone
+
+
 def zhaoshang(device, w, h):
     return None
 
 
 def toutiao(device, w, h):
-    return None
+    phone.tap(device, w / 2, 2340)
 
 
 def kuaishou(device, w, h):
@@ -75,11 +78,12 @@ def kuaikandian(device, w, h):
 
 
 def qutoutiao(device, w, h):
+    phone.tap(device, 750, 2330)
     return None
 
 
 def baidu(device, w, h):
-    return None
+    phone.tap(device, 750, 2330)
 
 
 def weishi(device, w, h):

@@ -25,7 +25,7 @@ def read_article(device, w, h, num):
 
 
 def read_novel(device, w, h, num):
-    print('看小说 ' + str(num) + '次 ' + datetime.now().time().__str__())
+    print('看小说' + str(num) + '次 ' + datetime.now().time().__str__())
     for i in range(0, num):
         for j in range(0, 10):
             phone.swipe_right_to_left(device, w, h / 2, randrange(2, 5), internal=300)
