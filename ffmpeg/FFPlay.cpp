@@ -10,6 +10,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
 #include <libavdevice/avdevice.h>
+#include <libavutil/fifo.h>
+#include <libavutil/avstring.h>
 }
 
 #include <SDL2/SDL.h>
@@ -22,19 +24,86 @@ extern "C" {
 const char programName[] = "FFplay";
 const int programBirthYear = 2021;
 
-typedef struct VideoState {
+DEFINE_string(input, "", "Input movie file path");
 
+// video
+#define VIDEO_PICTURE_QUEUE_SIZE 3
+// subtitle
+#define SUBTITLE_QUEUE_SIZE 16
+// audio
+#define SAMPLE_QUEUE_SIZE 9
+
+#define FRAME_QUEUE_SIZE FFMAX(SAMPLE_QUEUE_SIZE, FFMAX(VIDEO_PICTURE_QUEUE_SIZE, SUBTITLE_QUEUE_SIZE))
+
+// 链表节点
+typedef struct MyAVPacketList {
+    AVPacket* pkt;
+    int serial;
+} MyAVPacketList;
+
+typedef struct PacketQueue {
+    AVFifoBuffer* packetList;
+    int nbPackets;
+    int size;
+    int64_t duration;
+    int abortRequest;
+    int serial;
+    SDL_mutex* mutex;
+    SDL_cond* cond;
+} PacketQueue;
+
+// Common struct for handling all types of decoded data and allocated render buffers.
+typedef struct Frame {
+    AVFrame* frame;
+    AVSubtitle sub;
+    int serial;
+    double pts;         // presentation timestamp for the frame
+    double duration;    // estimated duration of the frame
+    int64_t pos;        // byte position of the frame in the input file
+    int width;
+    int height;
+    int format;
+    AVRational sar;     // sample aspect ratio
+    int uploaded;
+    int flipV;
+} Frame;
+
+typedef struct FrameQueue {
+    Frame queue[FRAME_QUEUE_SIZE];
+    int rIndex;
+    int wIndex;
+    int size;
+    int maxSize;
+    bool keepLast;
+    int rIndexShown;
+    SDL_mutex* mutex;
+    SDL_cond* cond;
+    PacketQueue* packetQueue;
+} FrameQueue;
+
+typedef struct VideoState {
+    char* filename;
+
+    // 流的下标
+    int videoStream, audioStream, subtitleStream;
+    int lastVideoStream, lastAudioStream, lastSubtitleStream;
+
+    FrameQueue videoPictureFrameQueue;
+    FrameQueue subtitleFrameQueue;
+    FrameQueue sampleFrameQueue;
+
+    PacketQueue videoPicturePacketQueue;
+    PacketQueue subtitlePacketQueue;
+    PacketQueue samplePacketQueue;
 } VideoState;
 
 // Options specified by the user
 
 // typedef struct AVFormatContext {
 // // The input container format.
-// // Demuxing only, set by avformat_open_input().
+// // De-muxing only, set by avformat_open_input().
 // } AVFormatContext;
 static AVInputFormat* fileInputFormat;  // 输入文件容器格式
-DEFINE_string(input, "", "Input movie file path");
-// static const char* inputFilename;       // 输入音视频文件
 static int defaultWidth = 640;          // 默认播放窗口的宽度
 static int defaultHeight = 480;         // 默认播放窗口的高度
 static const char* windowTitle;
@@ -77,11 +146,94 @@ static void doExit(VideoState* is) {
     exit(EXIT_SUCCESS);
 }
 
+static void streamClose(VideoState* is) {
+
+}
+
+/**
+ * 初始化FrameQueue结构体
+ *
+ * @param frameQueue            Frame队列
+ * @param packetQueue           Packet队列
+ * @param maxSize               队列的最大值
+ * @param keepLast
+ * @return                      0表示成功，其余值表示失败
+ */
+static int frameQueueInit(FrameQueue* frameQueue, PacketQueue* packetQueue, int maxSize, int keepLast) {
+    memset(frameQueue, 0, sizeof(FrameQueue));
+    // 初始化锁
+    if (!(frameQueue->mutex = SDL_CreateMutex())) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    if (!(frameQueue->cond = SDL_CreateCond())) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    frameQueue->packetQueue = packetQueue;
+    frameQueue->maxSize = FFMIN(maxSize, FRAME_QUEUE_SIZE);
+    frameQueue->keepLast = keepLast;
+    for (int i = 0; i < frameQueue->maxSize; i++)
+        // Only allocates the AVFrame itself, not the data buffers.
+        if (!(frameQueue->queue[i].frame = av_frame_alloc()))
+            return AVERROR(ENOMEM);
+    return 0;
+}
+
+static int packetQueueInit(PacketQueue* queue) {
+    memset(queue, 0, sizeof(PacketQueue));
+    queue->packetList = av_fifo_alloc(sizeof(MyAVPacketList));
+    if (!queue->packetList)
+        return AVERROR(ENOMEM);
+    queue->mutex = SDL_CreateMutex();
+    if (!queue->mutex) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    queue->cond = SDL_CreateCond();
+    if (!queue->cond) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    queue->abortRequest = 1;
+    return 0;
+}
+
 static VideoState* streamOpen(const char* filename, AVInputFormat* inputFormat) {
-    VideoState* is;
+    bool success = true;
+    VideoState* is = nullptr;
     is = static_cast<VideoState*>(av_mallocz(sizeof(VideoState)));
-    if (!is)
+    if (!is) {
+        av_log(nullptr, AV_LOG_ERROR, "Malloc VideoState struct failed\n");
         return nullptr;
+    }
+
+    is->lastVideoStream = is->videoStream = -1;
+    is->lastAudioStream = is->audioStream = -1;
+    is->lastSubtitleStream = is->subtitleStream = -1;
+    is->filename = av_strdup(filename);
+    if (!is->filename) {
+        success = false;
+        goto fail;
+    }
+
+    if (frameQueueInit(&is->videoPictureFrameQueue, &is->videoPicturePacketQueue, VIDEO_PICTURE_QUEUE_SIZE, true) < 0)
+        goto fail;
+    if (frameQueueInit(&is->subtitleFrameQueue, &is->subtitlePacketQueue, SUBTITLE_QUEUE_SIZE, false) < 0)
+        goto fail;
+    if (frameQueueInit(&is->sampleFrameQueue, &is->samplePacketQueue, SAMPLE_QUEUE_SIZE, true) < 0)
+        goto fail;
+
+    if (packetQueueInit(&is->videoPicturePacketQueue) < 0 ||
+        packetQueueInit(&is->samplePacketQueue) < 0 ||
+        packetQueueInit(&is->subtitlePacketQueue) < 0)
+        goto fail;
+
+    if (!success) {
+        fail:
+        streamClose(is);
+        return nullptr;
+    }
 
     return is;
 }
@@ -94,7 +246,6 @@ static void eventLoop(VideoState* currentStream) {
 // Called from the main
 int main(int argc, char** argv) {
     int flags;
-
     // 保存和视频相关的所有信息
     VideoState* is;
 

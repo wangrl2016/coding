@@ -2,6 +2,10 @@ import os
 from datetime import datetime
 from random import randrange
 
+from pytesseract import pytesseract
+from PIL import Image
+from pytesseract import Output
+
 from src import info, schedule, phone, checkin
 
 
@@ -71,3 +75,36 @@ def schedule_apps(device, w, h):
 def tail_work(device, w, h, hour):
     schedule_apps(device, w, h)
     print()
+
+
+def current_words_location(pid, words, output_dir='out'):
+    """
+    获取当前页面上文字的位置
+    """
+    # 1. 获取到手机截图
+    photo_name = phone.get_page_photo(pid, output_dir)
+    if photo_name is None:
+        return None
+    # 2. 对截图进行识别
+    data = pytesseract.image_to_data(Image.open(os.path.join(output_dir, photo_name)),
+                                     output_type=Output.DICT, lang='chi_sim')
+    # 3. 截图信息对比
+    for i in range(0, len(data['text'])):
+        if data['text'][i].__eq__(words[0]):
+            is_found = True
+            for j, word in enumerate(words):
+                # 保证数组不越界
+                if i + j >= len(data['text']):
+                    return None
+                if not word.__eq__(data['text'][i + j]):
+                    is_found = False
+                    break
+            if is_found:
+                # 4. 返回处理结果
+                os.remove(os.path.join(output_dir, photo_name))
+                if data['width'][i] == 0 or data['height'][i] == 0:
+                    return None
+                return {'x': data['left'][i], 'y': data['top'][i],
+                        'w': data['width'][i], 'h': data['height'][i]}
+    os.remove(os.path.join(output_dir, photo_name))
+    return None

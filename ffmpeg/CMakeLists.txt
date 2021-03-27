@@ -26,7 +26,6 @@ SET(
         TranscodeAAC
         Muxing
         Remuxing
-        Dranger
         FFPlay
 )
 

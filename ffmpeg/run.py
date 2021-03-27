@@ -81,8 +81,9 @@ if __name__ == '__main__':
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
         args = [exe]
-
         no = len(examples) - index
+        print(example)
+        print(str(no) + '. ', end='')
         if no == 1:
             print('打印多媒体文件元数据')
             args.append('../res/big-buck-bunny.mp4')
@@ -132,17 +133,13 @@ if __name__ == '__main__':
             args.append('../res/big-buck-bunny.mp4')
             args.append('out/big-buck-bunny.mov')
         elif no == 15:
-            print('简单的音视频播放器')
-            args.append('../res/big-buck-bunny.mp4')
-        elif no == 16:
             print('参考ffplay写的音视频播放器')
             args.append('--input')
             args.append('../res/big-buck-bunny.mp4')
 
         subprocess.run(args)
         print()
-
-        # 调试开关
+        # debug
         break
 
     exit(0)

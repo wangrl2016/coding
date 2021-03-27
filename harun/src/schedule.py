@@ -1,13 +1,16 @@
+import time
 from datetime import datetime
 
 from src import checkin, app, phone, info
 
 
 def test(device, w, h):
+    shuqi(device, w, h)
     return None
 
 
 def jingdong(device, w, h):
+    checkin.jingdong(device, w, h)
     return None
 
 
@@ -30,7 +33,17 @@ def kuchang(device, w, h):
 
 
 def shuqi(device, w, h):
-    return None
+    def watch_advert():
+        print('书旗看广告赚金币 ' + datetime.now().time().__str__())
+        phone.tap(device, 900, 2150, gap=10)
+        time.sleep(30)
+
+    if datetime.now().minute < info.SCHEDULE_TIME:
+        checkin.shuqi(device, w, h)
+        phone.tap(device, w / 2, 2300)
+        # [x] 看广告赚金币
+        watch_advert()
+        phone.stop_app(device, info.packages['shuqi'])
 
 
 def yingke(device, w, h):
@@ -42,7 +55,10 @@ def kugou(device, w, h):
 
 
 def zhongqing(device, w, h):
-    return None
+    checkin.zhongqing(device, w, h)
+    # [x] 阅读中青看点文章
+    app.read_article(device, w, h, num=1)
+    phone.stop_app(device, info.packages['zhongqing'])
 
 
 def kuaiyin(device, w, h):
@@ -71,6 +87,7 @@ def changdou(device, w, h):
 
 def kuaikandian(device, w, h):
     checkin.kuaikandian(device, w, h)
+    # [x] 阅读快看点文章
     app.read_article(device, w, h, num=1)
     phone.stop_app(device, info.packages['kuaikandian'])
 
