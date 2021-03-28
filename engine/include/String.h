@@ -7,6 +7,9 @@
 #include <cstdio>
 #include <string>
 #include <atomic>
+#include <memory>
+
+#include "RefCnt.h"
 
 /**
  * Light weight class for managing strings. Uses reference
@@ -41,11 +44,16 @@ private:
 
         constexpr Rec(uint32_t len, int32_t refCnt) : fLength(len), fRefCnt(refCnt) {}
 
-        static std::shared_ptr<Rec> Make(const char text[], size_t len);
+        /**
+         * std::shared_ptr介绍
+         *
+         * https://en.cppreference.com/w/cpp/memory/shared_ptr
+         */
+        static SharedPtr<Rec> Make(const char text[], size_t len);
 
-        char* data() {
-            return &fBeginningOfData;
-        }
+        char* data() { return &fBeginningOfData; }
+
+        const char* data() const { return &fBeginningOfData; }
 
         void ref() const;
 
@@ -57,5 +65,17 @@ private:
         uint32_t fLength;   // logically size_t, but we want it to stay 32 bits
         mutable std::atomic<int32_t> fRefCnt;
         char fBeginningOfData = '\0';
+
+    private:
+        // Ensure the unsized deleted is called
+        void operator delete(void* p) { ::operator delete(p); }
     };
+
+    SharedPtr<Rec> fRec;
+
+    const String& validate() const {
+        return *this;
+    }
+
+    static const Rec gEmptyRec;
 };

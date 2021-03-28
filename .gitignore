@@ -1,4 +1,6 @@
 
+engine/googletest/
+
 # Rust于亚
 target/
 
