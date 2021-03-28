@@ -4,37 +4,6 @@ import os
 import subprocess
 
 
-def cmake_executable():
-    """
-    查找CMake可执行程序是否安装
-
-    :return: A string suitable for passing to subprocess functions or None
-    """
-
-    with open(os.devnull, 'w') as devnull:
-        try:
-            subprocess.call(['cmake', '--version'], stdout=devnull)
-        except (OSError,):
-            print('CMake没有安装')
-            return None
-        return 'cmake'
-
-
-def ffmpeg_library():
-    """
-    检查ffmpeg是否安装
-
-    :return: A string suitable for passing to subprocess functions or None
-    """
-    with open(os.devnull, 'w') as devnull:
-        try:
-            subprocess.call(['ffmpeg', '-version'], stdout=devnull)
-        except (OSError,):
-            print('FFmpeg没有安装')
-            return None
-        return 'ffmpeg'
-
-
 def get_cmake_examples(path='CMakeLists.txt'):
     """
     获取CMakeLists.txt文件下面的EXAMPLES
@@ -69,11 +38,7 @@ if __name__ == '__main__':
     if not os.path.exists(build_dir):
         os.mkdir(build_dir)
 
-    if not cmake_executable() or not ffmpeg_library():
-        print('请手动安装CMake程序或者FFmpeg库')
-        exit(0)
-
-    subprocess.run([cmake_executable(), '-S', '.', '-B', build_dir])
+    subprocess.run(['cmake', '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
 
     examples = get_cmake_examples()

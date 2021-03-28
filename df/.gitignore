@@ -1,9 +1,0 @@
-.idea/
-target/
-Cargo.lock
-resvg/
-ffmpeg-next/
-out.*
-out/
-*.gif
-*.ppm

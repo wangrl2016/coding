@@ -12,7 +12,7 @@ WORKDIR /app
 # 下载依赖
 RUN apt update \
     && apt install -y git vim gcc g++ make openjdk-14-jdk \
-    			 nasm curl python libstdc++6 libasound \
+    			nasm curl python libstdc++6 libasound \
                         libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
 			libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
 			libflac-dev libmp3lame-dev libx264-dev libx11-dev \

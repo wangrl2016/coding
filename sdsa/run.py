@@ -4,18 +4,6 @@ import subprocess
 import requests
 
 
-def java_check():
-    """
-    检查计算机中是否安装java
-    """
-    with open(os.devnull, 'w') as devnull:
-        try:
-            subprocess.call(['java', '--version'], stdout=devnull)
-        except (OSError,):
-            return None
-    return 'java'
-
-
 def write_print(fd, log, new_line=True):
     """
     将log在控制台输出，并且写入到README.md文件中。
@@ -46,11 +34,6 @@ if __name__ == '__main__':
         os.mkdir(build_dir)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-
-    if not java_check():
-        print('请使用指令手动安装java库')
-        print('sudo apt install openjdk-11-jdk')
-        exit(0)
 
     readme = open('README.md', 'w')
     # 清空文件

@@ -6,10 +6,8 @@ import sys
 
 # 项目所需要的依赖
 dependencies = {
-    "engine/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",       
+    "engine/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",
     "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3",
-    "svg2gif/resvg": "https://github.com/RazrFalcon/resvg@38fc6781bd6edffcb8c14b3145b5e5a7342f6761",
-    "svg2gif/ffmpeg-next": "https://github.com/zmwangx/rust-ffmpeg@4d16604581dea325f70d0895970a91e6d2d91d17",
 }
 
 
@@ -31,23 +29,18 @@ def is_sha1_sum(s):
     return len(s) == 40 and all(c in '0123456789abcdef' for c in s)
 
 
-def git_executable():
-    """
-    Find the git executable.
-    :return: A string suitable for passing to subprocess functions, or None.
-    """
+def check_executable():
     with open(os.devnull, 'w') as devnull:
         try:
             subprocess.run(['git', '--version'], stdout=devnull)
+            subprocess.call(['java', '--version'], stdout=devnull)
+            subprocess.call(['cmake', '--version'], stdout=devnull)
+            subprocess.call(['ffmpeg', '-version'], stdout=devnull)
         except (OSError,):
             return None
-        return 'git'
 
 
 def git_sync_deps():
-    git = git_executable()
-    assert git
-
     for directory in sorted(dependencies):
         if '@' in dependencies[directory]:
             repo, commit_hash = dependencies[directory].split('@', 1)
@@ -58,8 +51,8 @@ def git_sync_deps():
             raise Exception("Poorly formed commit hash: %r" % commit_hash)
 
         if not os.path.isdir(directory):
-            subprocess.run([git, 'clone', '--quiet', '--no-checkout', repo, directory])
-            subprocess.run([git, 'checkout', '--quiet', commit_hash], cwd=directory)
+            subprocess.run(['git', 'clone', '--quiet', '--no-checkout', repo, directory])
+            subprocess.run(['git', 'checkout', '--quiet', commit_hash], cwd=directory)
 
             status(directory, commit_hash, True)  # success
             continue
@@ -67,19 +60,20 @@ def git_sync_deps():
         with open(os.devnull, 'w') as devnull:
             # If this fails, we will fetch before trying again.
             # Don't spam user with error information.
-            if 0 == subprocess.run([git, 'checkout', '--quiet', commit_hash],
+            if 0 == subprocess.run(['git', 'checkout', '--quiet', commit_hash],
                                    cwd=directory, stderr=devnull).returncode:
                 status(directory, commit_hash, False)  # success
                 continue
 
-        subprocess.run([git, 'remote', 'set-url', 'origin', repo], cwd=directory)
-        subprocess.run([git, 'fetch', '--quiet'], cwd=directory)
-        subprocess.run([git, 'checkout', '--quiet', commit_hash], cwd=directory)
+        subprocess.run(['git', 'remote', 'set-url', 'origin', repo], cwd=directory)
+        subprocess.run(['git', 'fetch', '--quiet'], cwd=directory)
+        subprocess.run(['git', 'checkout', '--quiet', commit_hash], cwd=directory)
 
         status(directory, commit_hash, True)  # success
 
 
 def main():
+    assert check_executable()
     git_sync_deps()
 
 

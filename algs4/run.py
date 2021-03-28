@@ -4,18 +4,6 @@ import subprocess
 import requests
 
 
-def java_check():
-    """
-    检查计算机中是否安装java
-    """
-    with open(os.devnull, 'w') as devnull:
-        try:
-            subprocess.call(['java', '--version'], stdout=devnull)
-        except (OSError,):
-            return None
-    return 'java'
-
-
 def download_third_jar(url, dst='./'):
     """
     下载程序需要的包依赖包
@@ -36,10 +24,6 @@ if __name__ == '__main__':
         os.mkdir(build_dir)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-
-    if not java_check():
-        print('请手动安装java库')
-        exit(0)
 
     third_jar_paths = [
         'https://algs4.cs.princeton.edu/code/algs4.jar'
