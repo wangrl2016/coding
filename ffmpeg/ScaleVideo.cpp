@@ -50,11 +50,11 @@ int parseVideoSize(int* width, int* height, const char* str) {
 
     char* pEnd;
     if (i == length) { // 说明没有找到缩写字符串
-        tmpWidth = strtol(str, &pEnd, 10);
+        tmpWidth = (int) strtol(str, &pEnd, 10);
         // 跳过宽和高分隔字符
         if (*pEnd)
             pEnd++;
-        tmpHeight = strtol(pEnd, &pEnd, 10);
+        tmpHeight = (int) strtol(pEnd, &pEnd, 10);
 
         // Trailing extraneous data detected, like in 123x345foobar.
         if (*pEnd)
@@ -69,7 +69,7 @@ int parseVideoSize(int* width, int* height, const char* str) {
     return 0;
 }
 
-static void fillYUVImage(uint8_t* data[4], int linesize[4],
+static void fillYUVImage(uint8_t* data[4], const int linesize[4],
                          int width, int height, int frameIndex) {
     int x, y;
     // Y
@@ -87,7 +87,7 @@ static void fillYUVImage(uint8_t* data[4], int linesize[4],
 }
 
 int main(int argc, char** argv) {
-    SwsContext* swsContext = nullptr;
+    SwsContext* swsContext;
     enum AVPixelFormat srcPixFmt = AV_PIX_FMT_YUV420P, dstPixFmt = AV_PIX_FMT_RGB24;
 
     if (argc != 3) {
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
     }
 
     av_log(nullptr, AV_LOG_INFO, "Scaling succeed. Play the output file with the command:\n"
-                                "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
+                                 "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
            av_get_pix_fmt_name(dstPixFmt), dstWidth, dstHeight, dstFilename);
 
     end:

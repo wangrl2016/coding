@@ -9,7 +9,7 @@ FlagInfo* CommandLineFlags::gHead;
 std::string CommandLineFlags::gUsage;
 
 // Some helper function for C strings.
-static inline bool StrStartsWith(const char string[], const char prefixStr[]) {
+static inline bool StrStartsWith(const char string[], const char prefixStr[]) { // NOLINT
     assert(string);
     assert(prefixStr);
     return !strncmp(string, prefixStr, strlen(prefixStr));
@@ -21,19 +21,9 @@ static inline int StrFind(const char string[], const char substring[]) {
     const char* first = strstr(string, substring);
     if (nullptr == first)
         return -1;
-    return first - &string[0];
+    return (int) (first - &string[0]);
 }
 
-// 重载bool operator()(T a, T b)函数
-struct CompareFlagsByName {
-    bool operator()(FlagInfo* a, FlagInfo* b) const {
-        return strcmp(a->name().c_str(), b->name().c_str()) < 0;
-    }
-
-    bool operator()(FlagInfo& a, FlagInfo& b) const {
-        return strcmp(a.name().c_str(), b.name().c_str()) < 0;
-    }
-};
 
 // Maximum line length for the help message
 #define LINE_LENGTH 72
@@ -78,11 +68,11 @@ static void printIndented(const std::string& text) {
 static void printHelpForFlag(const FlagInfo* flag) {
     printf("    --%s", flag->name().c_str());
     const std::string& shortName = flag->shortName();
-    if (shortName.size() > 0) {
+    if (!shortName.empty()) {
         printf(" or -%s", shortName.c_str());
     }
     printf(":\ttype: %s", flag->typeAsString().c_str());
-    if (flag->defaultValue().size() > 0) {
+    if (!flag->defaultValue().empty()) {
         printf("\tdefault: %s", flag->defaultValue().c_str());
     }
     printf("\n");
@@ -152,6 +142,7 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
     static bool gOnce;
     if (gOnce) {
         std::cout << "Parse should only be called once at the beginning of main!\n";
+        assert(false);
         return;
     }
     gOnce = true;
@@ -174,9 +165,9 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                 helpFlags.push_back(argv[j]);
             }
 
-            if (0 == helpFlags.size()) {
+            if (helpFlags.empty()) {
                 // Only print general help message if help for specific flags is not requested.
-                printf("%s\n%s\n", argv[0], gUsage.c_str());
+                PrintUsage();
             }
 
             std::sort(helpFlags.begin(), helpFlags.end());
@@ -185,23 +176,23 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                 printf("Flags:\n");
                 flagsPrinted = true;
             }
-            if (0 == helpFlags.size()) {
+            if (helpFlags.empty()) {
                 // If no flags followed --help, print them all.
                 std::vector<FlagInfo*> allFlags;
                 for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
                     allFlags.push_back(flag);
                 }
                 std::sort(allFlags.begin(), allFlags.end());
-                for (int i = 0; i < allFlags.size(); i++) {
-                    printHelpForFlag(allFlags[i]);
-                    if (allFlags[i]->extendedHelp().size() > 0) {
+                for (FlagInfo* flag: allFlags) {
+                    printHelpForFlag(flag);
+                    if (flag->extendedHelp().size() > 0) {
                         printf("        Use '--help %s' for more information.\n",
-                               allFlags[i]->name().c_str());
+                               flag->name().c_str());
                     }
                 }
             } else {
                 for (FlagInfo* flag = CommandLineFlags::gHead; flag; flag = flag->next()) {
-                    for (int k = 0; i < helpFlags.size(); k++) {
+                    for (int k = 0; k < helpFlags.size(); k++) {
                         if (flag->name() == helpFlags[k] ||
                             flag->shortName() == helpFlags[k]) {
                             printExtendedHelpForFlag(flag);
@@ -211,10 +202,10 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                     }
                 }
             }
-            if (helpFlags.size() > 0) {
+            if (!helpFlags.empty()) {
                 printf("Requested help for unrecognized flags:\n");
-                for (int k = 0; k < helpFlags.size(); k++) {
-                    printf("    --%s\n", helpFlags[k]);
+                for (auto& helpFlag : helpFlags) {
+                    printf("    --%s\n", helpFlag);
                 }
             }
             helpPrinted = true;
@@ -263,12 +254,14 @@ void CommandLineFlags::Parse(int argc, const char* const* argv) {
                         }
                         case FlagInfo::kInt_FlagType: {
                             i++;
-                            flag->setInt(atoi(argv[i]));
+                            char* end;
+                            flag->setInt((int) strtol(argv[i], &end, 10));
                             break;
                         }
                         case FlagInfo::kDouble_FlagType: {
                             i++;
-                            flag->setDouble(atof(argv[i]));
+                            char* end;
+                            flag->setDouble(strtod(argv[i], &end));
                             break;
                         }
                         default:
@@ -349,7 +342,7 @@ bool FlagInfo::match(const char* string) {
 
 bool FlagInfo::CreateStringFlag(const char* name, const char* shortName, CommandLineFlags::StringArray* pStrings,
                                 const char* defaultValue, const char* helpString, const char* extendedHelpString) {
-    FlagInfo* info =
+    auto* info =
             new FlagInfo(name, shortName, kString_FlagType, helpString, extendedHelpString);
     info->fDefaultString = defaultValue;
     info->fStrings = pStrings;
@@ -385,3 +378,4 @@ void FlagInfo::SetDefaultStrings(CommandLineFlags::StringArray* pStrings, const 
         }
     }
 }
+

@@ -17,14 +17,14 @@ extern "C" {
 #include <SDL2/SDL.h>
 #include <csignal>
 
-#include "CommandLineFlags.h"
+#include "command/CommandLineFlags.h"
 
 #define CONFIG_AVDEVICE 1
 
 const char programName[] = "FFplay";
 const int programBirthYear = 2021;
 
-DEFINE_string(input, "", "Input movie file path");
+DEFINE_string(input, "", "Input movie file path");  // NOLINT
 
 // video
 #define VIDEO_PICTURE_QUEUE_SIZE 3
@@ -82,6 +82,9 @@ typedef struct FrameQueue {
 } FrameQueue;
 
 typedef struct VideoState {
+    SDL_Thread* readThread;
+    AVInputFormat* inputFormat;
+    int abortRequest;
     char* filename;
 
     // 流的下标
@@ -95,7 +98,13 @@ typedef struct VideoState {
     PacketQueue videoPicturePacketQueue;
     PacketQueue subtitlePacketQueue;
     PacketQueue samplePacketQueue;
+
+    SDL_cond* continue_read_thread_cond;
+
+    int eof;
 } VideoState;
+
+AVDictionary* formatOptions;
 
 // Options specified by the user
 
@@ -150,6 +159,15 @@ static void streamClose(VideoState* is) {
 
 }
 
+void printError(const char* filename, int err) {
+    char errBuf[128];
+    const char* errBufPtr = errBuf;
+    if (av_strerror(err, errBuf, sizeof(errBuf)) < 0) {
+        errBufPtr = strerror(AVUNERROR(err));
+    }
+    av_log(nullptr, AV_LOG_ERROR, "%s:%s\n", filename, errBufPtr);
+}
+
 /**
  * 初始化FrameQueue结构体
  *
@@ -199,9 +217,65 @@ static int packetQueueInit(PacketQueue* queue) {
     return 0;
 }
 
+/**
+ * @return 返回1阻塞操作会中断
+ */
+static int decodeInterruptCallback(void* ctx) {
+    auto* is = static_cast<VideoState*>(ctx);
+    return is->abortRequest;
+}
+
+// This thread gets the stream from the disk or the network.
+static int readThread(void* arg) {
+    VideoState* is = static_cast<VideoState*>(arg);
+    AVFormatContext* inputFormatContext = nullptr;
+    int streamIndex[AVMEDIA_TYPE_NB];
+    int err, ret;
+    AVPacket* packet = nullptr;
+    SDL_mutex* waitMutex = SDL_CreateMutex();
+    bool scanAllPmtsSet = false;
+    if (!waitMutex) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateMutex() %s\n", SDL_GetError());
+        ret = AVERROR(ENOMEM);
+        goto fail;
+    }
+
+    memset(streamIndex, -1, sizeof(streamIndex));
+    is->eof = 0;
+
+    packet = av_packet_alloc();
+    if (!packet) {
+        av_log(nullptr, AV_LOG_FATAL, "Could not allocate packet\n");
+        ret = AVERROR(ENOMEM);
+        goto fail;
+    }
+    inputFormatContext = avformat_alloc_context();
+    if (!inputFormatContext) {
+        av_log(nullptr, AV_LOG_FATAL, "Could not allocate context\n");
+        ret = AVERROR(ENOMEM);
+        goto fail;
+    }
+    inputFormatContext->interrupt_callback.callback = decodeInterruptCallback;
+    inputFormatContext->interrupt_callback.opaque = is;
+    if (!av_dict_get(formatOptions, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE)) {
+        av_dict_set(&formatOptions, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+        scanAllPmtsSet = true;
+    }
+
+    err = avformat_open_input(&inputFormatContext,
+                              is->filename, is->inputFormat, &formatOptions);
+    if (err < 0) {
+        printError(is->filename, err);
+        ret = -1;
+        goto fail;
+    }
+
+    fail:
+    return 0;
+}
+
 static VideoState* streamOpen(const char* filename, AVInputFormat* inputFormat) {
-    bool success = true;
-    VideoState* is = nullptr;
+    VideoState* is;
     is = static_cast<VideoState*>(av_mallocz(sizeof(VideoState)));
     if (!is) {
         av_log(nullptr, AV_LOG_ERROR, "Malloc VideoState struct failed\n");
@@ -213,7 +287,6 @@ static VideoState* streamOpen(const char* filename, AVInputFormat* inputFormat) 
     is->lastSubtitleStream = is->subtitleStream = -1;
     is->filename = av_strdup(filename);
     if (!is->filename) {
-        success = false;
         goto fail;
     }
 
@@ -229,7 +302,14 @@ static VideoState* streamOpen(const char* filename, AVInputFormat* inputFormat) 
         packetQueueInit(&is->subtitlePacketQueue) < 0)
         goto fail;
 
-    if (!success) {
+    if (!(is->continue_read_thread_cond = SDL_CreateCond())) {
+        av_log(nullptr, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
+        goto fail;
+    }
+
+    is->readThread = SDL_CreateThread(readThread, "ReadThread", is);
+
+    if (!is->readThread) {
         fail:
         streamClose(is);
         return nullptr;
@@ -245,7 +325,7 @@ static void eventLoop(VideoState* currentStream) {
 
 // Called from the main
 int main(int argc, char** argv) {
-    int flags;
+    unsigned int flags;
     // 保存和视频相关的所有信息
     VideoState* is;
 
@@ -262,10 +342,14 @@ int main(int argc, char** argv) {
     // 初始化command参数
     CommandLineFlags::SetUsage("Simple media player");
     CommandLineFlags::Parse(argc, argv);
-    printf("Input file %s\n", FLAGS_input[0]);
 
     signal(SIGINT, sigtermHandler);     // interrupt
     signal(SIGTERM, sigtermHandler);    // termination
+
+    if (FLAGS_input.isEmpty()) {
+        printf("输入文件为空\n");
+        exit(EXIT_FAILURE);
+    }
 
     if (!FLAGS_input[0]) {
         showUsage();

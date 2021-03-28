@@ -38,6 +38,7 @@ def check_executable():
             subprocess.call(['ffmpeg', '-version'], stdout=devnull)
         except (OSError,):
             return None
+    return "OK"
 
 
 def git_sync_deps():

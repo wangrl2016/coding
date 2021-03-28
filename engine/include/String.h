@@ -39,6 +39,20 @@ private:
     struct Rec {
     public:
 
+        constexpr Rec(uint32_t len, int32_t refCnt) : fLength(len), fRefCnt(refCnt) {}
+
+        static std::shared_ptr<Rec> Make(const char text[], size_t len);
+
+        char* data() {
+            return &fBeginningOfData;
+        }
+
+        void ref() const;
+
+        void unref() const;
+
+        bool unique() const;
+
         // 字符串的长度
         uint32_t fLength;   // logically size_t, but we want it to stay 32 bits
         mutable std::atomic<int32_t> fRefCnt;

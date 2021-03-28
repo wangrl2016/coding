@@ -11,6 +11,52 @@
 #include <iostream>
 
 /**
+ * 定义全局变量
+ *
+ * static DEFINE_bool(loop, false, "Loop mode for profiling"); //NOLINT
+ * static DEFINE_bool_s(verbose, v, false, "Verbose mode");    //NOLINT
+ * static DEFINE_int(width, 1280, "Animation width");          //NOLINT
+ * static DEFINE_int(height, 720, "Animation height");         //NOLINT
+ * static DEFINE_int_s(fps, f, 24, "FPS");                     //NOLINT
+ * static DEFINE_double(seek, 5.0, "Animation seek time");     //NOLINT
+ * static DEFINE_string(assetPath, "", "path to assets needed for json file"); //NOLINT
+ * static DEFINE_string_s(input, i, "", "skottie animation to render");        //NOLINT
+ * static DEFINE_string_s(output, o, "", "mp4 file to create");                //NOLINT
+ * static DEFINE_extended_string(audio, "", "Audio path", "The animation audio path");//NOLINT
+ * static DEFINE_extended_string(subtitle, "", "Subtitle", "The animation subtitle"); // NOLINT
+ *
+ * 通过exe --help查找看所有的帮助信息
+ *
+ * Convert skottie to a mp4Flags:
+ *   --loop:	type: bool	default: false
+ *       Loop mode for profiling
+ *   --verbose or -v:	type: bool	default: false
+ *       Verbose mode
+ *   --width:	type: int	default: 1280
+ *        Animation width
+ *   --height:	type: int	default: 720
+ *       Animation height
+ *   --fps or -f:	type: int	default: 24
+ *       FPS
+ *   --seek:	type: double	default: 5.000000
+ *       Animation seek time
+ *   --assetPath:	type: string
+ *       path to assets needed for json file
+ *   --input or -i:	type: string
+ *       skottie animation to render
+ *   --output or -o:	type: string
+ *       mp4 file to create
+ *   --audio:	type: string
+ *       Audio path
+ *       Use '--help audio' for more information.
+ *   --subtitle:	type: string
+ *       Subtitle
+ *       Use '--help subtitle' for more information.
+ *
+ * 通过exe --help audio subtitle查看更多信息
+ *
+ * 通过exe --width 1000进行设置
+ *
  * Including this file (and compiling CommandLineFlags.cpp) provides command line
  * parsing. In order to use it, use the following macros in global namespace.
  *
@@ -204,8 +250,6 @@ public:
     static bool unused_##name = FlagInfo::CreateBoolFlag(               \
         TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString)
 
-#define DECLARE_bool(name) extern bool FLAGS_##name;
-
 #define DEFINE_string(name, defaultValue, helpString)                   \
     CommandLineFlags::StringArray FLAGS_##name;                         \
     static bool unused_##name = FlagInfo::CreateStringFlag(             \
@@ -233,14 +277,10 @@ public:
     static bool unused_##name = FlagInfo::CreateIntFlag(                \
         TO_STRING(name), TO_STRING(shortName), &FLAGS_##name, defaultValue, helpString)
 
-#define DECLARE_int(name) extern int FLAGS_##name;
-
 #define DEFINE_double(name, defaultValue, helpString)                   \
     double FLAGS_##name;                                                \
     static bool unused_##name = FlagInfo::CreateDoubleFlag(             \
         TO_STRING(name), &FLAGS_##name, defaultValue, helpString)
-
-#define DECLARE_double(name) extern double FLAGS_##name;
 
 class FlagInfo {
 public:

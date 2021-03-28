@@ -6,8 +6,8 @@ project(FFmpegTutorials)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-include_directories(${CMAKE_SOURCE_DIR}/../tools/command)
-add_subdirectory(${CMAKE_SOURCE_DIR}/../tools/command build)
+include_directories(${CMAKE_SOURCE_DIR}/../tools)
+add_subdirectory(${CMAKE_SOURCE_DIR}/../tools build)
 
 # add the executable
 SET(
