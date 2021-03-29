@@ -21,7 +21,7 @@ public:
      * Default construct, initializing the reference count to 1.
      */
     RefCntBase() : fRefCnt(1) {
-        DEBUG_F("%s called\n", __func__);
+        PRINT_FUNC();
     }
 
     /**
@@ -31,7 +31,7 @@ public:
         assert(getRefCnt() == 1);
         // Illegal value,to catch us if we reuse after delete.
         fRefCnt.store(0, std::memory_order_relaxed);
-        DEBUG_F("%s called\n", __func__);
+        PRINT_FUNC();
     }
 
     /**
@@ -57,6 +57,20 @@ public:
         (void) fRefCnt.fetch_add(+1, std::memory_order_relaxed);
     }
 
+    /**
+     * Decrement the reference count. If the reference count is 1 before the decrement, then
+     * delete the object. Note that if this is the case, then the object needs to have been
+     * allocated via new, and not on the stack.
+     */
+    void unref() const {
+        assert(getRefCnt() > 0);
+        // A release here acts in place of all releases we "should" have been doing in ref().
+        if (1 == fRefCnt.fetch_add(-1, std::memory_order_acq_rel)) {
+            // Like unique(), the acquire is only needed on success, to make sure
+            // code in internalDispose() doesn't happen before the decrement.
+            this->internalDispose();
+        }
+    }
 
     /**
      * @return the reference count. Use only for debugging
@@ -75,8 +89,28 @@ public:
     RefCntBase& operator=(const RefCntBase&) = delete;
 
 private:
+
+    /**
+     * Called when the ref count goes to 0.
+     */
+    virtual void internalDispose() const {
+        assert(0 == this->getRefCnt());
+        fRefCnt.store(1, std::memory_order_relaxed);
+        delete this;
+    }
+
     mutable std::atomic<int32_t> fRefCnt;
 };
+
+/**
+ * Call obj->ref() and return obj. The obj must not be nullptr.
+ */
+template<typename T>
+static inline T* Ref(T* obj) {
+    assert(obj);
+    obj->ref();
+    return obj;
+}
 
 /**
  * Check if the argument is non-null, and if so, call obj->ref() and return obj.

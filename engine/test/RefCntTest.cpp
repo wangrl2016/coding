@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 
 #include "include/NonCopyable.h"
+#include "include/RefCnt.h"
+#include "include/WeakRefCnt.h"
 
 
 void func1(NonCopyable var1) {
@@ -71,9 +73,33 @@ TEST(RefCnt, NonCopyable) { // NOLINT
     ptr6 = ptr3;
 
     func3(ptr6);
+
+    delete ptr3;
+
+    // double free detected
+    // delete ptr4;
+    // delete ptr5;
+    // delete ptr6;
 }
 
+std::weak_ptr<int> wp;
 
-TEST(RefCnt, RefCntBase) {  // NOLINT
+TEST(RefCnt, WeakRefCnt) {
+    // C++标准中的强指针和弱指针
+    // 弱指针需要转化为share_ptr进行调用
+    {
+        auto sp = std::make_shared<int>(42);
+        wp = sp;
+
+        ASSERT_EQ(wp.use_count(), 1);
+        std::shared_ptr<int> swp = wp.lock();
+        ASSERT_EQ(*swp, 42);
+    }
+    ASSERT_EQ(wp.use_count(), 0);
 
 }
+
+TEST(RefCnt, virtual) { // NOLINT
+
+}
+

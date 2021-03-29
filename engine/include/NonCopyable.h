@@ -23,6 +23,10 @@ public:
         return *this;
     };
 
+    ~NonCopyable() {
+        PRINT_FUNC();
+    }
+
     NonCopyable(const NonCopyable&) = delete;
 
     NonCopyable& operator=(const NonCopyable&) = delete;
