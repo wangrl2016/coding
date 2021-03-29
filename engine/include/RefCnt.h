@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Types.h"
+
 /**
  * RefCntBase is the base class for objects that maybe shared by multiple
  * objects. When an existing owner wants to share a reference, it calls ref().
@@ -18,7 +20,9 @@ public:
     /**
      * Default construct, initializing the reference count to 1.
      */
-    RefCntBase() : fRefCnt(1) {}
+    RefCntBase() : fRefCnt(1) {
+        DEBUG_F("%s called\n", __func__);
+    }
 
     /**
      * Destruct, asserting that the reference count is 1.
@@ -27,6 +31,7 @@ public:
         assert(getRefCnt() == 1);
         // Illegal value,to catch us if we reuse after delete.
         fRefCnt.store(0, std::memory_order_relaxed);
+        DEBUG_F("%s called\n", __func__);
     }
 
     /**
@@ -57,11 +62,9 @@ public:
      * @return the reference count. Use only for debugging
      */
     int32_t getRefCnt() const {
+        DEBUG_F("%s called\n", __func__);
         return fRefCnt.load(std::memory_order_relaxed);
     }
-
-private:
-    mutable std::atomic<int32_t> fRefCnt;
 
     RefCntBase(RefCntBase&&) = delete;
 
@@ -70,6 +73,9 @@ private:
     RefCntBase& operator=(RefCntBase&&) = delete;
 
     RefCntBase& operator=(const RefCntBase&) = delete;
+
+private:
+    mutable std::atomic<int32_t> fRefCnt;
 };
 
 /**
@@ -124,7 +130,7 @@ public:
      * the new SharedPtr will have a reference to the object, and the argument will point to null.
      * No call to ref() or unref() will be made.
      */
-    SharedPtr(SharedPtr<T>&& that)  noexcept : fPtr(that.release()) {}
+    SharedPtr(SharedPtr<T>&& that) noexcept: fPtr(that.release()) {}
 
     template<typename U,
             typename =typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
@@ -168,7 +174,7 @@ public:
      * a reference to another object, unref() will be called on that object. No call to ref()
      * will be made.
      */
-    SharedPtr<T>& operator=(SharedPtr<T>&& that)  noexcept {
+    SharedPtr<T>& operator=(SharedPtr<T>&& that) noexcept {
         this->reset(that.release());
         return *this;
     }

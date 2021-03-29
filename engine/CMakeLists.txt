@@ -7,7 +7,7 @@ project(Engine)
 add_subdirectory(googletest/)
 include_directories(${CMAKE_SOURCE_DIR}/)
 
-add_library(engine src/String.cpp)
+add_library(engine src/String.cpp include/Types.h include/NonCopyable.h src/Types.cpp)
 
 add_executable(Test
         test/MathTest.cpp
@@ -16,3 +16,5 @@ add_executable(Test
         test/StringTest.cpp
         test/StdTest.cpp)
 target_link_libraries(Test gtest_main engine)
+
+add_executable(Con src/Types.cpp)

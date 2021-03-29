@@ -113,6 +113,8 @@ https://ffmpeg.org/doxygen/trunk/examples.html
 
 https://learnopengl.com/
 
+https://www.opengl.org/
+
 - [x] Hello Triangle
 - [x] Shaders
 - [x] Textures
@@ -172,6 +174,8 @@ https://docs.opencv.org/4.5.1/
 
 ## 编解码([codec](codec/))
 
+https://www.w3.org/TR/PNG/
+
 - [x] PPM图片格式
 - [x] PCM音频格式
 - [x] BMP图片格式
@@ -214,6 +218,10 @@ https://github.com/SFML/SFML/
 https://github.com/RazrFalcon/resvg/
 
 https://github.com/google/skia
+
+https://www.w3.org/TR/SVG2/
+
+https://www.w3.org/XML/
 
 - [ ] 编写SVG渲染引擎
 - [ ] 编写JSON渲染引擎

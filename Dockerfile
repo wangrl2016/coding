@@ -13,11 +13,11 @@ WORKDIR /app
 RUN apt update \
     && apt install -y git vim gcc g++ make openjdk-14-jdk \
     			nasm curl python libstdc++6 libasound \
-                        libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
-			libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
-			libflac-dev libmp3lame-dev libx264-dev libx11-dev \
-			xorg-dev libglfw3-dev python3-tk python3-pil.imagetk \
-			libgtk2.0-dev pkg-config \
+                libssl-dev libxrandr-dev libxinerama-dev libxcursor-dev \
+			    libxi-dev openjdk-11-jdk libopenal-dev libvorbis-dev \
+			    libflac-dev libmp3lame-dev libx264-dev libx11-dev \
+			    xorg-dev libglfw3-dev python3-tk python3-pil.imagetk \
+			    libgtk2.0-dev pkg-config llvm clang tesseract-ocr python3-pip \
     # 安装FFmpeg依赖库
     && git clone --depth 10 https://github.com/FFmpeg/FFmpeg \
     && cd FFmpeg \
@@ -45,6 +45,8 @@ RUN apt update \
     # 安装OpenGL库
     && apt install mesa-common-dev \
     # 安装GLFW图形显示
+    # 文字识别
+    && pip3 install pytesseract
 
 
 
