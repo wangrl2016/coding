@@ -76,7 +76,7 @@ public:
      * @return the reference count. Use only for debugging
      */
     int32_t getRefCnt() const {
-        DEBUG_F("%s called\n", __func__);
+        PRINT_FUNC();
         return fRefCnt.load(std::memory_order_relaxed);
     }
 
