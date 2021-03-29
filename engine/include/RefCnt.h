@@ -20,8 +20,56 @@ public:
      */
     RefCntBase() : fRefCnt(1) {}
 
+    /**
+     * Destruct, asserting that the reference count is 1.
+     */
+    virtual ~RefCntBase() {
+        assert(getRefCnt() == 1);
+        // Illegal value,to catch us if we reuse after delete.
+        fRefCnt.store(0, std::memory_order_relaxed);
+    }
+
+    /**
+     * May return true if the caller isthe only owner.
+     * Ensures that all previous owner's actions are complete.
+     */
+    bool unique() const {
+        if (1 == fRefCnt.load(std::memory_order_acquire)) {
+            // This acquire barrier is only really needed if we return true. It
+            // prevents code conditioned on the result of unique() from running
+            // until previous owners are all totally done calling unref().
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Increment the reference count. Must be balanced by a call to unref().
+     */
+    void ref() const {
+        assert(getRefCnt() > 0);
+        // No barrier required.
+        (void) fRefCnt.fetch_add(+1, std::memory_order_relaxed);
+    }
+
+
+    /**
+     * @return the reference count. Use only for debugging
+     */
+    int32_t getRefCnt() const {
+        return fRefCnt.load(std::memory_order_relaxed);
+    }
+
 private:
     mutable std::atomic<int32_t> fRefCnt;
+
+    RefCntBase(RefCntBase&&) = delete;
+
+    RefCntBase(const RefCntBase&) = delete;
+
+    RefCntBase& operator=(RefCntBase&&) = delete;
+
+    RefCntBase& operator=(const RefCntBase&) = delete;
 };
 
 /**
