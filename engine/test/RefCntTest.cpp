@@ -8,16 +8,18 @@
 #include "include/RefCnt.h"
 #include "include/WeakRefCnt.h"
 
-
+// 测试变量在函数中传递函数
 void func1(NonCopyable var1) {
 
 }
 
+// 测试变量返回函数
 NonCopyable func2() {
     NonCopyable var1;
     return var1;
 }
 
+// 测试指针在函数中传递函数
 void func3(NonCopyable* ptr1) {
 
 }

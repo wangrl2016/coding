@@ -95,9 +95,15 @@ private:
      */
     virtual void internalDispose() const {
         assert(0 == this->getRefCnt());
+        // debug
         fRefCnt.store(1, std::memory_order_relaxed);
         delete this;
     }
+
+    // The following friends are those which override internalDispose()
+    // and conditionally call RefCnt::internalDispose().
+    // 可以访问私有变量
+    friend class WeakRefCnt;
 
     mutable std::atomic<int32_t> fRefCnt;
 };
