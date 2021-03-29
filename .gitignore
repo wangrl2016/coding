@@ -1,7 +1,9 @@
 
+opengl/glad/
+opengl/stb_image.h
+
 engine/googletest/
 
-# Rust于亚
 target/
 
 Cargo.lock

@@ -6,7 +6,7 @@ Personal coding exercises (个人代码练习)
 
 * 每个项目下的`run.py`自动运行示例。
 
-* 欢迎关注今日头条/西瓜视频/B站 `火车上遇见'
+* 欢迎关注今日头条/西瓜视频/B站 `火车上遇见`
 
 ## 简单数据结构和算法 ([sdsa](sdsa/))
 
@@ -39,7 +39,6 @@ https://github.com/TheAlgorithms/Java
 - [ ] Randomized Algorithms
 - [ ] Branch and Bound
 
-
 ## 算法(Algorithms)第四版 ([algs4](algs4/))
 
 https://algs4.cs.princeton.edu/home/
@@ -64,9 +63,9 @@ https://algs4.cs.princeton.edu/home/
 - [x] Tries
 - [ ] Substring Search
 - [ ] Regular Expressions
-- [ ] Data Compression 
+- [ ] Data Compression
 
-## 设计模式 ([dp](dp/))
+## 设计模式 ([depa](depa/))
 
 Design Patterns: Elements of Reusable Object-Oriented Software
 
@@ -92,8 +91,6 @@ https://github.com/iluwatar/java-design-patterns
 - [ ] State
 - [ ] Strategy
 - [ ] Visitor
-
-
 
 ## FFmpeg示例 ([ffmpeg](ffmpeg/))
 
@@ -121,7 +118,7 @@ https://learnopengl.com/
 - [x] Textures
 - [x] Transformations
 - [x] Coordinate Systems
-- [ ] Camera  
+- [ ] Camera
 - [ ] Basic Lighting
 - [ ] Materials
 - [ ] Lighting Maps
@@ -142,7 +139,6 @@ https://learnopengl.com/
 - [ ] Shadows
 - [ ] Normal Mapping
 - [ ] PBR
-
 
 ## Android ([android](android/))
 
@@ -168,12 +164,11 @@ https://docs.opencv.org/4.5.1/
 - [ ] Object Detection
 - [ ] Deep Neural Network module
 - [ ] Machine Learning
-- [ ] Clustering  and Search in Multi-Dimensional Spaces
+- [ ] Clustering and Search in Multi-Dimensional Spaces
 - [ ] Computational Photography
 - [ ] Images stitching
 - [ ] Graph API
 - [ ] Extra modules
-
 
 ## 编解码([codec](codec/))
 
@@ -187,13 +182,13 @@ https://docs.opencv.org/4.5.1/
 - [ ] MOV容器
 - [ ] MP4容器
 
-
 ## 协议 ([specs](specs/))
 
 存放重要的文件
 
 - [ ] Computer Systems - A Programmer's Perspective
 
+- [ ] C++ Concurrent in Action
 
 ## 手机群控系统 ([harun](harun/))
 
@@ -201,18 +196,10 @@ https://docs.opencv.org/4.5.1/
 
 - [x] 手动运行
 
-
-## 语言([lang](lang/))
-
-- [ ] CPP构造器
-- [ ] CPP多线程
-
-
 ## 数学基础 ([math](math/))
 
 - [ ] 线性代数
 - [ ] 微积分
-
 
 ## 多媒体播放器 ([sfml](sfml/))
 
@@ -222,24 +209,21 @@ https://github.com/SFML/SFML/
 - [ ] 图像
 - [ ] 网络
 
-
-## df ([df](df/))
+## df ([dfmt](dfmt/))
 
 https://github.com/RazrFalcon/resvg/
 
 https://github.com/google/skia
 
-
 - [ ] 编写SVG渲染引擎
 - [ ] 编写JSON渲染引擎
 - [ ] XML解析器
-
 
 ## 工具 ([tools](tools/))
 
 - [x] 命令行工具
 
-## 算法导论 ([ia](ia/))
+## 算法导论 ([ialgo](iaglo/))
 
 https://mitpress.mit.edu/books/introduction-algorithms-third-edition
 
@@ -277,8 +261,7 @@ https://mitpress.mit.edu/books/introduction-algorithms-third-edition
 - [ ] String Matching
 - [ ] Computational Geometry
 - [ ] NP-Completeness
-- [ ] Approximation Algorithms　
-
+- [ ] Approximation Algorithms
 
 ## 打赏作者
 

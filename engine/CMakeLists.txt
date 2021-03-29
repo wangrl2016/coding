@@ -14,5 +14,5 @@ add_executable(Test
         test/RefCntTest.cpp
         test/SortTest.cpp
         test/StringTest.cpp
-        )
+        test/StdTest.cpp)
 target_link_libraries(Test gtest_main engine)

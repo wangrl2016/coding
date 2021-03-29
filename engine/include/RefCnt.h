@@ -124,7 +124,7 @@ public:
      * the new SharedPtr will have a reference to the object, and the argument will point to null.
      * No call to ref() or unref() will be made.
      */
-    SharedPtr(SharedPtr<T>&& that) : fPtr(that.release()) {}
+    SharedPtr(SharedPtr<T>&& that)  noexcept : fPtr(that.release()) {}
 
     template<typename U,
             typename =typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
@@ -168,7 +168,7 @@ public:
      * a reference to another object, unref() will be called on that object. No call to ref()
      * will be made.
      */
-    SharedPtr<T>& operator=(SharedPtr<T>&& that) {
+    SharedPtr<T>& operator=(SharedPtr<T>&& that)  noexcept {
         this->reset(that.release());
         return *this;
     }
