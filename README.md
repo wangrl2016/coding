@@ -191,13 +191,11 @@ https://www.w3.org/TR/PNG/
 存放重要的文件
 
 - [ ] Computer Systems - A Programmer's Perspective
-
 - [ ] C++ Concurrent in Action
 
 ## 手机群控系统 ([harun](harun/))
 
 - [x] 自动运行
-
 - [x] 手动运行
 
 ## 数学基础 ([math](math/))
@@ -213,7 +211,7 @@ https://github.com/SFML/SFML/
 - [ ] 图像
 - [ ] 网络
 
-## df ([dfmt](dfmt/))
+## 数据格式 ([dfmt](dfmt/))
 
 https://github.com/RazrFalcon/resvg/
 
@@ -230,6 +228,7 @@ https://www.w3.org/XML/
 ## 工具 ([tools](tools/))
 
 - [x] 命令行工具
+- [ ] Skia跨平台脚本
 
 ## 算法导论 ([ialgo](iaglo/))
 
