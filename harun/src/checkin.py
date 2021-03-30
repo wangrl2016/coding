@@ -144,3 +144,13 @@ def diantao(device, gap=10):
 def huitoutiao(device, gap=10):
     phone.start_app(device, activities[
         inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)
+
+
+def touda(device, gap=10):
+    phone.start_app(device, activities[
+        inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)
+
+
+def shuabao(device, gap=10):
+    phone.start_app(device, activities[
+        inspect.getframeinfo(inspect.currentframe()).function.__str__()], gap)

@@ -108,3 +108,11 @@ def diantao(device, w, h):
 
 def huitoutiao(device, w, h):
     return None
+
+
+def touda(device, w, h):
+    return None
+
+
+def shuabao(device, w, h):
+    return None

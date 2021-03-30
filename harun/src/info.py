@@ -37,6 +37,9 @@ activities = {
     'diantao': 'com.taobao.live/.home.activity.TaoLiveHomeActivity',
     'huitoutiao': 'com.cashtoutiao/.account.ui.main.MainTabActivity',
 
+    'touda': 'com.ss.android.article.daziban/com.ss.android.article.news.activity.MainActivity',
+    'shuabao': 'com.jm.video/.ui.main.MainActivity',
+
     # com.taobao.litetao/com.taobao.ltao.maintab.MainFrameActivity
     # com.xunmeng.pinduoduo/.ui.activity.HomeActivity
     # com.qq.reader/.activity.MainActivity

@@ -5,7 +5,7 @@ from src import checkin, app, phone, info
 
 
 def test(device, w, h):
-    shuqi(device, w, h)
+    shuabao(device, w, h)
     return None
 
 
@@ -103,6 +103,11 @@ def toutiao(device, w, h):
     checkin.toutiao(device)
     # [x] 阅读头条文章
     app.read_article(device, w, h, num=1)
+
+    # [x] 开宝箱
+    phone.tap(device, w / 2, 2330)
+    phone.tap(device, 930, 2120, gap=3)
+
     phone.stop_app(device, info.packages['toutiao'])
 
 
@@ -174,3 +179,19 @@ def diantao(device, w, h):
 
 def huitoutiao(device, w, h):
     return None
+
+
+def touda(device, w, h):
+    checkin.touda(device)
+
+    # [x] 开宝箱
+    phone.tap(device, 850, 2290)
+    phone.tap(device, 890, 2010, gap=3)
+
+    phone.stop_app(device, info.packages['touda'])
+
+
+def shuabao(device, w, h):
+    checkin.shuabao(device)
+    app.watch_video(device, w, h, num=10)
+    phone.stop_app(device, info.packages['shuabao'])
