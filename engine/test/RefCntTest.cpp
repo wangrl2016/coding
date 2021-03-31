@@ -326,14 +326,49 @@ static void resetCounters() {
     gDeleteCounter = 0;
 }
 
+#define check(ref, unref, make, kill)   \
+    assert(gRefCounter == ref);         \
+    assert(gUnrefCounter == unref);     \
+    assert(gNewCounter == make);        \
+    assert(gDeleteCounter == kill)
+
 TEST(RefCnt, SharedPtr) {   // NOLINT
     resetCounters();
 
-    Paint paint;
-    ASSERT_EQ(paint.fEffect.get(), nullptr);
-    ASSERT_TRUE(!paint.get());
+    Paint paint1;
+    ASSERT_EQ(paint1.fEffect.get(), nullptr);
+    ASSERT_TRUE(!paint1.get());
+    check(0, 0, 0, 0);
 
-    
+    paint1.set(Create());
+    check(0, 0, 1, 0);
+    ASSERT_EQ(paint1.fEffect.get()->fRefCnt, 1);
+
+    if (paint1.get())
+        ASSERT_TRUE(true);
+    else
+        ASSERT_TRUE(false);
+
+    if (!paint1.get())
+        ASSERT_TRUE(false);
+    else
+        ASSERT_TRUE(true);
+
+    paint1.set(nullptr);
+    check(0, 1, 1, 1);
+
+    auto e = Create();
+    ASSERT_EQ(sizeof(e), sizeof(void*));
+    check(0, 1, 2, 1);
+    // 会调用copy构造器
+    paint1.set(e);
+    check(1, 1, 2, 1);
+
+    Paint paint2;
+    paint2.set(paint1.get());
+    check(2, 1, 2, 1);
+
+    assert(e.get() != nullptr);
 }
 
 TEST(RefCnt, virtual) { // NOLINT
