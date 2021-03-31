@@ -242,10 +242,100 @@ TEST(RefCnt, WeakRefCnt) {      // NOLINT
     delete ref1;
 
     // 测试RefCntBase类
+    auto* ref = new RefCntBase();
+    std::thread td5(bounceRef, ref);
+    std::thread td6(bounceRef, ref);
+    td5.join();
+    td6.join();
 
+    ASSERT_TRUE(ref->unique());
+    ref->unref();
+}
+
+static int gRefCounter;
+static int gUnrefCounter;
+static int gNewCounter;
+static int gDeleteCounter;
+
+class Effect {
+public:
+    Effect() : fRefCnt(1) {
+        gNewCounter += 1;
+    }
+
+    virtual ~Effect() = default;
+
+    int fRefCnt;
+
+    void ref() {
+        gRefCounter += 1;
+        fRefCnt += 1;
+    }
+
+    void unref() {
+        gUnrefCounter += 1;
+        assert(fRefCnt > 0);
+        if (0 == --fRefCnt) {
+            gDeleteCounter += 1;
+            delete this;
+        }
+    }
+
+    static int* method() {
+        return new int;
+    }
+};
+
+static SharedPtr<Effect> Create() {
+    return makeSharedPtr<Effect>();
+}
+
+class Paint {
+public:
+    SharedPtr<Effect> fEffect;
+
+    const SharedPtr<Effect>& get() const {
+        return fEffect;
+    }
+
+    void set(SharedPtr<Effect> value) {
+        fEffect = std::move(value);
+    }
+};
+
+struct EffectImpl : public Effect {
+    ~EffectImpl() override = default;
+
+    static SharedPtr<EffectImpl> Create() {
+        return SharedPtr<EffectImpl>(new EffectImpl);
+    }
+
+    int fValue;
+};
+
+static SharedPtr<Effect> makeEffect() {
+    auto foo = EffectImpl::Create();
+    foo->fValue = 42;
+    return std::move(foo);
+}
+
+static void resetCounters() {
+    gRefCounter = 0;
+    gUnrefCounter = 0;
+    gNewCounter = 0;
+    gDeleteCounter = 0;
+}
+
+TEST(RefCnt, SharedPtr) {   // NOLINT
+    resetCounters();
+
+    Paint paint;
+    ASSERT_EQ(paint.fEffect.get(), nullptr);
+    ASSERT_TRUE(!paint.get());
+
+    
 }
 
 TEST(RefCnt, virtual) { // NOLINT
 
 }
-

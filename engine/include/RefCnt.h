@@ -64,6 +64,7 @@ public:
      * allocated via new, and not on the stack.
      */
     void unref() const {
+        PRINT_FUNC();
         assert(getRefCnt() > 0);
         // A release here acts in place of all releases we "should" have been doing in ref().
         if (1 == fRefCnt.fetch_add(-1, std::memory_order_acq_rel)) {
@@ -71,7 +72,6 @@ public:
             // code in internalDispose() doesn't happen before the decrement.
             this->internalDispose();
         }
-        PRINT_FUNC();
     }
 
     /**
@@ -255,3 +255,8 @@ public:
 private:
     T* fPtr;
 };
+
+template<typename T, typename... Args>
+SharedPtr<T> makeSharedPtr(Args&& ... args) {
+    return SharedPtr<T>(new T(std::forward<Args>(args)...));
+}
