@@ -72,7 +72,6 @@ public:
      * @return Return the weak reference count.
      */
     int32_t getWeakCnt() const {
-        PRINT_FUNC();
         return fWeakCnt.load(std::memory_order_relaxed);
     }
 

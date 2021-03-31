@@ -55,6 +55,7 @@ public:
         assert(getRefCnt() > 0);
         // No barrier required.
         (void) fRefCnt.fetch_add(+1, std::memory_order_relaxed);
+        PRINT_FUNC();
     }
 
     /**
@@ -70,13 +71,13 @@ public:
             // code in internalDispose() doesn't happen before the decrement.
             this->internalDispose();
         }
+        PRINT_FUNC();
     }
 
     /**
      * @return the reference count. Use only for debugging
      */
     int32_t getRefCnt() const {
-        PRINT_FUNC();
         return fRefCnt.load(std::memory_order_relaxed);
     }
 

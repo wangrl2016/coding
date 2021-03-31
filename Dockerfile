@@ -46,7 +46,10 @@ RUN apt update \
     && apt install mesa-common-dev \
     # 安装GLFW图形显示
     # 文字识别
-    && pip3 install pytesseract
+    && pip3 install pytesseract \
+    # 安装conan库
+    && pip3 install conan \
+    && source ~/.profile
 
 
 

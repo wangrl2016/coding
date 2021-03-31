@@ -116,7 +116,8 @@ public:
     void bar() {
         for (int i = 0; i < 5; i++) {
             n++;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(
+                    std::chrono::milliseconds(10));
         }
     }
 
@@ -128,7 +129,8 @@ public:
     void operator()() {
         for (int i = 0; i < 5; i++) {
             ++n;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(
+                    std::chrono::milliseconds(10));
         }
     }
 
@@ -162,7 +164,6 @@ TEST(RefCnt, thread) {  // NOLINT
 
     // 检测joinable函数
     ASSERT_FALSE(t4.joinable());
-
 }
 
 /**
@@ -173,15 +174,38 @@ TEST(RefCnt, thread) {  // NOLINT
  * from it, the behavior is well-defined.
  */
 
-struct Counters {
-    int a;
-    int b;
-};
-
-std::atomic<Counters> cnt;
-
 TEST(RefCnt, atomic) {  // NOLINT
 
+}
+
+/**
+ * 类型转换 static_cast
+ *
+ * 1. 用于类层次结构中，基类和子类之间指针和引用的转换
+ * 2. 用于基础数据类型的转换，int转换为float
+ * 3. 将void指针转化为目标类型的指针
+ *
+ * dynamic_cast 类型之间转换，比static_cast更安全
+ *
+ * const_cast 常量和非常量指针之间的转换
+ */
+
+static void bounceRef(void* data) {
+    auto* ref = static_cast<RefCntBase*>(data);
+    ref->ref();
+    ref->unref();
+}
+
+static void bounceWeakRef(void* data) {
+    auto* ref = static_cast<WeakRefCnt*>(data);
+    ref->tryRef();
+    ref->unref();
+}
+
+static void bounceWeakWeakRef(void* data) {
+    auto* ref = static_cast<WeakRefCnt*>(data);
+    ref->weakRef();
+    ref->weakUnref();
 }
 
 std::weak_ptr<int> wp;
@@ -199,9 +223,26 @@ TEST(RefCnt, WeakRefCnt) {      // NOLINT
     }
     ASSERT_EQ(wp.use_count(), 0);
 
-    auto* ref = new WeakRefCnt();
-    ref->weakRef();
-    ref->weakUnref();
+    // 先调用父类构造器
+    auto* ref1 = new WeakRefCnt();
+    std::thread td1(bounceRef, ref1);
+    std::thread td2(bounceRef, ref1);
+    std::thread td3(bounceWeakRef, ref1);
+    std::thread td4(bounceWeakWeakRef, ref1);
+
+    td1.join();
+    td2.join();
+    td3.join();
+    td4.join();
+
+    assert(ref1->unique());
+    ASSERT_EQ(ref1->getWeakCnt(), 1);
+
+    // 先释放子类
+    delete ref1;
+
+    // 测试RefCntBase类
+
 }
 
 TEST(RefCnt, virtual) { // NOLINT
