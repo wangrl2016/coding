@@ -140,6 +140,28 @@ static inline void SafeUnref(T* obj) {
     }
 }
 
+template<typename Derived>
+class NVRefCnt {
+public:
+    NVRefCnt() : fRefCnt(1) {}
+
+    ~NVRefCnt() {
+        // debug
+        int rc = fRefCnt.load(std::memory_order_relaxed);
+    }
+
+    NVRefCnt(const NVRefCnt&) = delete;
+
+    NVRefCnt(NVRefCnt&&) = delete;
+
+    NVRefCnt& operator=(NVRefCnt&&) = delete;
+
+    NVRefCnt& operator=(const NVRefCnt&) = delete;
+
+private:
+    mutable std::atomic<int32_t> fRefCnt;
+};
+
 /**
  * Shared pointer class to wrap classes that support a ref()/unref() interface.
  *
@@ -259,4 +281,60 @@ private:
 template<typename T, typename... Args>
 SharedPtr<T> makeSharedPtr(Args&& ... args) {
     return SharedPtr<T>(new T(std::forward<Args>(args)...));
+}
+
+/**
+ * Returns a SharedPtr wrapping the provided ptr AND calls ref on it (if not null).
+ *
+ * This is different than the semantics of the constructor for SharedPtr, which just wraps the ptr,
+ * effectively "adopting" it.
+ */
+template<typename T>
+SharedPtr<T> refSharedPtr(T* obj) {
+    return SharedPtr<T>(SafeRef(obj));
+}
+
+template<typename T>
+SharedPtr<T> refSharedPtr(const T* obj) {
+    return SharedPtr<T>(const_cast<T*>(SafeRef(obj)));
+}
+
+template<typename T>
+inline void swap(SharedPtr<T>& a, SharedPtr<T>& b) {
+    a.swap(b);
+}
+
+template<typename T, typename U>
+inline bool operator==(const SharedPtr<T>& a, const SharedPtr<U>& b) {
+    return a.get() == b.get();
+}
+
+template<typename T>
+inline bool operator==(const SharedPtr<T>& a, std::nullptr_t) {
+    return !a;
+}
+
+template<typename T>
+inline bool operator==(std::nullptr_t, const SharedPtr<T>& b) {
+    return !b;
+}
+
+template<typename T, typename U>
+inline bool operator!=(const SharedPtr<T>& a, const SharedPtr<U>& b) {
+    return a.get() != b.get();
+}
+
+template<typename T>
+inline bool operator!=(const SharedPtr<T>& a, std::nullptr_t) {
+    return static_cast<bool>(a);
+}
+
+template<typename T>
+inline bool operator!=(std::nullptr_t, const SharedPtr<T>& b) {
+    return static_cast<bool>(b);
+}
+
+template<typename C, typename CT, typename T>
+auto operator<<(std::basic_ostream<C, CT>& os, const SharedPtr<T>& sp) -> decltype(os << sp.get()) {
+    return os << sp.get();
 }

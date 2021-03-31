@@ -363,12 +363,68 @@ TEST(RefCnt, SharedPtr) {   // NOLINT
     // 会调用copy构造器
     paint1.set(e);
     check(1, 1, 2, 1);
+    ASSERT_EQ(paint1.fEffect.get()->fRefCnt, 2);
 
     Paint paint2;
     paint2.set(paint1.get());
     check(2, 1, 2, 1);
+    ASSERT_EQ(paint1.fEffect.get()->fRefCnt, 3);
 
-    assert(e.get() != nullptr);
+    // test SharedPtr::operator->
+    delete paint1.get()->method();
+    check(2, 1, 2, 1);
+
+    // Test SharedPtr::operator*
+    delete (*paint1.get()).method();
+    check(2, 1, 2, 1);
+
+    paint1.set(nullptr);
+    e = nullptr;
+    paint2.set(nullptr);
+    check(2, 4, 2, 2);
+
+    resetCounters();
+    // Test convertible SharedPtr assignment.
+    {
+        check(0, 0, 0, 0);
+        SharedPtr<Effect> foo(nullptr);
+        ASSERT_TRUE(!foo);
+        foo = makeEffect();
+        ASSERT_TRUE(foo);
+        check(0, 0, 1, 0);
+    }
+    check(0, 1, 1, 1);
+
+    // Test passing convertible rvalue into function.
+    resetCounters();
+    paint1.set(EffectImpl::Create());
+    check(0, 0, 1, 0);
+    paint1.set(nullptr);
+    check(0, 1, 1, 1);
+
+
+    resetCounters();
+    auto baz = EffectImpl::Create();
+    check(0, 0, 1, 0);
+    paint1.set(std::move(baz));
+    check(0, 0, 1, 0);
+    ASSERT_TRUE(!baz);
+    paint1.set(nullptr);
+    check(0, 1, 1, 1);
+
+    resetCounters();
+    {
+        // Test comparison operation with convertible type.
+        SharedPtr<EffectImpl> bar1 = EffectImpl::Create();
+        SharedPtr<Effect> bar2(bar1);
+        check(1, 0, 1, 0);
+        ASSERT_TRUE(bar1);
+        ASSERT_TRUE(bar2);
+        ASSERT_TRUE(bar1 == bar2);
+        ASSERT_TRUE(bar2 == bar1);
+        ASSERT_TRUE(!(bar1 != bar2));
+        ASSERT_TRUE(!(bar2 != bar1));
+    }
 }
 
 TEST(RefCnt, virtual) { // NOLINT
