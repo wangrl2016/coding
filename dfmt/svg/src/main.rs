@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use log::{Metadata, Record, Level};
 use usvg::NodeExt;
 use usvg::fontdb::Database;
+use std::io::Write;
 
 macro_rules! timed {
     ($args:expr, $name:expr, $task:expr) => {
@@ -16,7 +17,6 @@ macro_rules! timed {
         }
     };
 }
-
 
 fn main() {
     if let Err(e) = process() {
@@ -49,7 +49,18 @@ fn process() -> Result<(), String> {
         return query_all(&tree);
     }
 
-    Ok(())
+    // Dump before rendering in case of panic.
+    if let Some(ref dump_path) = args.dump {
+        dump_svg(&tree, dump_path)?;
+    }
+
+    let out_image = match args.out_image {
+        Some(ref path) => path.clone(),
+        None => return Ok(()),
+    };
+
+    // render
+    render_svg(args, &tree, &out_image)
 }
 
 struct Args {
@@ -317,5 +328,55 @@ fn query_all(tree: &usvg::Tree) -> Result<(), String> {
         return Err(String::from("The file has no valid ID's"));
     }
 
+    Ok(())
+}
+
+fn dump_svg(tree: &usvg::Tree, path: &path::Path) -> Result<(), String> {
+    let mut f = std::fs::File::create(path)
+        .map_err(|_| format!("Failed to create a file {:?}", path))?;
+
+    f.write_all(tree.to_string(usvg::XmlOptions::default()).as_bytes())
+        .map_err(|_| format!("Failed to write a file {:?}", path))?;
+
+    Ok(())
+}
+
+fn render_svg(args: Args, tree: &usvg::Tree, out_image: &path::Path) -> Result<(), String> {
+    let now = std::time::Instant::now();
+    let img = if let Some(ref id) = args.export_id {
+        if let Some(node) = tree.root().descendants()
+            .find(|n| &*n.id() == id) {
+            let bbox = node.calculate_bbox()
+                .ok_or_else(|| String::from("Node has zero size"))?;
+            let size = args.fit_to.fit_to(bbox.to_screen_size())
+                .ok_or_else(|| String::from("Target size is zero"))?;
+
+            // Unwrap is safe, because size is already valid.
+            let mut pixmap = tiny_skia::Pixmap::new(size.width(), size.height()).unwrap();
+
+            if let Some(background) = args.background {
+                pixmap.fill(tiny_skia::Color::from_rgba8(
+                    background.red, background.green, background.blue, 255));
+            }
+            svg::render_node(&node, args.fit_to, pixmap.as_mut());
+            pixmap
+        } else {
+            return Err(format!("SVG doesn't have {} ID", id));
+        }
+    } else {
+        let size = args.fit_to.fit_to(tree.svg_node().size.to_screen_size())
+            .ok_or_else(|| String::from("Target size is zero"))?;
+
+        // Unwrap is safe, because size is already valid.
+        let mut pixmap = tiny_skia::Pixmap::new(size.width(), size.height()).unwrap();
+
+        if let Some(background) = args.background {
+            pixmap.fill(tiny_skia::Color::from_rgba8(
+                background.red, background.green, background.blue, 255));
+        }
+
+        svg::render(tree, args.fit_to, pixmap.as_mut());
+        pixmap
+    };
     Ok(())
 }
