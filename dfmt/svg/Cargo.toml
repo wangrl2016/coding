@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 pico-args = "0.4.0"
+usvg = "0.14.0"
+log = "0.4.14"
