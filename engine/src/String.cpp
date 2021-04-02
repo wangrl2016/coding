@@ -13,6 +13,12 @@ String::~String() {
     this->validate();
 }
 
+SharedPtr<String::Rec> String::Rec::Make(const char text[], size_t len) {
+    if (0 == len) {
+        return SharedPtr<String::Rec>(const_cast<Rec*>(&gEmptyRec));
+    }
+
+}
 
 void String::Rec::unref() const {
     if (this == &String::gEmptyRec) {

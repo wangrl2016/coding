@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "RefCnt.h"
+#include "SafeMath.h"
 
 /**
  * Light weight class for managing strings. Uses reference
@@ -27,6 +28,20 @@ public:
     explicit String(const char text[]);
 
     String(const char text[], size_t len);
+
+    String(const String&);
+
+    String(String&&);
+
+    explicit SkString(const std::string&);
+
+    ~String();
+
+    bool isEmpty() const {
+        return 0 == fRec->fLength;
+    }
+
+
 
     // 复制构造器
     String(const String&);

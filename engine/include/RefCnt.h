@@ -148,6 +148,31 @@ public:
     ~NVRefCnt() {
         // debug
         int rc = fRefCnt.load(std::memory_order_relaxed);
+        assert(rc == 0);
+    }
+
+    /**
+     * Implementation is pretty much the same as RefCntBase. All required barriers are the same:
+     *    - unique() needs acquire when it returns true, and no barrier if it returns false;
+     *    - ref() doesn't need any barrier;
+     *    - unref() needs a release barrier, and an acquire if it's going to call delete.
+     */
+    bool unique() const {
+        return 1 == fRefCnt.load(std::memory_order_acquire);
+    }
+
+    void ref() const {
+        fRefCnt.fetch_add(+1, std::memory_order_relaxed);
+    }
+
+    void unref() const {
+        if (1 == fRefCnt.fetch_add(-1, std::memory_order_acq_rel)) {
+            delete (const Derived*) this;
+        }
+    }
+
+    void deref() const {
+        this->unref();
     }
 
     NVRefCnt(const NVRefCnt&) = delete;
