@@ -8,6 +8,7 @@
 #include <string>
 #include <atomic>
 #include <memory>
+#include <cstring>
 
 #include "RefCnt.h"
 #include "SafeMath.h"
@@ -17,6 +18,50 @@
  * counting to make string assignments and copies very fast
  * with no extra RAM cost. Assume UTF8 encoding.
  */
+
+static inline bool StrStartWith(const char string[], const char prefixStr[]) {
+    assert(string);
+    assert(prefixStr);
+    return !strncmp(string, prefixStr, strlen(prefixStr));
+}
+
+static inline bool StrStartsWith(const char string[], const char prefixChar) {
+    assert(string);
+    return (prefixChar == *string);
+}
+
+bool StrEndsWith(const char string[], const char suffixStr[]);
+
+bool StrEndsWith(const char string[], const char suffixChar);
+
+int StrStartsWithOneOf(const char string[], const char prefixes[]);
+
+static inline int StrFind(const char string[], const char subString[]) {
+    const char* first = strstr(string, subString);
+    if (nullptr == first) return -1;
+    return ToInt(first - &string[0]);
+}
+
+static inline int StrFindLastOf(const char string[], const char subChar) {
+    const char* last = strrchr(string, subChar);
+    if (nullptr == last) return -1;
+    return ToInt(last - &string[0]);
+}
+
+static inline bool StrContains(const char string[], const char subString[]) {
+    assert(string);
+    assert(subString);
+    return (-1 != StrFind(string, subString));
+}
+
+static inline bool StrContains(const char string[], const char subChar) {
+    assert(string);
+    char tmp[2];
+    tmp[0] = subChar;
+    tmp[1] = '\0';
+    return (-1 != StrFind(string, tmp));
+}
+
 
 class String {
 public:
@@ -33,7 +78,7 @@ public:
 
     String(String&&);
 
-    explicit SkString(const std::string&);
+    explicit String(const std::string&);
 
     ~String();
 
@@ -41,17 +86,106 @@ public:
         return 0 == fRec->fLength;
     }
 
+    size_t size() const {
+        return (size_t) fRec->fLength;
+    }
 
+    const char* c_str() const {
+        return fRec->data();
+    }
 
-    // 复制构造器
-    String(const String&);
+    char operator[](size_t n) const {
+        return this->c_str()[n];
+    }
 
-    // 移动构造器
-    String(String&&);
+    bool equals(const String&) const;
 
-    explicit String(const std::string&);
+    bool equals(const char text[]) const;
 
-    ~String();
+    bool equals(const char text[], size_t len) const;
+
+    bool startsWith(const char prefixStr[]) const {
+        return StrStartWith(fRec->data(), prefixStr);
+    }
+
+    bool startsWith(const char prefixChar) const {
+        return StrStartsWith(fRec->data(), prefixChar);
+    }
+
+    bool endsWidth(const char suffixStr[]) const {
+        return StrEndsWith(fRec->data(), suffixStr);
+    }
+
+    bool endsWidth(const char suffixChar) const {
+        return StrEndsWith(fRec->data(), suffixChar);
+    }
+
+    bool contains(const char subString[]) const {
+        return StrContains(fRec->data(), subString);
+    }
+
+    bool contains(const char subChar) const {
+        return StrContains(fRec->data(), subChar);
+    }
+
+    int find(const char subString[]) const {
+        return StrFind(fRec->data(), subString);
+    }
+
+    int findLastOf(const char subChar) const {
+        return StrFindLastOf(fRec->data(), subChar);
+    }
+
+    friend bool operator==(const String& a, const String& b) {
+        return a.equals(b);
+    }
+
+    friend bool operator!=(const String& a, const String& b) {
+        return !a.equals(b);
+    }
+
+    String& operator=(const String&);
+
+    String& operator=(String&&);
+
+    String& operator=(const char text[]);
+
+    char* writable_str();
+
+    char& operator[](size_t n) {
+        return this->writable_str()[n];
+    }
+
+    void reset();
+
+    void resize(size_t len);
+
+    void set(const String& src) { *this = src; }
+
+    void set(const char text[]);
+
+    void set(const char text[], size_t len);
+
+    void insert(size_t offset, const String& src) {
+        this->insert(offset, src.c_str(), src.size());
+    }
+
+    void insert(size_t offset, const char text[]);
+
+    void insert(size_t offset, const char text[], size_t len);
+
+    void insertS32(size_t offset, int32_t value);
+
+    void insertS64(size_t offset, int64_t value, int minDigits = 0);
+
+    void append(const String& str) {
+        this->insert((size_t) -1, str);
+    }
+
+    String& operator+=(const String& s) {
+        this->append(s);
+        return *this;
+    }
 
 private:
     struct Rec {

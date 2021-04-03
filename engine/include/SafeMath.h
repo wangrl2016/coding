@@ -87,12 +87,14 @@ TFitsIn(S src) {    // return bool
  * This must be correct for all platforms, because this is a check for safety at runtime.
  */
 class SafeMath {
+public:
     SafeMath() = default;
 
     bool ok() const {
         return fOK;
     }
 
+    // 提供一个本类型到bool的隐式转换，不允许使用参数。
     explicit operator bool() const {
         return fOK;
     }
@@ -151,13 +153,13 @@ private:
         uint64_t bx = x;
         uint64_t by = y;
         uint64_t result = bx * by;
-        fOK &= result >> 32 == 0;   // 说明没有溢出
+        fOK &= result >> 32u == 0;   // 说明没有溢出
         return result;
     }
 
     uint64_t mul64(uint64_t x, uint64_t y) {
-        if (x <= std::numeric_limits<uint64_t>::max() >> 32 &&
-            y <= std::numeric_limits<uint64_t>::max() >> 32) {
+        if (x <= std::numeric_limits<uint64_t>::max() >> 32u &&
+            y <= std::numeric_limits<uint64_t>::max() >> 32u) {
             return x * y;
         } else {
             auto hi = [](uint64_t x) { return x >> 32; };
@@ -168,12 +170,44 @@ private:
             uint64_t lx_hy = lo(x) * hi(y);
             uint64_t hx_hy = hi(x) * hi(y);
             uint64_t result = 0;
-            result = this->add(lx_ly, (hx_ly << 32));
-            result = this->add(result, (lx_hy << 32));
-            fOK &= (hx_hy + (hx_ly >> 32) + (lx_hy >> 32)) == 0;
+            result = this->add(lx_ly, (hx_ly << 32u));
+            result = this->add(result, (lx_hy << 32u));
+            fOK &= (hx_hy + (hx_ly >> 32u) + (lx_hy >> 32u)) == 0;
             return result;
         }
     }
 
     bool fOK = true;
 };
+
+template<typename D, typename S>
+constexpr D To(S s) {
+    return assert(TFitsIn<D>(s)), static_cast<D>(s);
+}
+
+template<typename S>
+constexpr int8_t ToS8(S x) { return To<int8_t>(x); }
+
+template<typename S>
+constexpr uint8_t ToU8(S x) { return To<uint8_t>(x); }
+
+template<typename S>
+constexpr int16_t ToS16(S x) { return To<int16_t>(x); }
+
+template<typename S>
+constexpr uint16_t ToU16(S x) { return To<uint16_t>(x); }
+
+template<typename S>
+constexpr int32_t ToS32(S x) { return To<int32_t>(x); }
+
+template<typename S>
+constexpr uint32_t ToU32(S x) { return To<uint32_t>(x); }
+
+template<typename S>
+constexpr int ToInt(S x) { return To<int>(x); }
+
+template<typename S>
+constexpr unsigned ToUInt(S x) { return To<unsigned>(x); }
+
+template<typename S>
+constexpr size_t ToSizeT(S x) { return To<size_t>(x); }

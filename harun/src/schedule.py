@@ -114,7 +114,7 @@ def toutiao(device, w, h):
 def kuaishou(device, w, h):
     checkin.kuaishou(device)
     # [x] 看快手视频
-    app.watch_video(device, w, h, num=10)
+    app.watch_video(device, w, h, num=20)
     phone.stop_app(device, info.packages['kuaishou'])
 
 
