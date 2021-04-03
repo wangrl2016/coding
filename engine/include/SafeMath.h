@@ -4,11 +4,19 @@
 
 #pragma once
 
+#include <limits>
+#include <cstdint>
+#include <type_traits>
+
 template<typename T, class Enable = void>
 struct StripEnum {
     typedef T type;
 };
 
+template<typename T>
+struct StripEnum<T, typename std::enable_if<std::is_enum<T>::value>::type> {
+    typedef typename std::underlying_type<T>::type type;
+};
 
 
 /**
@@ -50,7 +58,7 @@ struct StripEnum {
  *
  * So for the eight cases three are trivially true, three more are valid casts, and two are special.
  * The two 'full' checks which otherwise require two comparisons are valid cast checks.
- * The two remaining check s -> U [v >= 0] and U -> s [v <= max(s)] can be donewith one op.
+ * The two remaining check s -> U [v >= 0] and U -> s [v <= max(s)] can be done with one op.
  */
 
 template<typename D, typename S>
@@ -65,5 +73,107 @@ TFitsIn(S src) {    // return bool
             (S) 0 <= src :
             // E.g. (uint8_t)(int8_t) uint8_t(255) == 255, but the int8_t == -1.
             (std::is_signed<D>::value && std::is_unsigned<S>::value && sizeof(D) <= sizeof(S)) ?
-            src <= (S) std::numeric_limits<typename
+            src <= (S) std::numeric_limits<typename StripEnum<D>::type>::max() :
+            // More complex version that's safe with /RTCc. Used in all debug builds, for coverage.
+            (std::is_signed<S>::value) ?
+            (intmax_t) src >= (intmax_t) std::numeric_limits<typename StripEnum<D>::type>::min() &&
+            (intmax_t) src <= (intmax_t) std::numeric_limits<typename StripEnum<D>::type>::max() :
+            // std::is_unsigned<S> ?
+            (uintmax_t) src <= (uintmax_t) std::numeric_limits<typename StripEnum<D>::type>::max();
 }
+
+/**
+ * SafeMath always check that a series of operations do not overflow.
+ * This must be correct for all platforms, because this is a check for safety at runtime.
+ */
+class SafeMath {
+    SafeMath() = default;
+
+    bool ok() const {
+        return fOK;
+    }
+
+    explicit operator bool() const {
+        return fOK;
+    }
+
+    size_t mul(size_t x, size_t y) {
+        return sizeof(size_t) == sizeof(uint64_t) ? mul64(x, y) : mul32(x, y);
+    }
+
+    size_t add(size_t x, size_t y) {
+        size_t result = x + y;
+        fOK &= result >= x;
+        return result;
+    }
+
+    /**
+     * Return a + b, unless this result is an overflow/underflow. In those cases, fOK
+     * will be set to false, and it is undefined what this returns.
+     */
+    int addInt(int a, int b) {
+        if (b < 0 && a < std::numeric_limits<int>::min() - b) {
+            fOK = false;
+            return a;
+        } else if (b > 0 && a > std::numeric_limits<int>::max() - b) {
+            fOK = false;
+            return a;
+        }
+        return a + b;
+    }
+
+    // 2的阶乘取整
+    size_t alignUp(size_t x, size_t alignment) {
+        assert(alignment && !(alignment & (alignment - 1)));
+        return add(x, alignment - 1) & ~(alignment - 1);
+    }
+
+    template<typename T>
+    T castTo(size_t value) {
+        if (!TFitsIn<T>(value)) {
+            fOK = false;
+        }
+        return static_cast<T>(value);
+    }
+
+    // These saturate to their results.
+    static size_t Add(size_t x, size_t y);
+
+    static size_t Mul(size_t x, size_t y);
+
+    static size_t Align4(size_t x) {
+        SafeMath safe;
+        return safe.alignUp(x, 4);
+    }
+
+private:
+    uint32_t mul32(uint32_t x, uint32_t y) {
+        uint64_t bx = x;
+        uint64_t by = y;
+        uint64_t result = bx * by;
+        fOK &= result >> 32 == 0;   // 说明没有溢出
+        return result;
+    }
+
+    uint64_t mul64(uint64_t x, uint64_t y) {
+        if (x <= std::numeric_limits<uint64_t>::max() >> 32 &&
+            y <= std::numeric_limits<uint64_t>::max() >> 32) {
+            return x * y;
+        } else {
+            auto hi = [](uint64_t x) { return x >> 32; };
+            auto lo = [](uint64_t x) { return x & 0xFFFFFFFF; };
+
+            uint64_t lx_ly = lo(x) * lo(y);
+            uint64_t hx_ly = hi(x) * lo(y);
+            uint64_t lx_hy = lo(x) * hi(y);
+            uint64_t hx_hy = hi(x) * hi(y);
+            uint64_t result = 0;
+            result = this->add(lx_ly, (hx_ly << 32));
+            result = this->add(result, (lx_hy << 32));
+            fOK &= (hx_hy + (hx_ly >> 32) + (lx_hy >> 32)) == 0;
+            return result;
+        }
+    }
+
+    bool fOK = true;
+};

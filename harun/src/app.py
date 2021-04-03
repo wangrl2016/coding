@@ -14,7 +14,7 @@ def read_article(device, w, h, num):
     print('看文章' + str(num) + '次 ' + datetime.now().time().__str__())
     for i in range(0, num):
         # 获取文章目录
-        phone.swipe_up_to_down(device, w / 2, h)
+        phone.swipe_down_to_up(device, w / 2, h, internal=300)
         # 点击文章
         phone.tap(device, w / 2, h / 2)
         # 滑动阅读
