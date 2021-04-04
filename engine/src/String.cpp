@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include "include/String.h"
+#include "include/Malloc.h"
 
 // Number of bytes (on the stack) to receive the printf result.
 static const size_t kBufferSize = 1024;
@@ -40,11 +41,33 @@ String::String(size_t len) {
     fRec = Rec::Make(nullptr, len);
 }
 
+String::String(const char text[]) {
+    size_t len = text ? strlen(text) : 0;
+    fRec = Rec::Make(text, len);
+}
+
+String::String(const char text[], size_t len) {
+    fRec = Rec::Make(text, len);
+}
+
 String::~String() {
     this->validate();
 }
 
-#define SizeOfRec() (g)
+bool String::equals(const String& src) const {
+    return fRec == src.fRec || this->equals(src.c_str(), src.size());
+}
+
+bool String::equals(const char text[]) const {
+    return this->equals(text, text ? strlen(text) : 0);
+}
+
+bool String::equals(const char text[], size_t len) const {
+    assert(len == 0 || text != nullptr);
+    return fRec->fLength == len && !CarefulMemcpy(fRec->data(), text, len);
+}
+
+#define SizeOfRec() (gEmptyRec.data() - (const char*)&gEmptyRec)
 
 SharedPtr<String::Rec> String::Rec::Make(const char text[], size_t len) {
     if (0 == len) {
@@ -52,8 +75,20 @@ SharedPtr<String::Rec> String::Rec::Make(const char text[], size_t len) {
     }
     SafeMath safe;
     // We store a 32bit version of the length.
-    uint32_t stringLen = safe.castTo<uint32_t>(len);
+    auto stringLen = safe.castTo<uint32_t>(len);
     // Add SizeOfRec() for our overhead and 1 for nul-termination.
+    size_t allocationSize = safe.add(len, SizeOfRec() + sizeof(char));
+    // Align up to a multiple of 4.
+    allocationSize = safe.alignUp(allocationSize, 4);
+    assert(safe.ok());
+
+    void* storage = ::operator new(allocationSize);
+    SharedPtr<Rec> rec(new(storage) Rec(stringLen, 1));
+    if (text) {
+        memcpy(rec->data(), text, len);
+    }
+    rec->data()[len] = 0;
+    return rec;
 }
 
 void String::Rec::unref() const {

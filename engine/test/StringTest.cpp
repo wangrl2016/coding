@@ -9,7 +9,7 @@
 TEST(String, SafeMath) {    // NOLINT
     size_t max = std::numeric_limits<size_t>::max();
     {
-        size_t halfMax = max >> 1;
+        size_t halfMax = max >> 1u;
         size_t halfMaxPlusOne = halfMax + 1;
         SafeMath safe;
         ASSERT_TRUE(safe.add(halfMax, halfMax) == 2 * halfMax);
@@ -47,4 +47,14 @@ TEST(String, SafeMath) {    // NOLINT
 TEST(String, String) {  // NOLINT
     String a;
     String b((size_t) 0);
+    String c("");
+    String d(nullptr, 0);
+
+    ASSERT_TRUE(a.isEmpty());
+    ASSERT_TRUE(a == b && a == c && a == d);
+
+    a.set("hello");
+    b.set("helloX", 5);
+    c.set(a);
+    d.resize(5);
 }
