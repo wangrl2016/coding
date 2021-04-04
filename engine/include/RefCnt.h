@@ -244,8 +244,8 @@ public:
      * object.
      */
     SharedPtr<T>& operator=(const SharedPtr<T>& that) {
-        if (this != that) {
-            this->reset(SafeRef(that.get));
+        if (this != &that) {
+            this->reset(SafeRef(that.get()));
         }
         return *this;
     }

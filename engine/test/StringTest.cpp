@@ -57,4 +57,43 @@ TEST(String, String) {  // NOLINT
     b.set("helloX", 5);
     c.set(a);
     d.resize(5);
+    memcpy(d.writable_str(), "helloZ", 5);
+
+    ASSERT_TRUE(!a.isEmpty());
+    ASSERT_TRUE(a.size() == 5);
+
+    ASSERT_TRUE(a == b && a == c && a == d);
+    ASSERT_TRUE(a.equals("hello", 5));
+    ASSERT_TRUE(a.equals("hello"));
+    ASSERT_TRUE(!a.equals("help"));
+
+    ASSERT_TRUE(a.startsWith("hell"));
+    ASSERT_TRUE(a.startsWith('h'));
+    ASSERT_TRUE(!a.startsWith("ell"));
+    ASSERT_TRUE(!a.startsWith('e'));
+    ASSERT_TRUE(a.startsWith(""));
+    ASSERT_TRUE(a.endsWith("llo"));
+    ASSERT_TRUE(a.endsWith('o'));
+    ASSERT_TRUE(!a.endsWith("ll"));
+    ASSERT_TRUE(!a.endsWith('l'));
+    ASSERT_TRUE(a.endsWith(""));
+    ASSERT_TRUE(a.contains("he"));
+    ASSERT_TRUE(a.contains("ll"));
+    ASSERT_TRUE(a.contains("lo"));
+    ASSERT_TRUE(a.contains("hello"));
+    ASSERT_TRUE(!a.contains("helloHello"));
+    ASSERT_TRUE(a.contains(""));
+    ASSERT_TRUE(a.contains('e'));
+    ASSERT_TRUE(!a.contains('z'));
+
+    String e(a);
+    String f("hello");
+    String g("helloZ", 5);
+    ASSERT_TRUE(a == e && a == f && a == g);
+
+    b.set("world");
+    c = b;
+    ASSERT_TRUE(a != b && a != c && b == c);
+
+    a.append(" world");
 }

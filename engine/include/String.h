@@ -112,11 +112,11 @@ public:
         return StrStartsWith(fRec->data(), prefixChar);
     }
 
-    bool endsWidth(const char suffixStr[]) const {
+    bool endsWith(const char suffixStr[]) const {
         return StrEndsWith(fRec->data(), suffixStr);
     }
 
-    bool endsWidth(const char suffixChar) const {
+    bool endsWith(const char suffixChar) const {
         return StrEndsWith(fRec->data(), suffixChar);
     }
 
@@ -182,10 +182,20 @@ public:
         this->insert((size_t) -1, str);
     }
 
+    void append(const char text[]) {
+        this->insert((size_t) -1, text);
+    }
+
     String& operator+=(const String& s) {
         this->append(s);
         return *this;
     }
+
+    /**
+     * Swap contents between this and other. This function is guaranteed
+     * to never fail or throw.
+     */
+    void swap(String& other);
 
 private:
     struct Rec {

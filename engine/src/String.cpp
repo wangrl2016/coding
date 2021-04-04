@@ -64,7 +64,99 @@ bool String::equals(const char text[]) const {
 
 bool String::equals(const char text[], size_t len) const {
     assert(len == 0 || text != nullptr);
-    return fRec->fLength == len && !CarefulMemcpy(fRec->data(), text, len);
+    return fRec->fLength == len && !CarefulMemcmp(fRec->data(), text, len);
+}
+
+static uint32_t TrimSizeToU32(size_t value) {
+    if (sizeof(size_t) > sizeof(uint32_t)) {
+        if (value > UINT32_MAX) {
+            value = UINT32_MAX;
+        }
+    }
+    return (uint32_t) value;
+}
+
+void String::set(const char text[]) {
+    this->set(text, text ? strlen(text) : 0);
+}
+
+void String::set(const char text[], size_t len) {
+    len = TrimSizeToU32(len);
+    if (0 == len) {
+        this->reset();
+    } else if (fRec->unique() && ((len >> 2u) <= (fRec->fLength >> 2u))) {
+        // Use less of the buffer we have without allocating a smaller one.
+        // 沿用原来的内存
+        char* p = this->writable_str();
+        if (text) {
+            memcpy(p, text, len);
+        }
+        p[len] = '\0';
+        fRec->fLength = ToU32(len);
+    } else {
+        String tmp(text, len);
+        this->swap(tmp);
+    }
+}
+
+void String::insert(size_t offset, const char text[]) {
+    this->insert(offset, text, text ? strlen(text) : 0);
+}
+
+void String::insert(size_t offset, const char text[], size_t len) {
+    if (len) {
+        
+    }
+}
+
+String& String::operator=(const String& src) {
+    this->validate();
+    fRec = src.fRec;
+    return *this;
+}
+
+void String::resize(size_t len) {
+    len = TrimSizeToU32(len);
+    if (0 == len) {
+        this->reset();
+    } else if (fRec->unique() && ((len >> 2u) <= (fRec->fLength >> 2u))) {
+        // Use less of the buffer we have without allocating a smaller one.
+        char* p = this->writable_str();
+        p[len] = '\0';
+        fRec->fLength = ToU32(len);
+    } else {
+        String newString(len);
+        char* dest = newString.writable_str();
+        int copyLen = std::min<uint32_t>(len, this->size());
+        memcpy(dest, this->c_str(), copyLen);
+        dest[copyLen] = '\0';
+        this->swap(newString);
+    }
+}
+
+void String::reset() {
+    this->validate();
+    fRec.reset(const_cast<Rec*>(&gEmptyRec));
+}
+
+char* String::writable_str() {
+    this->validate();
+
+    if (fRec->fLength) {
+        if (!fRec->unique()) {
+            fRec = Rec::Make(fRec->data(), fRec->fLength);
+        }
+    }
+    return fRec->data();
+}
+
+String::String(const String& src) : fRec(src.validate().fRec) {}
+
+
+void String::swap(String& other) {
+    this->validate();
+    other.validate();
+    std::swap(fRec, other.fRec);
 }
 
 #define SizeOfRec() (gEmptyRec.data() - (const char*)&gEmptyRec)
@@ -91,6 +183,13 @@ SharedPtr<String::Rec> String::Rec::Make(const char text[], size_t len) {
     return rec;
 }
 
+void String::Rec::ref() const {
+    if (this == &String::gEmptyRec) {
+        return;
+    }
+    this->fRefCnt.fetch_add(+1, std::memory_order_relaxed);
+}
+
 void String::Rec::unref() const {
     if (this == &String::gEmptyRec) {
         return;
@@ -100,4 +199,8 @@ void String::Rec::unref() const {
     if (1 == oldRefCnt) {
         delete this;
     }
+}
+
+bool String::Rec::unique() const {
+    return fRefCnt.load(std::memory_order_acquire) == 1;
 }

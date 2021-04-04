@@ -25,3 +25,12 @@ static inline void* CarefulMemcpy(void* dst, const void* src, size_t len) {
     }
     return dst;
 }
+
+static inline int CarefulMemcmp(const void* a, const void* b, size_t len) {
+    // When we pass > 0 len we had better already be passing valid pointers.
+    // So we just need to skip caling memcpy when len == 0.
+    if (len == 0) {
+        return 0;   // we treat zero-length buffer as equal
+    }
+    return memcmp(a, b, len);
+}
