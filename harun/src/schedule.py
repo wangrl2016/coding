@@ -62,7 +62,11 @@ def zhongqing(device, w, h):
 
 
 def kuaiyin(device, w, h):
-    return None
+    # [x] 播放
+    if datetime.now().hour == 1:
+        checkin.kuaiyin(device, w, h)
+    if datetime.now().hour == 4:
+        phone.stop_app(device, info.packages['kuaiyin'])
 
 
 def kuge(device, w, h):
@@ -133,10 +137,11 @@ def douyin(device, w, h):
 
 
 def qutoutiao(device, w, h):
-    checkin.qutoutiao(device)
-    # [x] 阅读趣头条文章
-    app.read_article(device, w, h, num=1)
-    phone.stop_app(device, info.packages['qutoutiao'])
+    if datetime.now().hour > 8:
+        checkin.qutoutiao(device)
+        # [x] 阅读趣头条文章
+        app.read_article(device, w, h, num=1)
+        phone.stop_app(device, info.packages['qutoutiao'])
 
 
 def baidu(device, w, h):
@@ -168,13 +173,12 @@ def uc(device, w, h):
 
 
 def diantao(device, w, h):
-    checkin.diantao(device)
-
-    # [x] 点击进入直播页面
-    phone.tap(device, w / 3, h / 3, gap=5)
-    app.watch_video(device, w, h, num=10)
-
-    phone.stop_app(device, info.packages['diantao'])
+    if datetime.now().hour > 8:
+        checkin.diantao(device)
+        # [x] 点击进入直播页面
+        phone.tap(device, w / 3, h / 3, gap=5)
+        app.watch_video(device, w, h, num=10)
+        phone.stop_app(device, info.packages['diantao'])
 
 
 def huitoutiao(device, w, h):

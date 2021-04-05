@@ -62,6 +62,36 @@ static inline bool StrContains(const char string[], const char subChar) {
     return (-1 != StrFind(string, tmp));
 }
 
+/**
+ * The StrAppend... method will write into the provided buffer, assuming it is large enough.
+ * Each method has an associated const (e.g. StrAppendU32MaxSize) which will be the largest
+ * value needed for that method's buffer.
+ *
+ * char storage[StrAppendU32MaxSize];
+ * StrAppendU32(storage, value);
+ *
+ * Note: none of the StrAppend... methods write a terminating 0 to their buffer. Instead, the
+ * method return the ptr to the end of the written part of the buffer. This can be used
+ * to compute the length, and/or know where to write a 0 if that is desired.
+ *
+ * char storage[StrAppendU32MaxSize + 1];
+ * char* stop = StrAppendU32(storage, value);
+ * size_t len = stop - storage;
+ * *stop = 0;   // valid, since storage was 1 byte larger than the max.
+ */
+static constexpr int StrAppendU32MaxSize = 10;
+static constexpr int StrAppendS32MaxSize = StrAppendU32MaxSize + 1;
+static constexpr int StrAppendU64MaxSize = 20;
+static constexpr int StrAppendS64MaxSize = StrAppendU64MaxSize + 1;
+
+char* StrAppendU32(char buffer[], uint32_t);
+
+char* StrAppendS32(char buffer[], int32_t);
+
+char* StrAppendS64(char buffer[], int64_t, int minDigits);
+
+char* StrAppendU64(char buffer[], uint64_t, int minDigits);
+
 
 class String {
 public:
@@ -184,6 +214,22 @@ public:
 
     void append(const char text[]) {
         this->insert((size_t) -1, text);
+    }
+
+    void append(const char text[], size_t len) {
+        this->insert((size_t) -1, text, len);
+    }
+
+    void appendS32(int32_t value) {
+        this->insertS32((size_t) -1, value);
+    }
+
+    void prepend(const String& str) {
+        this->insert(0, str);
+    }
+
+    void prepend(const char text[]) {
+        this->insert(0, text);
     }
 
     String& operator+=(const String& s) {

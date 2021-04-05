@@ -33,6 +33,33 @@ bool StrEndsWith(const char string[], const char suffixChar) {
     }
 }
 
+char* StrAppendU32(char string[], uint32_t dec) {
+    char* start = string;
+    char buffer[StrAppendU32MaxSize];
+    char* p = buffer + sizeof(buffer);
+    do {
+        *--p = ToU8('0' + dec % 10);
+        dec /= 10;
+    } while (dec != 0);
+    assert(p >= buffer);
+    char* stop = buffer + sizeof(buffer);
+    while (p < stop) {
+        *string++ = *p++;
+    }
+    assert(string - start <= StrAppendU32MaxSize);
+    return string;
+}
+
+char* StrAppendS32(char string[], int32_t dec) {
+    uint32_t uDec = dec;
+    if (dec < 0) {
+        *string++ = '-';
+        // uDec = -uDec, but silences some warnings that are trying to be helpful.
+        uDec = ~uDec + 1;
+    }
+    return StrAppendU32(string, uDec);
+}
+
 const String::Rec String::gEmptyRec(0, 0);
 
 String::String() : fRec(const_cast<Rec*>(&gEmptyRec)) {}
@@ -103,9 +130,65 @@ void String::insert(size_t offset, const char text[]) {
     this->insert(offset, text, text ? strlen(text) : 0);
 }
 
+static size_t CheckAdd32(size_t base, size_t extra) {
+    assert(base <= UINT32_MAX);
+    if (sizeof(size_t) > sizeof(uint32_t)) {
+        if (base + extra > UINT32_MAX) {
+            extra = UINT32_MAX - base;
+        }
+    }
+    return extra;
+}
+
 void String::insert(size_t offset, const char text[], size_t len) {
     if (len) {
-        
+        size_t length = fRec->fLength;
+        if (offset > length) {
+            offset = length;
+        }
+
+        // Check if length + len exceed 32bits, we trim len
+        len = CheckAdd32(length, len);
+        if (0 == len) {
+            return;
+        }
+
+        /**
+         * If we're the only owner, and we have room in our allocation for the insert,
+         * do it in place, rather than allocating a new buffer.
+         *
+         * To know we have room, compare the allocated sizes
+         * beforeAlloc = Align4(length + 1)
+         * afterAlloc = Align4(length + 1 + len)
+         * but Align4(x) is (x + 3) >> 2 << 2
+         * which is equivalent for testing to (length + 1 + 3) >> 2 == (length + 1 + 3 + len) >> 2
+         * and we can then eliminate the +1+3 since that doesn't affect the answer.
+         */
+        if (fRec->unique() && (length >> 2u) == ((length + len) >> 2u)) {
+            char* dst = this->writable_str();
+            if (offset < length) {
+                memmove(dst + offset + len, dst + offset, length - offset);
+            }
+            memcpy(dst + offset, text, len);
+            dst[length + len] = 0;
+            fRec->fLength = ToU32(length + len);
+        } else {
+            /**
+             * Seems we shoulduse realloc here, since that is safe if it fails
+             * (we have the original data), and might be faster than alloc/copy/free.
+             */
+            String tmp(fRec->fLength + len);
+            char* dst = tmp.writable_str();
+            if (offset > 0) {
+                memcpy(dst, fRec->data(), offset);
+            }
+            memcpy(dst + offset, text, len);
+            if (offset < fRec->fLength) {
+                memcpy(dst + offset + len, fRec->data() + offset,
+                       fRec->fLength - offset);
+            }
+            this->swap(tmp);
+        }
     }
 }
 
@@ -157,6 +240,12 @@ void String::swap(String& other) {
     this->validate();
     other.validate();
     std::swap(fRec, other.fRec);
+}
+
+void String::insertS32(size_t offset, int32_t value) {
+    char buffer[StrAppendS32MaxSize];
+    char* stop = StrAppendS32(buffer, value);
+    this->insert(offset, buffer, stop - buffer);
 }
 
 #define SizeOfRec() (gEmptyRec.data() - (const char*)&gEmptyRec)

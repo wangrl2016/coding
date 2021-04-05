@@ -79,7 +79,6 @@ def kuaikandian(device, w, h):
 
 def qutoutiao(device, w, h):
     phone.tap(device, 750, 2330)
-    return None
 
 
 def baidu(device, w, h):

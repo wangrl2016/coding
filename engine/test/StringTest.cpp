@@ -96,4 +96,32 @@ TEST(String, String) {  // NOLINT
     ASSERT_TRUE(a != b && a != c && b == c);
 
     a.append(" world");
+    e.append("worldZ", 5);
+    e.insert(5, " ");
+    f.set("world");
+    f.prepend("hello ");
+    ASSERT_TRUE(a.equals("hello world") && a == e && a == f);
+
+    a.reset();
+    b.resize(0);
+    ASSERT_TRUE(a.isEmpty() && b.isEmpty() && a == b);
+
+    a.set("a");
+    a.set("ab");
+    a.set("abc");
+    a.set("abcd");
+
+    a.set("");
+    a.appendS32(0x7FFFFFFFL);
+    ASSERT_TRUE(a.equals("2147483647"));
+
+    a.set("");
+    a.appendS32(0x80000001L);
+    ASSERT_TRUE(a.equals("-2147483647"));
+
+    a.set("");
+    a.appendS32(0x80000000L);
+    ASSERT_TRUE(a.equals("-2147483648"));
+
+    a.set("");
 }
