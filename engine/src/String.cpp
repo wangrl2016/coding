@@ -60,6 +60,40 @@ char* StrAppendS32(char string[], int32_t dec) {
     return StrAppendU32(string, uDec);
 }
 
+char* StrAppendU64(char string[], uint64_t dec, int minDigits) {
+    char* start = string;
+    char buffer[StrAppendU64MaxSize];
+    char* p = buffer + sizeof(buffer);
+
+    do {
+        *--p = ToU8('0' + (int32_t) (dec % 10));
+        dec /= 10;
+        minDigits--;
+    } while (dec != 0);
+
+    while (minDigits > 0) {
+        *--p = '0';
+        minDigits--;
+    }
+
+    assert(p >= buffer);
+    size_t cpLen = buffer + sizeof(buffer) - p;
+    memcpy(string, p, cpLen);
+    string += cpLen;
+    assert(string - start <= StrAppendU64MaxSize);
+    return string;
+}
+
+char* StrAppendS64(char string[], int64_t dec, int minDigits) {
+    uint64_t uDec = dec;
+    if (dec < 0) {
+        *string++ = '-';
+        // uDec = -uDec, but silences some warnings that are trying to be helpful.
+        uDec = ~uDec + 1;
+    }
+    return StrAppendU64(string, uDec, minDigits);
+}
+
 const String::Rec String::gEmptyRec(0, 0);
 
 String::String() : fRec(const_cast<Rec*>(&gEmptyRec)) {}
@@ -245,6 +279,24 @@ void String::swap(String& other) {
 void String::insertS32(size_t offset, int32_t value) {
     char buffer[StrAppendS32MaxSize];
     char* stop = StrAppendS32(buffer, value);
+    this->insert(offset, buffer, stop - buffer);
+}
+
+void String::insertS64(size_t offset, int64_t dec, int minDigits) {
+    char buffer[StrAppendS64MaxSize];
+    char* stop = StrAppendS64(buffer, dec, minDigits);
+    this->insert(offset, buffer, stop - buffer);
+}
+
+void String::insertU32(size_t offset, uint32_t dec) {
+    char buffer[StrAppendU32MaxSize];
+    char* stop = StrAppendU32(buffer, dec);
+    this->insert(offset, buffer, stop - buffer);
+}
+
+void String::insertU64(size_t offset, uint64_t dec, int minDigits) {
+    char buffer[StrAppendU64MaxSize];
+    char* stop = StrAppendU64(buffer, dec, minDigits);
     this->insert(offset, buffer, stop - buffer);
 }
 

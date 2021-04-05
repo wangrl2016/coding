@@ -206,7 +206,11 @@ public:
 
     void insertS32(size_t offset, int32_t value);
 
+    void insertU32(size_t offset, uint32_t value);
+
     void insertS64(size_t offset, int64_t value, int minDigits = 0);
+
+    void insertU64(size_t offset, uint64_t value, int minDigits = 0);
 
     void append(const String& str) {
         this->insert((size_t) -1, str);
@@ -222,6 +226,18 @@ public:
 
     void appendS32(int32_t value) {
         this->insertS32((size_t) -1, value);
+    }
+
+    void appendU32(uint32_t value) {
+        this->insertU32((size_t) -1, value);
+    }
+
+    void appendS64(int64_t value, int minDigits = 0) {
+        this->insertS64((size_t) -1, value, minDigits);
+    }
+
+    void appendU64(uint64_t value, int minDigits = 0) {
+        this->insertU64((size_t) -1, value, minDigits);
     }
 
     void prepend(const String& str) {

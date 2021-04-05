@@ -124,4 +124,41 @@ TEST(String, String) {  // NOLINT
     ASSERT_TRUE(a.equals("-2147483648"));
 
     a.set("");
+    a.appendU32(0x7FFFFFFFUL);
+    ASSERT_TRUE(a.equals("2147483647"));
+    a.set("");
+    a.appendU32(0x80000001UL);
+    ASSERT_TRUE(a.equals("2147483649"));
+    a.set("");
+    a.appendU32(0xFFFFFFFFUL);
+    ASSERT_TRUE(a.equals("4294967295"));
+
+    a.set("");
+    a.appendS64(0x7FFFFFFFFFFFFFFFLL, 0);
+    ASSERT_TRUE(a.equals("9223372036854775807"));
+    a.set("");
+    a.appendS64(0x8000000000000001LL, 0);
+    ASSERT_TRUE(a.equals("-9223372036854775807"));
+    a.set("");
+    a.appendS64(0x8000000000000000LL, 0);
+    ASSERT_TRUE(a.equals("-9223372036854775808"));
+    a.set("");
+    a.appendS64(0x0000000001000000LL, 15);
+    ASSERT_TRUE(a.equals("000000016777216"));
+    a.set("");
+    a.appendS64(0xFFFFFFFFFF000000LL, 15);
+    ASSERT_TRUE(a.equals("-000000016777216"));
+
+    a.set("");
+    a.appendU64(0x7FFFFFFFFFFFFFFFULL, 0);
+    ASSERT_TRUE(a.equals("9223372036854775807"));
+    a.set("");
+    a.appendU64(0x8000000000000001ULL, 0);
+    ASSERT_TRUE(a.equals("9223372036854775809"));
+    a.set("");
+    a.appendU64(0xFFFFFFFFFFFFFFFFULL, 0);
+    ASSERT_TRUE(a.equals("18446744073709551615"));
+    a.set("");
+    a.appendU64(0x0000000001000000ULL, 15);
+    ASSERT_TRUE(a.equals("000000016777216"));
 }
