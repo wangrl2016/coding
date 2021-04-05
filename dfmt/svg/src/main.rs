@@ -77,7 +77,7 @@ struct Args {
 }
 
 fn parse_args() -> Result<Args, String> {
-    let mut args = collect_args().map_err(|e| e.to_string())?;
+    let args = collect_args().map_err(|e| e.to_string())?;
 
     if args.help {
         print!("{}", HELP);
@@ -283,7 +283,7 @@ impl log::Log for SimpleLogger {
             };
             let line = record.line().unwrap_or(0);
 
-            let mut level_str;
+            let level_str;
             match record.level() {
                 Level::Error => { level_str = "Error"; }
                 Level::Warn => { level_str = "Warning"; }
@@ -366,6 +366,7 @@ fn render_svg(args: Args, tree: &usvg::Tree, out_image: &path::Path) -> Result<(
     } else {
         let size = args.fit_to.fit_to(tree.svg_node().size.to_screen_size())
             .ok_or_else(|| String::from("Target size is zero"))?;
+        println!("Svg size {}x{}", size.width(), size.height());
 
         // Unwrap is safe, because size is already valid.
         let mut pixmap = tiny_skia::Pixmap::new(size.width(), size.height()).unwrap();
@@ -378,5 +379,10 @@ fn render_svg(args: Args, tree: &usvg::Tree, out_image: &path::Path) -> Result<(
         svg::render(tree, args.fit_to, pixmap.as_mut());
         pixmap
     };
-    Ok(())
+
+    if args.perf {
+        println!("Rendering: {:.2}ms", now.elapsed().as_micros() as f64 / 1000.0);
+    }
+
+    timed!(args, "Saving", img.save_png(out_image).map_err(|e| e.to_string()))
 }

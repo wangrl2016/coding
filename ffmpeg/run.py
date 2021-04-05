@@ -4,32 +4,6 @@ import os
 import subprocess
 
 
-def get_cmake_examples(path='CMakeLists.txt'):
-    """
-    获取CMakeLists.txt文件下面的EXAMPLES
-    :return: 返回EXAMPLE链表
-    """
-    example_list = []
-    if os.path.exists(path):
-        with open(path) as file:
-            get_flag = False
-            while True:
-                line = file.readline()
-
-                for word in line.split():
-                    if word.__eq__('EXAMPLES'):
-                        get_flag = True
-                        continue
-                    if get_flag and word.__ne__(')'):
-                        example_list.append(word)
-                    if get_flag and word.__eq__(')'):
-                        get_flag = False
-                        break
-                if not line:
-                    break
-    return example_list
-
-
 if __name__ == '__main__':
     out_dir = 'out'
     build_dir = 'build'
@@ -40,8 +14,6 @@ if __name__ == '__main__':
 
     subprocess.run(['cmake', '-S', '.', '-B', build_dir])
     subprocess.run(['make', '-C', build_dir])
-
-    examples = get_cmake_examples()
 
     for index, example in enumerate(reversed(examples)):
         exe = os.path.join(build_dir, example)
