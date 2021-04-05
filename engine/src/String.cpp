@@ -101,6 +101,24 @@ char* StrAppendFloat(char string[], float value) {
         strcpy(string, "nan");
         return string + 3;
     }
+    if (!FloatIsFinite(value)) {
+        if (value > 0) {
+            strcpy(string, "inf");
+            return string + 3;
+        } else {
+            strcpy(string, "-inf");
+            return string + 4;
+        }
+    }
+
+    // Since floats have at most 8 significant digits, we limit our %g to that.
+    static const char gFormat[] = "%.8g";
+    // Make it 1 larger for the terminating 0.
+    char buffer[StrAppendFloatMaxSize + 1];
+    int len = snprintf(buffer, sizeof(buffer), gFormat, value);
+    memcpy(string, buffer, len);
+    assert(len <= StrAppendFloatMaxSize);
+    return string + len;
 }
 
 const String::Rec String::gEmptyRec(0, 0);

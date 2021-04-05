@@ -167,7 +167,11 @@ TEST(String, String) {  // NOLINT
         float fValue;
         const char* fString;
     } gRec[] = {
-            {0, "0"},
+            {0,     "0"},
+            {1.0f,  "1"},
+            {-1.0f, "-1"},
+            {1.0f / 2, "0.5"},
+
     };
 
     for (size_t i = 0; i < ARRAY_SIZE(gRec); i++) {
