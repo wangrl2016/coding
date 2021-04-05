@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use usvg::ScreenSize;
+use crate::layers::List::{Cons, Nil};
 
 type LayerData = Rc<RefCell<tiny_skia::Pixmap>>;
 
@@ -32,8 +33,6 @@ enum List {
     Cons(i32, Rc<List>),
     Nil,
 }
-
-use crate::layers::List::{Cons, Nil};
 
 #[test]
 fn test_rc() {

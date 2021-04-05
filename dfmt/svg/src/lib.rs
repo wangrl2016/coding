@@ -1,6 +1,6 @@
 mod render;
 mod layers;
-
+mod path;
 // Renders an SVG to pixmap.
 // If fit_to size differs from tree.svg_node.size, SVG would be scaled accordingly.
 pub fn render(
