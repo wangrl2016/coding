@@ -5,6 +5,7 @@
 #include <cassert>
 #include "include/String.h"
 #include "include/Malloc.h"
+#include "include/Math.h"
 
 // Number of bytes (on the stack) to receive the printf result.
 static const size_t kBufferSize = 1024;
@@ -92,6 +93,14 @@ char* StrAppendS64(char string[], int64_t dec, int minDigits) {
         uDec = ~uDec + 1;
     }
     return StrAppendU64(string, uDec, minDigits);
+}
+
+char* StrAppendFloat(char string[], float value) {
+    // Handle infinity and NaN ourselves to ensure consistent cross-platform results.
+    if (FloatIsNaN(value)) {
+        strcpy(string, "nan");
+        return string + 3;
+    }
 }
 
 const String::Rec String::gEmptyRec(0, 0);
@@ -297,6 +306,12 @@ void String::insertU32(size_t offset, uint32_t dec) {
 void String::insertU64(size_t offset, uint64_t dec, int minDigits) {
     char buffer[StrAppendU64MaxSize];
     char* stop = StrAppendU64(buffer, dec, minDigits);
+    this->insert(offset, buffer, stop - buffer);
+}
+
+void String::insertFloat(size_t offset, float value) {
+    char buffer[StrAppendFloatMaxSize];
+    char* stop = StrAppendFloat(buffer, value);
     this->insert(offset, buffer, stop - buffer);
 }
 

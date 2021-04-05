@@ -84,6 +84,15 @@ static constexpr int StrAppendS32MaxSize = StrAppendU32MaxSize + 1;
 static constexpr int StrAppendU64MaxSize = 20;
 static constexpr int StrAppendS64MaxSize = StrAppendU64MaxSize + 1;
 
+/**
+ * Floats have at most 8 significant digits, so we limit our %g to that.
+ * However, the total string could be 15 characters: -1.2345678e-005
+ *
+ * In theory we should only expect up to 2 digits for the exponent, but on
+ * some platforms we have 3 (as in the example above).
+ */
+static constexpr int StrAppendFloatMaxSize = 15;
+
 char* StrAppendU32(char buffer[], uint32_t);
 
 char* StrAppendS32(char buffer[], int32_t);
@@ -91,6 +100,15 @@ char* StrAppendS32(char buffer[], int32_t);
 char* StrAppendS64(char buffer[], int64_t, int minDigits);
 
 char* StrAppendU64(char buffer[], uint64_t, int minDigits);
+
+/**
+ * Write the scalar in decimal format into buffer, and return a pointer to
+ *  the next char after the last one written. Note: a terminating 0 is not
+ *  written into buffer, which must be at least StrAppendFloatMaxSize.
+ *  Thus if the caller wants to add a 0 at the end, buffer must be at least
+ *  StrAppendScalarMaxSize + 1 bytes large.
+ */
+char* StrAppendFloat(char buffer[], float);
 
 
 class String {
@@ -212,6 +230,8 @@ public:
 
     void insertU64(size_t offset, uint64_t value, int minDigits = 0);
 
+    void insertFloat(size_t offset, float);
+
     void append(const String& str) {
         this->insert((size_t) -1, str);
     }
@@ -238,6 +258,10 @@ public:
 
     void appendU64(uint64_t value, int minDigits = 0) {
         this->insertU64((size_t) -1, value, minDigits);
+    }
+
+    void appendFloat(float value) {
+        this->insertFloat((size_t) -1, value);
     }
 
     void prepend(const String& str) {

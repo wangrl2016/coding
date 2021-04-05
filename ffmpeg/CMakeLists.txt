@@ -24,7 +24,6 @@ SET(
         Muxing
         Remuxing
         FFPlay
-        JPEG2RGB
 )
 
 foreach (EXAMPLE ${EXAMPLES})

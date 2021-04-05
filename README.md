@@ -65,6 +65,13 @@ https://algs4.cs.princeton.edu/home/
 - [ ] Regular Expressions
 - [ ] Data Compression
 
+## C++核心库 ([engine](engine/))
+
+- [x] 智能指针
+- [x] 字符串
+- [ ] 排序
+- [ ] 内存分配
+
 ## 设计模式 ([depa](depa/))
 
 Design Patterns: Elements of Reusable Object-Oriented Software
@@ -146,9 +153,11 @@ https://www.opengl.org/
 
 https://developer.android.com/
 
+https://github.com/google/oboe
+
 - [ ] Camera
 - [ ] Media Player
-- [ ] NDK
+- [ ] Oboe
 
 ## OpenCV示例 ([opencv](opencv/))
 
@@ -224,6 +233,7 @@ https://www.w3.org/XML/
 - [ ] 编写SVG渲染引擎
 - [ ] 编写JSON渲染引擎
 - [ ] XML解析器
+- [ ] PPT解析和生成
 
 ## 工具 ([tools](tools/))
 

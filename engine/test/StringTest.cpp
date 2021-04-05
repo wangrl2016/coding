@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 #include "include/SafeMath.h"
 #include "include/String.h"
+#include "include/Sort.h"
 
 TEST(String, SafeMath) {    // NOLINT
     size_t max = std::numeric_limits<size_t>::max();
@@ -161,4 +162,16 @@ TEST(String, String) {  // NOLINT
     a.set("");
     a.appendU64(0x0000000001000000ULL, 15);
     ASSERT_TRUE(a.equals("000000016777216"));
+
+    static const struct {
+        float fValue;
+        const char* fString;
+    } gRec[] = {
+            {0, "0"},
+    };
+
+    for (size_t i = 0; i < ARRAY_SIZE(gRec); i++) {
+        a.reset();
+        a.appendFloat(gRec[i].fValue);
+    }
 }
