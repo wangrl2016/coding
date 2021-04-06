@@ -1,5 +1,6 @@
 mod decoder;
 mod parser;
+mod marker;
 
 use std::fs::File;
 use std::io::BufReader;
