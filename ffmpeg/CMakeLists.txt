@@ -23,7 +23,7 @@ SET(
         TranscodeAAC
         Muxing
         Remuxing
-        FFPlay
+        FFPlayer
 )
 
 foreach (EXAMPLE ${EXAMPLES})

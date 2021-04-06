@@ -14,7 +14,7 @@
  *          printf("%s\n", *src);
  *      }
  * In this code the compiler can assume src is not null and omit the if (src) {...}
- * check, uncoditionally running the printf, crashing the program is src really is null.
+ * check, unconditionally running the printf, crashing the program is src really is null.
  * Of the compilers we pay attention to only GCC performs this optimization in practice.
  */
 static inline void* CarefulMemcpy(void* dst, const void* src, size_t len) {
