@@ -74,16 +74,21 @@ https://algs4.cs.princeton.edu/home/
 
 ## 人工智能 ([atit](atit))
 
-https://www.oreilly.com/content/generative-adversarial-networks-for-beginners/
+https://www.tensorflow.org/tutorials
 
-https://github.com/NVlabs/stylegan
+https://github.com/tensorflow/tensorflow
+
+https://www.oreilly.com/content/generative-adversarial-networks-for-beginners/
 
 https://github.com/NVIDIA/pix2pixHD
 
-- [ ] 图像合成和语义处理
+https://github.com/NVlabs/stylegan
 
-- [ ] StyleGAN
+- [ ] TensorFlow
+- [ ] CNN (Convolutional Neural Network)
+- [ ] GAN (Generative Adversarial Network)
 
+![GAN](res/gans.png)
 
 ## 设计模式 ([depa](depa/))
 
@@ -127,7 +132,7 @@ https://ffmpeg.org/doxygen/trunk/examples.html
 
 ![FFmpeg](res/ffmpeg.png)
 
-- [ ] FFplay
+- [x] FFPlayer
 
 ## OpenGL示例 ([opengl](opengl/))
 
@@ -177,10 +182,10 @@ https://github.com/google/oboe
 https://docs.opencv.org/4.5.1/
 
 - [x] Introduction to OpenCV
-- [ ] Core functionality
+- [x] Core functionality
 - [ ] Image Processing
-- [ ] Image file reading and writing
-- [ ] Video I/O
+- [x] Image file reading and writing
+- [x] Video I/O
 - [ ] High-level GUI
 - [ ] Video Analysis
 - [ ] CameraCalibration and 3D Reconstruction
