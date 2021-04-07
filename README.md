@@ -74,7 +74,11 @@ https://algs4.cs.princeton.edu/home/
 
 ## 人工智能 ([atit](atit))
 
+https://www.oreilly.com/content/generative-adversarial-networks-for-beginners/
+
 https://github.com/NVlabs/stylegan
+
+https://github.com/NVIDIA/pix2pixHD
 
 - [ ] 图像合成和语义处理
 
@@ -241,7 +245,7 @@ https://www.w3.org/TR/SVG2/
 
 https://www.w3.org/XML/
 
-- [ ] 编写SVG渲染引擎
+- [x] 编写SVG渲染引擎
 - [ ] 编写JSON渲染引擎
 - [ ] XML解析器
 - [ ] PPT解析和生成
