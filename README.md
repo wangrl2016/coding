@@ -127,7 +127,7 @@ https://www.opengl.org/
 - [x] Textures
 - [x] Transformations
 - [x] Coordinate Systems
-- [ ] Camera
+- [x] Camera
 - [ ] Basic Lighting
 - [ ] Materials
 - [ ] Lighting Maps
@@ -188,6 +188,7 @@ https://www.w3.org/TR/PNG/
 - [x] PPM图片格式
 - [x] PCM音频格式
 - [x] BMP图片格式
+- [ ] JPEG图片格式解码器
 - [ ] WAV音频格式
 - [ ] MP3音频格式
 - [ ] AAC音频格式
@@ -216,6 +217,7 @@ https://www.w3.org/TR/PNG/
 
 https://github.com/SFML/SFML/
 
+- [ ] 系统
 - [ ] 声音
 - [ ] 图像
 - [ ] 网络
