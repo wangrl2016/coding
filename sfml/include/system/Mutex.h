@@ -7,6 +7,10 @@
 #include "include/system/NonCopyable.h"
 
 namespace sf {
+    namespace priv {
+        class MutexImpl;
+    }
+
     class Mutex : NonCopyable {
     public:
         Mutex();
@@ -16,5 +20,8 @@ namespace sf {
         void lock();
 
         void unlock();
+
+    private:
+        priv::MutexImpl* mMutexImpl;    // OS specific implementation
     };
 }
