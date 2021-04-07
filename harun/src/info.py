@@ -56,7 +56,7 @@ packages = {}
 contexts = {}
 
 # 高配置手机
-high_serials = ['9598552235004UD']
+high_serials = ['9598552235004UD', 'ce7f96a00307']
 
 # 程序的定时任务为30分钟
 SCHEDULE_TIME = 30

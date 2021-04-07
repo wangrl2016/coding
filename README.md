@@ -72,6 +72,15 @@ https://algs4.cs.princeton.edu/home/
 - [ ] 排序
 - [ ] 内存分配
 
+## 人工智能 ([atit](atit))
+
+https://github.com/NVlabs/stylegan
+
+- [ ] 图像合成和语义处理
+
+- [ ] StyleGAN
+
+
 ## 设计模式 ([depa](depa/))
 
 Design Patterns: Elements of Reusable Object-Oriented Software
