@@ -10,6 +10,7 @@ include_directories(${CMAKE_SOURCE_DIR}/)
 add_library(engine src/String.cpp src/Types.cpp)
 
 add_executable(Test
+        test/JsonTest.cpp
         test/MathTest.cpp
         test/RefCntTest.cpp
         test/SortTest.cpp
