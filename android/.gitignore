@@ -18,3 +18,22 @@ Camera/app/src/main/res/mipmap*/
 Camera/app/src/main/res/values/
 Camera/app/src/main/res/values-night/
 
+Oboea/.gitignore
+Oboea/app/.gitignore
+Oboea/gradle/
+Oboea/build.gradle
+Oboea/gradle.properties
+Oboea/gradlew
+Oboea/gradlew.bat
+Oboea/local.properties
+Oboea/settings.gradle
+Oboea/app/build/
+Oboea/app/proguard-rules.pro
+Oboea/app/src/androidTest/
+Oboea/app/src/test/
+Oboea/app/src/main/res/drawable/
+Oboea/app/src/main/res/drawable-v24/
+Oboea/app/src/main/res/mipmap*/
+Oboea/app/src/main/res/values/
+Oboea/app/src/main/res/values-night/
+
