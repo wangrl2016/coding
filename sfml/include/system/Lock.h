@@ -39,7 +39,7 @@ namespace sf {
      *             sf::Lock lock(mutex);
      *             codeThatRequiresProtection();
      *         }    // mutex is unlocked here
-     *         codeThatDeesNotCareAboutTheMutex();
+     *         codeThatDoesNotCareAboutTheMutex();
      *     }
      *
      * Having a mutex locked longer than required is a bad practice which
@@ -64,5 +64,4 @@ namespace sf {
     private:
         Mutex& mMutex;
     };
-
 }

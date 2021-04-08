@@ -33,7 +33,9 @@ set(VERSION_PATCH 0)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_library(audio src/audio/AlResource.cpp
+add_library(audio
+        src/audio/AudioDevice.cpp
+        src/audio/AlResource.cpp
         src/system/Lock.cpp
         src/system/Mutex.cpp
         src/system/MutexImpl.cpp
@@ -41,3 +43,8 @@ add_library(audio src/audio/AlResource.cpp
 
 add_executable(sound Sound.cpp)
 target_link_libraries(sound audio)
+
+add_subdirectory(googletest)
+add_executable(Test
+        test/LockTest.cpp)
+target_link_libraries(Test gtest_main audio)

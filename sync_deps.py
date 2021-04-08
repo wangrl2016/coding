@@ -7,6 +7,7 @@ import sys
 # 项目所需要的依赖
 dependencies = {
     "engine/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",
+    "sfml/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",
     "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3",
 }
 
@@ -38,7 +39,7 @@ def check_executable():
             subprocess.call(['ffmpeg', '-version'], stdout=devnull)
         except (OSError,):
             return None
-    return "OK"
+    return 'OK'
 
 
 def git_sync_deps():

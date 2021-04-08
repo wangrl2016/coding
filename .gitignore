@@ -3,6 +3,7 @@ opengl/glad/
 opengl/stb_image.h
 
 engine/googletest/
+sfml/googletest/
 
 target/
 
