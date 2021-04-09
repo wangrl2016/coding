@@ -8,6 +8,8 @@
 
 #include "IRestartable.h"
 #include "SoundGenerator.h"
+#include "DefaultErrorCallback.h"
+#include "LatencyTunningCallback.h"
 
 class HelloOboeEngine : public IRestartable {
 public:
@@ -68,11 +70,15 @@ public:
     bool isLatencyDetectionSupported();
 
 private:
+    oboe::Result reopenStream();
 
+    oboe::Result createPlaybackStream();
+
+private:
     std::shared_ptr<oboe::AudioStream> mStream;
-
+    std::unique_ptr<LatencyTunningCallback> mLatencyCallback;
+    std::unique_ptr<DefaultErrorCallback> mErrorCallback;
     std::shared_ptr<SoundGenerator> mAudioSource;
-
     bool mIsLatencyDetectionSupported = false;
 
     int32_t mDeviceId = oboe::Unspecified;
