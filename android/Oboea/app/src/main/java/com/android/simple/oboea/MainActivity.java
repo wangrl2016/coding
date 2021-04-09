@@ -17,7 +17,9 @@ import androidx.core.view.MotionEventCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
 
@@ -39,13 +41,21 @@ public class MainActivity extends Activity {
     private TextView mLatencyText;
     private Timer mLatencyUpdater;
 
+    /**
+     * Hook to user control to start / stop audio playback:
+     * touch-down: start, and keeps on playing
+     * touch-up: stop
+     * simply pass the event to native side.
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
         switch (action) {
             case (MotionEvent.ACTION_DOWN):
+                PlaybackEngine.setToneOn(true);
                 break;
             case (MotionEvent.ACTION_UP):
+                PlaybackEngine.setToneOn(false);
                 break;
         }
         return super.onTouchEvent(event);
@@ -56,9 +66,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Example of a call to a native method
-        // TextView tv = findViewById(R.id.sample_text);
-        // tv.setText(PlaybackEngine.stringFromJNI());
+        mLatencyText = findViewById(R.id.latencyText);
         setupAudioApiSpinner();
         setupPlaybackDeviceSpinner();
         setupChannelCountSpinner();
@@ -73,11 +81,49 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         PlaybackEngine.create(this);
+        setupLatencyUpdater();
+        // Return the spinner states to their default value.
+        mChannelCountSpinner.setSelection(CHANNEL_COUNT_DEFAULT_OPTION_INDEX);
+        mPlaybackDeviceSpinner.setSelection(SPINNER_DEFAULT_OPTION_INDEX);
+        mBufferSizeSpinner.setSelection(SPINNER_DEFAULT_OPTION_INDEX);
+        mAudioApiSpinner.setSelection(SPINNER_DEFAULT_OPTION_INDEX);
     }
 
     @Override
     protected void onPause() {
+        if (mLatencyUpdater != null)
+            mLatencyUpdater.cancel();
+        PlaybackEngine.delete();
         super.onPause();
+    }
+
+    private void setupLatencyUpdater() {
+        // Update the latency every 1s.
+        TimerTask latencyUpdateTask = new TimerTask() {
+            @Override
+            public void run() {
+                final String latencyStr;
+                if (PlaybackEngine.isLatencyDetectionSupported()) {
+                    double latency = PlaybackEngine.getCurrentOutputLatencyMillis();
+                    if (latency >= 0) {
+                        latencyStr = String.format(Locale.getDefault(), "%.2fms", latency);
+                    } else {
+                        latencyStr = "Unknown";
+                    }
+                } else {
+                    latencyStr = "Only supported in AAudio (API 26+)";
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLatencyText.setText(getString(R.string.latency, latencyStr));
+                    }
+                });
+            }
+        };
+        mLatencyUpdater = new Timer();
+        mLatencyUpdater.schedule(latencyUpdateTask, 0, UPDATE_LATENCY_EVERY_MILLIS);
     }
 
     private void setupAudioApiSpinner() {
@@ -93,7 +139,7 @@ public class MainActivity extends Activity {
         mAudioApiSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                PlaybackEngine.setAudioApi(position);
             }
 
             @Override
@@ -103,6 +149,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    private int getPlaybackDeviceId() {
+        return ((AudioDeviceListEntry) mPlaybackDeviceSpinner.getSelectedItem()).getId();
+    }
+
     private void setupPlaybackDeviceSpinner() {
         mPlaybackDeviceSpinner = findViewById(R.id.playbackDevicesSpinner);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -110,7 +160,7 @@ public class MainActivity extends Activity {
             mPlaybackDeviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                    PlaybackEngine.setAudioDeviceId(getPlaybackDeviceId());
                 }
 
                 @Override
@@ -130,7 +180,7 @@ public class MainActivity extends Activity {
         mChannelCountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                PlaybackEngine.setChannelCount(CHANNEL_COUNT_OPTIONS[mChannelCountSpinner.getSelectedItemPosition()]);
             }
 
             @Override
@@ -138,6 +188,18 @@ public class MainActivity extends Activity {
 
             }
         });
+    }
+
+    private int getBufferSizeInBursts() {
+        HashMap<String, String> selectionOption = (HashMap<String, String>)
+                mBufferSizeSpinner.getSelectedItem();
+
+        String valueKey = getString(R.string.buffer_size_value_key);
+
+        // parseInt will throw a NumberFormatException if the string doesn't contain a valid integer
+        // representation. We don't need to worry about this because the values are derived from
+        // the BUFFER_SIZE_OPTIONS int array.
+        return Integer.parseInt(selectionOption.get(valueKey));
     }
 
     private void setupBufferSizeSpinner() {
@@ -153,7 +215,7 @@ public class MainActivity extends Activity {
         mBufferSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                PlaybackEngine.setBufferSizeInBursts(getBufferSizeInBursts());
             }
 
             @Override

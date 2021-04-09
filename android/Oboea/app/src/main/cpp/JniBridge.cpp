@@ -18,80 +18,136 @@ Java_com_android_simple_oboea_PlaybackEngine_native_1createEngine(JNIEnv *env, j
         LOGE("Could not instantiate HelloOboeEngine");
         return 0;
     }
-    return 0;
+    auto result = engine->start();
+    if (result != oboe::Result::OK) {
+        LOGE("Opening and starting stream failed. Returned %d", result);
+        engine->stop();
+        delete engine;
+        return 0;
+    }
+    return reinterpret_cast<jlong>(engine);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1deleteEngine(JNIEnv *env, jclass clazz,
-                                                                  jlong engine_handle) {
-    // TODO: implement native_deleteEngine()
+Java_com_android_simple_oboea_PlaybackEngine_native_1deleteEngine(
+        JNIEnv *env, jclass clazz,
+        jlong engineHandle) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    engine->stop();
+    delete engine;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setToneOn(JNIEnv *env, jclass clazz,
-                                                               jlong engine_handle,
-                                                               jboolean is_tone_on) {
-    // TODO: implement native_setToneOn()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setToneOn(
+        JNIEnv *env, jclass clazz,
+        jlong engineHandle,
+        jboolean isToneOn) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine handle is invalid, call createHandle() to create a new one");
+        return;
+    }
+    engine->tap(isToneOn);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setAudioApi(JNIEnv *env, jclass clazz,
-                                                                 jlong engine_handle,
-                                                                 jint audio_api) {
-    // TODO: implement native_setAudioApi()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setAudioApi(
+        JNIEnv *env, jclass clazz,
+        jlong engineHandle,
+        jint audioApi) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine handle is invalid, call createHandle() to create a new one");
+        return;
+    }
+
+    oboe::AudioApi api = static_cast<oboe::AudioApi>(audioApi);
+    engine->setAudioApi(api);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setAudioDeviceId(JNIEnv *env, jclass clazz,
-                                                                      jlong engine_handle,
-                                                                      jint device_id) {
-    // TODO: implement native_setAudioDeviceId()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setAudioDeviceId(
+        JNIEnv *env, jclass clazz,
+        jlong engineHandle,
+        jint deviceId) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine handle is invalid, call createHandle() to create a new one");
+        return;
+    }
+    engine->setDeviceId(deviceId);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setChannelCount(JNIEnv *env, jclass clazz,
-                                                                     jlong m_engine_handle,
-                                                                     jint channel_count) {
-    // TODO: implement native_setChannelCount()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setChannelCount(
+        JNIEnv *env, jclass clazz,
+        jlong engineHandle,
+        jint channelCount) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine handle is invalid, call createHandle() to create a new one");
+        return;
+    }
+    engine->setChannelCount(channelCount);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setBufferSizeInBursts(JNIEnv *env,
-                                                                           jclass clazz,
-                                                                           jlong engine_handle,
-                                                                           jint buffer_size_in_bursts) {
-    // TODO: implement native_setBufferSizeInBursts()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setBufferSizeInBursts(
+        JNIEnv *env,
+        jclass clazz,
+        jlong engineHandle,
+        jint bufferSizeInBursts) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine handle is invalid, call createHandle() to create a new one");
+        return;
+    }
+    engine->setBufferSizeInBursts(bufferSizeInBursts);
 }
 
 extern "C"
 JNIEXPORT jdouble JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1getCurrentOutputLatencyMillis(JNIEnv *env,
-                                                                                   jclass clazz,
-                                                                                   jlong engine_handle) {
-    // TODO: implement native_getCurrentOutputLatencyMillis()
+Java_com_android_simple_oboea_PlaybackEngine_native_1getCurrentOutputLatencyMillis(
+        JNIEnv *env,
+        jclass clazz,
+        jlong engineHandle) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine is null, you must call createEngine before calling this method");
+        return static_cast<jdouble>(-1.0);
+    }
+    return static_cast<jdouble>(engine->getCurrentOutputLatencyMillis());
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1isLatencyDetectionSupported(JNIEnv *env,
-                                                                                 jclass clazz,
-                                                                                 jlong engine_handle) {
-    // TODO: implement native_isLatencyDetectionSupported()
+Java_com_android_simple_oboea_PlaybackEngine_native_1isLatencyDetectionSupported(
+        JNIEnv *env,
+        jclass clazz,
+        jlong engineHandle) {
+    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
+    if (engine == nullptr) {
+        LOGE("Engine is null, you must call createEngine before calling this method");
+        return JNI_FALSE;
+    }
+    return (engine->isLatencyDetectionSupported() ? JNI_TRUE : JNI_FALSE);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_android_simple_oboea_PlaybackEngine_native_1setDefaultStreamValues(JNIEnv *env,
-                                                                            jclass clazz,
-                                                                            jint sample_rate,
-                                                                            jint frames_per_burst) {
-    // TODO: implement native_setDefaultStreamValues()
+Java_com_android_simple_oboea_PlaybackEngine_native_1setDefaultStreamValues(
+        JNIEnv *env,
+        jclass clazz,
+        jint sampleRate,
+        jint framesPerBurst) {
+    oboe::DefaultStreamValues::SampleRate = (int32_t) sampleRate;
+    oboe::DefaultStreamValues::FramesPerBurst = (int32_t) framesPerBurst;
 }
 
 extern "C"

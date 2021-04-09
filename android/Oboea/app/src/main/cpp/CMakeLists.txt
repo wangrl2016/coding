@@ -26,7 +26,7 @@ add_library( # Sets the name of the library.
         # Provides a relative path to your source file(s).
         JniBridge.cpp
         HelloOboeEngine.cpp
-        LatencyTunningCallback.cpp
+        LatencyTuningCallback.cpp
         SoundGenerator.cpp
         )
 

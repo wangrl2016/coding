@@ -8,8 +8,9 @@
 #include "oboe/LatencyTuner.h"
 #include "DefaultDataCallback.h"
 
-class LatencyTunningCallback : public DefaultDataCallback {
-    LatencyTunningCallback() : DefaultDataCallback() {}
+class LatencyTuningCallback : public DefaultDataCallback {
+public:
+    LatencyTuningCallback() : DefaultDataCallback() {}
 
     /**
      * Every time the playback stream requires data this method will be called.

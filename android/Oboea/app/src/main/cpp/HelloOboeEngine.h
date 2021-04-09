@@ -9,7 +9,9 @@
 #include "IRestartable.h"
 #include "SoundGenerator.h"
 #include "DefaultErrorCallback.h"
-#include "LatencyTunningCallback.h"
+#include "LatencyTuningCallback.h"
+
+constexpr int32_t kBufferSizeAutomatic = 0;
 
 class HelloOboeEngine : public IRestartable {
 public:
@@ -17,7 +19,7 @@ public:
 
     virtual ~HelloOboeEngine() = default;
 
-    void top(bool isDown);
+    void tap(bool isDown);
 
     /**
      * Open and start a stream.
@@ -76,7 +78,7 @@ private:
 
 private:
     std::shared_ptr<oboe::AudioStream> mStream;
-    std::unique_ptr<LatencyTunningCallback> mLatencyCallback;
+    std::unique_ptr<LatencyTuningCallback> mLatencyCallback;
     std::unique_ptr<DefaultErrorCallback> mErrorCallback;
     std::shared_ptr<SoundGenerator> mAudioSource;
     bool mIsLatencyDetectionSupported = false;

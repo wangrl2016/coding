@@ -3,11 +3,11 @@
 //
 
 #include <android/trace.h>
-#include "LatencyTunningCallback.h"
+#include "LatencyTuningCallback.h"
 
 oboe::DataCallbackResult
-LatencyTunningCallback::onAudioReady(oboe::AudioStream *oboeStream, void *audioData,
-                                     int32_t numFrames) {
+LatencyTuningCallback::onAudioReady(oboe::AudioStream *oboeStream, void *audioData,
+                                    int32_t numFrames) {
     if (oboeStream != mStream) {
         mStream = oboeStream;
         mLatencyTuner = std::make_unique<oboe::LatencyTuner>(*oboeStream);
