@@ -7,7 +7,10 @@ project(Engine)
 add_subdirectory(googletest/)
 include_directories(${CMAKE_SOURCE_DIR}/)
 
-add_library(engine src/String.cpp src/Types.cpp)
+add_library(engine
+        src/Data.cpp
+        src/String.cpp
+        src/Types.cpp)
 
 add_executable(Test
         test/JsonTest.cpp

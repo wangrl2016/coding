@@ -99,12 +99,30 @@ class Data final : public NVRefCnt<Data> {
      */
     static SharedPtr<Data> MakeFromMalloc(const void* data, size_t length);
 
+    /**
+     * Create a new dataRef the file with the specified path.
+     * If the file cannot be opened, this returns nullptr.
+     */
     static SharedPtr<Data> MakeFromFileName(const char path[]);
 
+    /**
+     * Create a new dataRef from a stdio FILE.
+     * This does not take ownership of the FILE, nor close it.
+     * The caller is free to close the FILE at its convenience.
+     * The FILE must be open for reading only.
+     * Returns nullptr on failure.
+     */
     static SharedPtr<Data> MakeFromFILE(FILE* f);
 
+    /**
+     * Create a new dataRef using a subset of the data in the specified src dataRef.
+     */
     static SharedPtr<Data> MakeSubset(const Data* src, size_t offset, size_t length);
 
+    /**
+     * Returns a new empty dataRef (or a reference to a shared empty dataRef).
+     * New or shared, the caller must see that unref() is eventually called.
+     */
     static SharedPtr<Data> MakeEmpty();
 
 private:
