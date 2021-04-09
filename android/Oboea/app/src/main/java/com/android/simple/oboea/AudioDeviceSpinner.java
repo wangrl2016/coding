@@ -63,7 +63,7 @@ public class AudioDeviceSpinner extends AppCompatSpinner {
     @TargetApi(23)
     private void setupAudioDeviceCallback() {
         // Note that we will immediately receive a call to onDevicesAdded with the list of
-        // devices which are currently connectedd.
+        // devices which are currently connected.
         mAudioManager.registerAudioDeviceCallback(new AudioDeviceCallback() {
             @Override
             public void onAudioDevicesAdded(AudioDeviceInfo[] addedDevices) {
