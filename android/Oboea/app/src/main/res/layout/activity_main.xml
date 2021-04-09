@@ -6,6 +6,63 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Audio API container -->
+    <LinearLayout
+        android:id="@+id/audioApisContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/audioApisTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/audio_api" />
+
+        <Spinner
+            android:id="@+id/audoiApiSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+    <!-- Playback device container -->
+    <LinearLayout
+        android:id="@+id/playbackDevicesContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/audioApisContainer">
+
+        <TextView
+            android:id="@+id/playbackDeviceTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/playback_device" />
+
+        <com.android.simple.oboea.AudioDeviceSpinner
+            android:id="@+id/playbackDevicesSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp" />
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/sample_text"
         android:layout_width="wrap_content"
