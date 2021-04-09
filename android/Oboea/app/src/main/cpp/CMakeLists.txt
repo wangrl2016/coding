@@ -9,6 +9,8 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project("oboea")
 
+# Find the Oboe package
+find_package (oboe REQUIRED CONFIG)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -21,7 +23,9 @@ add_library( # Sets the name of the library.
              # Sets the library as a shared library.
              SHARED
 
-             # Provides a relative path to your source file(s).
+        # Provides a relative path to your source file(s).
+        HelloOboeEngine.cpp
+        SoundGenerator.cpp
         JniBridge.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -36,9 +40,6 @@ find_library( # Sets the name of the path variable.
               # Specifies the name of the NDK library that
               # you want CMake to locate.
               log )
-
-# Find the Oboe package
-find_package (oboe REQUIRED CONFIG)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this

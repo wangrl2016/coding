@@ -65,10 +65,14 @@ public class MainActivity extends Activity {
         setupBufferSizeSpinner();
     }
 
+    /**
+     * Creating engine in onResume() and destroying in onPause() so the stream retains exclusive
+     * mode only while in focus. This allows other apps to reclaim exclusive stream mode.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        // PlaybackEngine.create(this);
+        PlaybackEngine.create(this);
     }
 
     @Override
@@ -170,6 +174,14 @@ public class MainActivity extends Activity {
         return audioApiOptions;
     }
 
+    /**
+     * Creates a list of buffer size options which can be used to populate a SimpleAdapter.
+     * Each option has a description and a value. The description is always equal to the value,
+     * except when the value is zero as this indicates that the buffer size should be set
+     * automatically by the audio engine.
+     *
+     * @return list of buffer size options
+     */
     private List<HashMap<String, String>> createBufferSizeOptionsList() {
         ArrayList<HashMap<String, String>> bufferSizeOptions = new ArrayList<>();
 

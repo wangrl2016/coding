@@ -1,10 +1,24 @@
 #include <jni.h>
 #include <string>
 
+#include "LogMacros.h"
+#include "HelloOboeEngine.h"
+
+/**
+ * Creates the audio engine
+ *
+ * @return a pointer to the audio engine. This should be passed to other methods
+ */
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_android_simple_oboea_PlaybackEngine_native_1createEngine(JNIEnv *env, jclass clazz) {
-    // TODO: implement native_createEngine()
+    // We use std::nothrow so new returns a nullptr if the engine creation fails.
+    HelloOboeEngine *engine = new(std::nothrow) HelloOboeEngine();
+    if (engine == nullptr) {
+        LOGE("Could not instantiate HelloOboeEngine");
+        return 0;
+    }
+    return 0;
 }
 
 extern "C"
