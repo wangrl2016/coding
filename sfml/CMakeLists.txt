@@ -33,6 +33,11 @@ set(VERSION_PATCH 0)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
+# 理解第三方库OpenAL的安装过程
+# 需要编写pkg-config文件
+# 导入到CMakeLists.txt文件中
+# 通过find_package查找到相关库
+
 add_library(audio
         src/audio/AudioDevice.cpp
         src/audio/AlResource.cpp
