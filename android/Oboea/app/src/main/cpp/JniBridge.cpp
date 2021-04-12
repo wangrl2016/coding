@@ -156,3 +156,27 @@ Java_com_android_simple_oboea_PlaybackEngine_native_1stringFromJNI(JNIEnv *env, 
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
+
+// Rhythm Game
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RhythmGameActivity_native_1onStart(JNIEnv *env, jobject thiz,
+                                                                 jobject asset_manager) {
+    // TODO: implement native_onStart()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RhythmGameActivity_native_1onStop(JNIEnv *env, jobject thiz) {
+    // TODO: implement native_onStop()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RhythmGameActivity_native_1setDefaultStreamValues(JNIEnv *env,
+                                                                                jclass clazz,
+                                                                                jint default_sample_rate,
+                                                                                jint default_frames_per_burst) {
+    // TODO: implement native_setDefaultStreamValues()
+}
