@@ -24,6 +24,7 @@ add_library( # Sets the name of the library.
              SHARED
 
         # Provides a relative path to your source file(s).
+        Game.cpp
         JniBridge.cpp
         HelloOboeEngine.cpp
         LatencyTuningCallback.cpp
@@ -50,6 +51,8 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
                        native-lib
 
+                        android
+                        GLESv2
                         oboe::oboe
                        # Links the target library to the log library
                        # included in the NDK.

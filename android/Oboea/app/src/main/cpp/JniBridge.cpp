@@ -1,8 +1,11 @@
 #include <jni.h>
 #include <string>
+#include <memory>
+#include <android/asset_manager_jni.h>
 
 #include "LogMacros.h"
 #include "HelloOboeEngine.h"
+#include "Game.h"
 
 /**
  * Creates the audio engine
@@ -159,11 +162,22 @@ Java_com_android_simple_oboea_PlaybackEngine_native_1stringFromJNI(JNIEnv *env, 
 
 // Rhythm Game
 
+extern "C" {
+std::unique_ptr<Game> game;
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RhythmGameActivity_native_1onStart(JNIEnv *env, jobject thiz,
-                                                                 jobject asset_manager) {
-    // TODO: implement native_onStart()
+                                                                 jobject jAssetManager) {
+    AAssetManager *assetManager = AAssetManager_fromJava(env, jAssetManager);
+    if (assetManager == nullptr) {
+        LOGE("Could not obtain the AAssetManager");
+        return;
+    }
+
+    game = std::make_unique<Game>(*assetManager);
+    game->start();
 }
 
 extern "C"
@@ -176,7 +190,43 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RhythmGameActivity_native_1setDefaultStreamValues(JNIEnv *env,
                                                                                 jclass clazz,
-                                                                                jint default_sample_rate,
-                                                                                jint default_frames_per_burst) {
-    // TODO: implement native_setDefaultStreamValues()
+                                                                                jint sampleRate,
+                                                                                jint framesPerBurst) {
+    oboe::DefaultStreamValues::SampleRate = (int32_t) sampleRate;
+    oboe::DefaultStreamValues::FramesPerBurst = (int32_t) framesPerBurst;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RendererWrapper_native_1onSurfaceCreated(JNIEnv *env, jclass clazz) {
+    // TODO: implement native_onSurfaceCreated()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RendererWrapper_native_1onSurfaceChanged(JNIEnv *env, jclass clazz,
+                                                                       jint width_in_pixels,
+                                                                       jint height_in_pixels) {
+    // TODO: implement native_onSurfaceChanged()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_RendererWrapper_native_1onDrawFrame(JNIEnv *env, jclass clazz) {
+    // TODO: implement native_onDrawFrame()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_GameSurfaceView_native_1onTouchInput(JNIEnv *env, jclass clazz,
+                                                                   jint event_type,
+                                                                   jlong time_since_boot_ms, jint x,
+                                                                   jint y) {
+    // TODO: implement native_onTouchInput()
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_simple_oboea_GameSurfaceView_native_1surfaceDestroyed(JNIEnv *env, jclass clazz) {
+    // TODO: implement native_surfaceDestroyed()
 }
