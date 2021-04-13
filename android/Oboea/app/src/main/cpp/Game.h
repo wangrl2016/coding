@@ -8,8 +8,15 @@
 #include <android/asset_manager.h>
 
 #include "oboe/Oboe.h"
+#include "Mixer.h"
 
 using namespace oboe;
+
+enum class GameState {
+    Loading,
+    Playing,
+    FailedToLoad
+};
 
 class Game : public AudioStreamCallback {
 public:
@@ -28,12 +35,16 @@ private:
 
     bool openStream();
 
+    bool setupAudioSources();
+
 private:
     AAssetManager &mAssetManager;
     std::shared_ptr<AudioStream> mAudioStream;
 
-    std::unique_ptr<float[]> mConversionBuffer{nullptr};    // for float -> int16 conversion
+    Mixer mMixer;
 
+    std::unique_ptr<float[]> mConversionBuffer{nullptr};    // for float -> int16 conversion
+    std::atomic<GameState> mGameState{GameState::Loading};
     std::future<void> mLoadingResult;
 };
 

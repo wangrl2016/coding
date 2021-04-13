@@ -4,6 +4,10 @@
 
 #include "Game.h"
 #include "LogMacros.h"
+#include "GameConstants.h"
+#include "SampleBuffer.h"
+
+using namespace iolib;
 
 Game::Game(AAssetManager &assetManager) : mAssetManager(assetManager) {}
 
@@ -13,7 +17,12 @@ DataCallbackResult Game::onAudioReady(AudioStream *oboeStream, void *audioData, 
 
 void Game::load() {
     if (!openStream()) {
+        mGameState = GameState::FailedToLoad;
+    }
 
+    if (!setupAudioSources()) {
+        mGameState = GameState::FailedToLoad;
+        return;
     }
 }
 
@@ -38,9 +47,30 @@ bool Game::openStream() {
     }
 
     if (mAudioStream->getFormat() == AudioFormat::I16) {
-
+        mConversionBuffer = std::make_unique<float[]>(
+                (size_t) mAudioStream->getBufferCapacityInFrames() *
+                mAudioStream->getChannelCount());
     }
 
-    return false;
+    // Reduce stream latency by setting the buffer size to a multiple of the burst size
+    auto setBufferSizeResult = mAudioStream->setBufferSizeInFrames(
+            mAudioStream->getFramesPerBurst() * kBufferSizeInBursts);
+    if (setBufferSizeResult != Result::OK) {
+        LOGW("Failed to set buffer size. Error: %s", convertToText(setBufferSizeResult.error()));
+    }
+
+    mMixer.setChannelCount(mAudioStream->getChannelCount());
+
+    return true;
 }
 
+bool Game::setupAudioSources() {
+    // Set the properties of our audio source(s) to match that of our audio stream.
+    AudioProperties targetProperties{
+            .channelCount = mAudioStream->getChannelCount(),
+            .sampleRate = mAudioStream->getSampleRate()
+    };
+
+    // Create a data source and player for the clap sound.
+    return false;
+}
