@@ -28,6 +28,7 @@ add_library( # Sets the name of the library.
         JniBridge.cpp
         HelloOboeEngine.cpp
         LatencyTuningCallback.cpp
+        OpenGLFunctions.cpp
         SoundGenerator.cpp
         )
 

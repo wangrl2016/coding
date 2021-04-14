@@ -9,6 +9,7 @@
 
 #include "oboe/Oboe.h"
 #include "Mixer.h"
+#include "AAssetDataSource.h"
 
 using namespace oboe;
 
