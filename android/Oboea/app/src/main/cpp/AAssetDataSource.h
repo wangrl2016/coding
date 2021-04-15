@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <memory>
+#include <android/asset_manager.h>
 #include "DataSource.h"
 
 class AAssetDataSource : public DataSource {
@@ -24,7 +26,6 @@ public:
             AAssetManager &aAssetManager,
             const char *filename,
             AudioProperties targetProperties);
-
 
 private:
     const std::unique_ptr<float[]> mBuffer;

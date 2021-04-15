@@ -21,9 +21,9 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends Activity {
+public class HelloOboeActivity extends Activity {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = HelloOboeActivity.class.getName();
     private static final long UPDATE_LATENCY_EVERY_MILLIS = 1000;
 
     private static final String[] AUDIO_API_OPTIONS = {"Unspecified", "OpenSL ES", "AAudio"};

@@ -23,11 +23,18 @@ public class DemoListActivity extends ListActivity {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
                 switch (position) {
+                    case 0:
+                        intent = new Intent(getApplicationContext(), HelloOboeActivity.class);
+                        break; 
                     case 1:
-                        Intent intent = new Intent(getApplicationContext(), RhythmGameActivity.class);
-                        startActivity(intent);
+                        intent = new Intent(getApplicationContext(), RhythmGameActivity.class);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + position);
                 }
+                startActivity(intent);
             }
         });
     }

@@ -2,6 +2,8 @@
 // Created by wangrl on 21-4-13.
 //
 
+#pragma once
+
 #include "OpenGLFunctions.h"
 
 // Use 2 bursts as the buffer size (double buffer).

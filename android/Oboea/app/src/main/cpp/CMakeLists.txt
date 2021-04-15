@@ -24,10 +24,13 @@ add_library( # Sets the name of the library.
              SHARED
 
         # Provides a relative path to your source file(s).
+        AAssetDataSource.cpp
+        FFmpegExtractor.cpp
         Game.cpp
         JniBridge.cpp
         HelloOboeEngine.cpp
         LatencyTuningCallback.cpp
+        NDKExtractor.cpp
         OpenGLFunctions.cpp
         SoundGenerator.cpp
         )

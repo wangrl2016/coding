@@ -5,9 +5,6 @@
 #include "Game.h"
 #include "LogMacros.h"
 #include "GameConstants.h"
-#include "SampleBuffer.h"
-
-using namespace iolib;
 
 Game::Game(AAssetManager &assetManager) : mAssetManager(assetManager) {}
 
@@ -72,5 +69,14 @@ bool Game::setupAudioSources() {
     };
 
     // Create a data source and player for the clap sound.
+    std::shared_ptr<AAssetDataSource> mClapSource {
+        AAssetDataSource::newFromCompressedAsset(mAssetManager, kClapFilename, targetProperties)
+    };
+    if (mClapSource == nullptr) {
+        LOGE("Could not load source data for clap sound");
+        return false;
+    }
+    mClap = std::make_unique<Player>(mClapSource);
+
     return false;
 }
