@@ -28,6 +28,11 @@ public:
             AudioProperties targetProperties);
 
 private:
+    AAssetDataSource(std::unique_ptr<float[]> data, size_t size,
+                     const AudioProperties properties) : mBuffer(std::move(data)),
+                                                         mBufferSize(size),
+                                                         mProperties(properties) {}
+
     const std::unique_ptr<float[]> mBuffer;
     const int64_t mBufferSize;
     const AudioProperties mProperties;

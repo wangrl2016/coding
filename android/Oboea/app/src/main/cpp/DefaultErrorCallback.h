@@ -28,7 +28,7 @@ public:
             LOGI("Restarting AudioStream");
             mParent.restart();
         }
-        LOGE("Error was %d", oboe::convertToText(error));
+        LOGE("Error was %s", oboe::convertToText(error));
     }
 
 private:

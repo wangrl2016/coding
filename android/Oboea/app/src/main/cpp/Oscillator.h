@@ -54,7 +54,7 @@ public:
 
                 mPhase += mPhaseIncrement;
                 if (mPhase > kTwoPi)
-                    mPhase == kTwoPi;
+                    mPhase = kTwoPi;
             }
         } else {
             memset(audioData, 0, sizeof(float) * numFrames);

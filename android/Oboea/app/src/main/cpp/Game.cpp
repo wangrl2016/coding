@@ -21,12 +21,30 @@ void Game::load() {
         mGameState = GameState::FailedToLoad;
         return;
     }
+
+    scheduleSongEvents();
+
+    Result result = mAudioStream->requestStart();
+    if (result != Result::OK) {
+        LOGE("Failed to start stream. Error: %s", convertToText(result));
+        mGameState = GameState::FailedToLoad;
+        return;
+    }
+    mGameState = GameState::Playing;
 }
 
 void Game::start() {
     // async returns a future, we must store this future to avoid blocking. It's not sufficient
     // to store this in a local variable as its destructor will block until Game::load completes.
     mLoadingResult = std::async(&Game::load, this);
+}
+
+void Game::stop() {
+    if (mAudioStream) {
+        mAudioStream->stop();
+        mAudioStream->close();
+        mAudioStream.reset();
+    }
 }
 
 bool Game::openStream() {
@@ -69,8 +87,8 @@ bool Game::setupAudioSources() {
     };
 
     // Create a data source and player for the clap sound.
-    std::shared_ptr<AAssetDataSource> mClapSource {
-        AAssetDataSource::newFromCompressedAsset(mAssetManager, kClapFilename, targetProperties)
+    std::shared_ptr<AAssetDataSource> mClapSource{
+            AAssetDataSource::newFromCompressedAsset(mAssetManager, kClapFilename, targetProperties)
     };
     if (mClapSource == nullptr) {
         LOGE("Could not load source data for clap sound");
@@ -78,5 +96,32 @@ bool Game::setupAudioSources() {
     }
     mClap = std::make_unique<Player>(mClapSource);
 
-    return false;
+    // Create a data source and player for out backing track.
+    std::shared_ptr<AAssetDataSource> backingTrackSource{
+            AAssetDataSource::newFromCompressedAsset(mAssetManager, kBackingTrackFilename,
+                                                     targetProperties)
+    };
+    if (backingTrackSource == nullptr) {
+        LOGE("Could not load source data for backing track");
+        return false;
+    }
+    mBackingTrack = std::make_unique<Player>(backingTrackSource);
+    mBackingTrack->setPlaying(true);
+    mBackingTrack->setLooping(true);
+
+    // Add both players to a mixer.
+    mMixer.addTrack(mClap.get());
+    mMixer.addTrack(mBackingTrack.get());
+
+    return true;
 }
+
+void Game::scheduleSongEvents() {
+    for (auto t : kClapEvents) mClapEvents.push(t);
+    for (auto t : kClapWindows) mClapWindows.push(t);
+}
+
+void Game::onErrorAfterClose(AudioStream *oboeStream, Result error) {
+    LOGE("The audio stream was closed, please restart the game. Error: %s", convertToText(error));
+}
+

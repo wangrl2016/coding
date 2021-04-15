@@ -1,4 +1,6 @@
 
+*.mp3
+
 opengl/glad/
 opengl/stb_image.h
 
