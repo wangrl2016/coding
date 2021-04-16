@@ -2,6 +2,7 @@
 // Created by wangrl on 21-4-15.
 //
 
+#include "oboe/Oboe.h"
 #include "AAssetDataSource.h"
 #include "LogMacros.h"
 // #include "FFmpegExtractor.h"
@@ -36,5 +37,17 @@ AAssetDataSource::newFromCompressedAsset(AAssetManager &aAssetManager, const cha
     int64_t bytesDecoded = NDKExtractor::decode(asset, decodedData, targetProperties);
     auto numSamples = bytesDecoded / sizeof(int16_t);
 
-    return nullptr;
+    // Now we know the exact number of samples we can create a float array to hold the audio data.
+    auto outputBuffer = std::make_unique<float[]>(numSamples);
+
+    // The NDK decoder can only decode to int16, we need to convert to floats.
+    oboe::convertPcm16ToFloat(
+            reinterpret_cast<int16_t*>(decodedData),
+            outputBuffer.get(),
+            bytesDecoded / sizeof(int16_t));
+
+    delete[] decodedData;
+    AAsset_close(asset);
+
+    return new AAssetDataSource(std::move(outputBuffer), numSamples, targetProperties);
 }

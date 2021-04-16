@@ -183,7 +183,7 @@ Java_com_android_simple_oboea_RhythmGameActivity_native_1onStart(JNIEnv *env, jo
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RhythmGameActivity_native_1onStop(JNIEnv *env, jobject thiz) {
-    // TODO: implement native_onStop()
+    game->stop();
 }
 
 extern "C"
@@ -199,21 +199,21 @@ Java_com_android_simple_oboea_RhythmGameActivity_native_1setDefaultStreamValues(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RendererWrapper_native_1onSurfaceCreated(JNIEnv *env, jclass clazz) {
-    // TODO: implement native_onSurfaceCreated()
+    game->onSurfaceCreated();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RendererWrapper_native_1onSurfaceChanged(JNIEnv *env, jclass clazz,
-                                                                       jint width_in_pixels,
-                                                                       jint height_in_pixels) {
-    // TODO: implement native_onSurfaceChanged()
+                                                                       jint width,
+                                                                       jint height) {
+    game->onSurfaceChanged(width, height);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_RendererWrapper_native_1onDrawFrame(JNIEnv *env, jclass clazz) {
-    // TODO: implement native_onDrawFrame()
+    game->tick();
 }
 
 extern "C"
@@ -222,11 +222,11 @@ Java_com_android_simple_oboea_GameSurfaceView_native_1onTouchInput(JNIEnv *env, 
                                                                    jint event_type,
                                                                    jlong time_since_boot_ms, jint x,
                                                                    jint y) {
-    // TODO: implement native_onTouchInput()
+    game->tap(time_since_boot_ms);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_android_simple_oboea_GameSurfaceView_native_1surfaceDestroyed(JNIEnv *env, jclass clazz) {
-    // TODO: implement native_surfaceDestroyed()
+    game->onSurfaceDestroyed();
 }

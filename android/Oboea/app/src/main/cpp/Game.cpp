@@ -5,10 +5,40 @@
 #include "Game.h"
 #include "LogMacros.h"
 #include "GameConstants.h"
+#include "UtilityFunctions.h"
 
 Game::Game(AAssetManager &assetManager) : mAssetManager(assetManager) {}
 
 DataCallbackResult Game::onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) {
+    // If our audio stream is expecting 16-bit samples we need to render our floats into a separate
+    // buffer then convert them into 16-bit ints.
+    bool is16Bit = (oboeStream->getFormat() == AudioFormat::I16);
+    float *outputBuffer = (is16Bit) ? mConversionBuffer.get() : static_cast<float *>(audioData);
+
+    int64_t nextClapEventMs;
+
+    for (int i = 0; i < numFrames; ++i) {
+
+        mSongPositionMs = convertFramesToMillis(
+                mCurrentFrame,
+                mAudioStream->getSampleRate());
+
+        if (mClapEvents.peek(nextClapEventMs) && mSongPositionMs >= nextClapEventMs){
+            mClap->setPlaying(true);
+            mClapEvents.pop(nextClapEventMs);
+        }
+        mMixer.renderAudio(outputBuffer+(oboeStream->getChannelCount()*i), 1);
+        mCurrentFrame++;
+    }
+
+    if (is16Bit){
+        oboe::convertFloatToPcm16(outputBuffer,
+                                  static_cast<int16_t*>(audioData),
+                                  numFrames * oboeStream->getChannelCount());
+    }
+
+    mLastUpdateTime = nowUptimeMillis();
+
     return DataCallbackResult::Continue;
 }
 
@@ -125,3 +155,61 @@ void Game::onErrorAfterClose(AudioStream *oboeStream, Result error) {
     LOGE("The audio stream was closed, please restart the game. Error: %s", convertToText(error));
 }
 
+void Game::onSurfaceCreated() {
+    SetGLScreenColor(kLoadingColor);
+}
+
+void Game::onSurfaceDestroyed() {
+    // Nothing to do.
+}
+
+void Game::onSurfaceChanged(int widthInPixels, int heightInPixels) {
+    // Nothing to do.
+}
+
+void Game::tick() {
+    switch (mGameState) {
+        case GameState::Playing:
+            TapResult r;
+            if (mUiEvents.pop(r)) {
+                renderEvent(r);
+            } else {
+                SetGLScreenColor(kPlayingColor);
+            }
+            break;
+        case GameState::Loading:
+            SetGLScreenColor(kLoadingColor);
+            break;
+
+        case GameState::FailedToLoad:
+            SetGLScreenColor(kLoadingFailedColor);
+            break;
+    }
+}
+
+void Game::tap(int64_t eventTimeAsUptime) {
+    if (mGameState != GameState::Playing) {
+        LOGW("Game not in playing state, ignoring tap event");
+    } else {
+        mClap->setPlaying(true);
+        int64_t nextClapWindowTimeMs;
+        if (mClapWindows.pop(nextClapWindowTimeMs)) {
+            // Convert the tap time to a song position.
+            int64_t tapTimeInSongMs = mSongPositionMs + (eventTimeAsUptime - mLastUpdateTime);
+            TapResult result = getTapResult(tapTimeInSongMs, nextClapWindowTimeMs);
+            mUiEvents.push(result);
+        }
+    }
+}
+
+TapResult Game::getTapResult(int64_t tapTimeInMillis, int64_t tapWindowInMillis) {
+    if (tapTimeInMillis <= tapWindowInMillis + kWindowCenterOffsetMs) {
+        if (tapTimeInMillis >= tapWindowInMillis - kWindowCenterOffsetMs) {
+            return TapResult::Success;
+        } else {
+            return TapResult::Early;
+        }
+    } else {
+        return TapResult::Late;
+    }
+}

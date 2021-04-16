@@ -32,6 +32,7 @@ add_library( # Sets the name of the library.
         LatencyTuningCallback.cpp
         NDKExtractor.cpp
         OpenGLFunctions.cpp
+        UtilityFunctions.cpp
         Player.cpp
         SoundGenerator.cpp
         )

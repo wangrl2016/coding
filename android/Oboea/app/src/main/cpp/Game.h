@@ -13,6 +13,7 @@
 #include "Mixer.h"
 
 #include "Player.h"
+#include "UtilityFunctions.h"
 
 using namespace oboe;
 
@@ -56,6 +57,8 @@ private:
 
     void scheduleSongEvents();
 
+    TapResult getTapResult(int64_t tapTimeInMillis, int64_t tapWindowInMillis);
+
 private:
     AAssetManager &mAssetManager;
     std::shared_ptr<AudioStream> mAudioStream;
@@ -63,12 +66,18 @@ private:
     std::unique_ptr<Player> mBackingTrack;
     Mixer mMixer;
 
+    std::atomic<int64_t> mCurrentFrame { 0 };
+
     std::unique_ptr<float[]> mConversionBuffer{nullptr};    // for float -> int16 conversion
 
     LockFreeQueue<int64_t, kMaxQueueItems> mClapEvents;
     LockFreeQueue<int64_t, kMaxQueueItems> mClapWindows;
+    LockFreeQueue<TapResult, kMaxQueueItems> mUiEvents;
 
     std::atomic<GameState> mGameState{GameState::Loading};
     std::future<void> mLoadingResult;
+
+    std::atomic<int64_t> mSongPositionMs { 0 };
+    std::atomic<int64_t> mLastUpdateTime { 0 };
 };
 
