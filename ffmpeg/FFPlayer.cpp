@@ -137,10 +137,10 @@ typedef struct Clock {
     double speed;
     int serial;           /* clock is based on a packet with this serial */
     int paused;
-    int* queue_serial;    /* pointer to the current packet queue serial, used for obsolete clock detection */
+    int* queue_serial;    // pointer to the current packet queue serial, used for obsolete clock detection
 } Clock;
 
-/* Common struct for handling all types of decoded data and allocated render buffers. */
+// Common struct for handling all types of decoded data and allocated render buffers.
 typedef struct Frame {
     AVFrame* frame;
     AVSubtitle sub;
@@ -170,9 +170,9 @@ typedef struct FrameQueue {
 } FrameQueue;
 
 enum {
-    AV_SYNC_AUDIO_MASTER, /* default choice */
+    AV_SYNC_AUDIO_MASTER, // default choice
     AV_SYNC_VIDEO_MASTER,
-    AV_SYNC_EXTERNAL_CLOCK, /* synchronize to an external clock */
+    AV_SYNC_EXTERNAL_CLOCK, // synchronize to an external clock
 };
 
 enum ShowMode {
@@ -228,7 +228,7 @@ typedef struct VideoState {
 
     double audio_clock;
     int audio_clock_serial;
-    double audio_diff_cum; /* used for AV difference average computation */
+    double audio_diff_cum; // used for AV difference average computation
     double audio_diff_avg_coef;
     double audio_diff_threshold;
     int audio_diff_avg_count;
@@ -237,9 +237,9 @@ typedef struct VideoState {
     int audio_hw_buf_size;
     uint8_t* audio_buf;
     uint8_t* audio_buf1;
-    unsigned int audio_buf_size; /* in bytes */
+    unsigned int audio_buf_size; // in bytes
     unsigned int audio_buf1_size;
-    int audio_buf_index; /* in bytes */
+    int audio_buf_index; // in bytes
     int audio_write_buf_size;
     int audio_volume;
     int muted;
@@ -298,7 +298,7 @@ typedef struct VideoState {
     SDL_cond* continue_read_thread;
 } VideoState;
 
-/* options specified by the user */
+// options specified by the user
 static AVInputFormat* file_iformat;
 static const char* input_filename;
 static const char* window_title;
