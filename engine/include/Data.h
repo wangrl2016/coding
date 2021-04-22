@@ -89,9 +89,7 @@ class Data final : public NVRefCnt<Data> {
      * Call this when the data parameter is already const and will outlive the lifetime of the
      * Data. Suitable for with const globals.
      */
-    static SharedPtr<Data> MakeWithoutCopy(const void* data, size_t length) {
-
-    }
+    static SharedPtr<Data> MakeWithoutCopy(const void* data, size_t length);
 
     /**
      * Create a new dataRef from a pointer allocated by malloc. The Data object
