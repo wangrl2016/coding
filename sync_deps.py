@@ -9,6 +9,7 @@ dependencies = {
     "engine/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",
     "sfml/googletest": "https://github.com/google/googletest@3ff1e8b98a3d1d3abc24a5bacb7651c9b32faedd",
     "opengl/glm": "https://github.com/g-truc/glm@ace16e47780dcef815294715237f51e9129b6eb3",
+    "agn/externals/libnyquist": "https://github.com/ddiakopoulos/libnyquist@244afdd52e8fc5bc0396cbcd9437b2d74271509f",
 }
 
 
