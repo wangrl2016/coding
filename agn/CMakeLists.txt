@@ -6,10 +6,16 @@ project(AudioGraphNode)
 set(AUDIO_GRAPH_NODE "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(${AUDIO_GRAPH_NODE}/include)
+include_directories(${AUDIO_GRAPH_NODE})
+
+add_subdirectory(externals/libnyquist)
+include_directories(${AUDIO_GRAPH_NODE}/externals/libnyquist/include/)
 
 set(SRC
+        src/core/AudioBus.cpp
+        src/core/AudioChannel.cpp
         src/AudioFileReader.cpp
+        src/internal/src/VectorMath.cpp
         )
 add_library(AudioGraphNode ${SRC})
 
